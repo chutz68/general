@@ -19,9 +19,8 @@ public class ImageService {
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
 	
-	private File baseDir;
-	private UserPropertyReader userPropertyReader;
-
+	private final File baseDir;
+	private final UserPropertyReader userPropertyReader;
 	
 	/**
 	 * Constructor
@@ -54,7 +53,7 @@ public class ImageService {
 	 * 
 	 * @return
 	 */
-	public Collection<File> listAllImageFilesInDir() {
+	Collection<File> listAllImageFilesInDir() {
         String fileExtensionList = userPropertyReader.getPropertyMapOfProperty(PropertyName.fileExtensionList).get(UserPropertyReader.INDEX_IF_EXACTLYONE); 
 		String[] extensions = fileExtensionList.split(",");
 		

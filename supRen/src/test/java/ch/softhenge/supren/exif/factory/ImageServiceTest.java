@@ -1,5 +1,6 @@
 package ch.softhenge.supren.exif.factory;
 
+import java.util.Date;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;

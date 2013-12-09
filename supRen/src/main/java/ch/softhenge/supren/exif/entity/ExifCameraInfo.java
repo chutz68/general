@@ -7,17 +7,17 @@ public class ExifCameraInfo {
 
 	private static final int CAMERA_MODEL_EXIF_TAG = ExifIFD0Directory.TAG_MODEL;
 
-	private String cameraModel;
-	private String cameraOut;
+	private final String cameraModel;
+	private final String camera4ch;
 
 	/**
 	 * 
 	 * @param cameraModel
-	 * @param cameraOut Part of the filename
+	 * @param camera4ch 4 character Camera name
 	 */
-	public ExifCameraInfo(String cameraModel, String cameraOut) {
+	public ExifCameraInfo(String cameraModel, String camera4ch) {
 		this.cameraModel= cameraModel;
-		this.cameraOut = cameraOut;
+		this.camera4ch = camera4ch;
 	}
 	
  	
