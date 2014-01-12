@@ -1,6 +1,5 @@
 package ch.softhenge.supren.exif.factory;
 
-import java.util.Date;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -8,7 +7,7 @@ import java.util.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ImageServiceTest {
+public class ImageServiceTestAllPhones {
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
 
@@ -28,4 +27,9 @@ public class ImageServiceTest {
 		imageService.listAllImageFilesInDir();
 	}
 
+	@Test
+	public void testListImageFilesToRename() {
+		imageService.listImageFilesToRename();
+	}
+	
 }

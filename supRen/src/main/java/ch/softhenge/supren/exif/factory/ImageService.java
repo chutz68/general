@@ -1,11 +1,16 @@
 package ch.softhenge.supren.exif.factory;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
 
+import ch.softhenge.supren.exif.entity.ImageFile;
+import ch.softhenge.supren.exif.file.ImageFileValidator;
 import ch.softhenge.supren.exif.property.UserPropertyReader;
 import ch.softhenge.supren.exif.property.UserPropertyReader.PropertyName;
 
@@ -21,6 +26,10 @@ public class ImageService {
 	
 	private final File baseDir;
 	private final UserPropertyReader userPropertyReader;
+	private final ExifService exifService;
+	private final ImageFileValidator imageFileValidator;
+
+	private final Collection<ImageFile> imageFileCollection;
 	
 	/**
 	 * Constructor
@@ -31,6 +40,9 @@ public class ImageService {
 	public ImageService(String resourceFileName, String baseDirectory) {
 		this.baseDir = new File(baseDirectory);
 		this.userPropertyReader = new UserPropertyReader(resourceFileName);
+		this.exifService = new ExifService();
+		this.imageFileValidator = new ImageFileValidator(userPropertyReader);
+		this.imageFileCollection = new ArrayList<>();
 	}
 
 	
@@ -39,13 +51,32 @@ public class ImageService {
 	}
 
 	public Collection<File> listImageFilesToRename() {
-		Collection<File> listAllImageFiles = listAllImageFilesInDir();
-		for (File file : listAllImageFiles) {
-			
+		if (imageFileCollection.isEmpty()) {
+			Collection<File> listAllImageFiles = listAllImageFilesInDir();
+			for (File file : listAllImageFiles) {
+				Date pictureDate = exifService.getPictureDate(file);
+				String cameraModel = exifService.getCameraModel(file);
+				Integer imageIndex = imageFileValidator.getIndexOfKnownFilePattern(file.getName());
+				ImageFile imageFile;
+				if (imageIndex != null) {
+					Integer imageNumber = 0;
+					String cameraModel4ch = "";
+					
+					imageFile = new ImageFile(file, cameraModel, pictureDate, imageNumber, cameraModel4ch, imageIndex);
+				} else {
+					new ImageFile(file, cameraModel, pictureDate, null, null, null);
+				}
+			}
 		}
 		return null;
 	}
 
+	/**
+	 * Empties the list of Image Files
+	 */
+	public void resetImageFileList() {
+		imageFileCollection.clear();
+	}
 	
 	
 	/**

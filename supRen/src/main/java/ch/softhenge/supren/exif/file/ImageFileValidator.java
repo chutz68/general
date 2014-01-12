@@ -1,93 +1,111 @@
 package ch.softhenge.supren.exif.file;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ch.softhenge.supren.exif.property.UserPropertyReader;
+import ch.softhenge.supren.exif.property.UserPropertyReader.PropertyName;
+
 /**
  * Validates an image file against a set of Patterns
  * 
  * @author werni
- *
+ * 
  */
 public class ImageFileValidator {
 
+	/**
+	 * This map contains all known filename patterns. The map key is the index
+	 * number
+	 **/
+	private final Map<Integer, String> infilePatternMap;
+	/**
+	 * This map contains from all known filename patterns the position of the
+	 * image number. The map key is the index number
+	 **/
+	private final Map<Integer, String> infilePatternImgNumMap;
+	/** Map of Pattern that contains all Filename Patterns **/
 	private Map<Integer, Pattern> patternMap;
-	private Map<Integer, List<String>> matchesFilenameList; //A List of all images that were matches using the pattern with the index as key
-	private List<String> unknownFilenameList;
 
 	/**
-	 * Constructor
 	 * 
-	 * @param stringPatternMap
-	 * @param fileExtensionPattern
+	 * @param userPropertyReader
 	 */
-	public ImageFileValidator(Map<Integer, String> stringPatternMap, String fileExtensionPattern) {
-		patternMap = new HashMap<>();
-		matchesFilenameList = new HashMap<>();
-		unknownFilenameList = new ArrayList<>();
-		for (Entry<Integer, String> stringPatternEntry : stringPatternMap.entrySet()) {
-			Pattern pattern = Pattern.compile(stringPatternEntry.getValue() + fileExtensionPattern, Pattern.CASE_INSENSITIVE);
-			patternMap.put(stringPatternEntry.getKey(), pattern);
-			matchesFilenameList.put(stringPatternEntry.getKey(), new ArrayList<String>());
+	public ImageFileValidator(UserPropertyReader userPropertyReader) {
+		Map<PropertyName, Map<Integer, String>> propertyMap = userPropertyReader
+				.getMapOfPropertyMap();
+		this.infilePatternMap = propertyMap.get(PropertyName.InfilePattern);
+		this.infilePatternImgNumMap = propertyMap
+				.get(PropertyName.InfilePatternImgNumGroup);
+		String fileExtensionPattern = propertyMap.get(
+				PropertyName.FileExtensionPattern).get(
+				UserPropertyReader.INDEX_IF_EXACTLYONE);
+		this.patternMap = new HashMap<>();
+		for (Entry<Integer, String> stringPatternEntry : infilePatternMap.entrySet()) {
+			Pattern pattern = Pattern.compile(stringPatternEntry.getValue()
+					+ fileExtensionPattern, Pattern.CASE_INSENSITIVE);
+			this.patternMap.put(stringPatternEntry.getKey(), pattern);
 		}
 	}
 
 	/**
-	 * Validate image with regular expression against all known image file patterns
+	 * Validate image with regular expression against all known image file
+	 * patterns. Return the index of the pattern to which it matches.
 	 * 
 	 * @param imageFileName
-	 * @return true: filename is a known filename, false is an unknown filename
+	 * @return pattern index if the file matches, null if the filename is of a
+	 *         unknown pattern.
 	 */
-	public boolean validate(final String imageFileName) {
+	public Integer getIndexOfKnownFilePattern(String imageFileName) {
 		for (Entry<Integer, Pattern> patternEntry : this.patternMap.entrySet()) {
 			Matcher matcher = patternEntry.getValue().matcher(imageFileName);
 			if (matcher.matches()) {
-				matchesFilenameList.get(patternEntry.getKey()).add(imageFileName);
-				return true;
+				return patternEntry.getKey();
 			}
 		}
-		unknownFilenameList.add(imageFileName);
-		return false;
+		return null;
 	}
 
 	/**
-	 * Get the number of filenames that matched the pattern
+	 * Get the 4 digit number from the known filenamepattern with the index
+	 * indexOfFilePattern For example from the filename IMG_4711, pattern:
+	 * (^img_)([0-9]{4}) which is index 1, return 4711. If the pattern is
+	 * unknown or the patternImageNum is 0, this indicates that there is no
+	 * known number: return null Return null also if no Image File number can be
+	 * detected. Get the indexOfFilePattern using Method
+	 * getIndexOfKnownFilePattern before.
 	 * 
-	 * @param idx
-	 * @return number of matches, 0 if none or unknown index
-	 */
-	public Integer getMatchesFilenameCountForPatternIdx(int idx) {
-		if (matchesFilenameList.containsKey(idx)) {
-			return matchesFilenameList.get(idx).size();
-		}
-		return 0;
-	}
-
-	/**
-	 * Return a list of all filenames that matched the pattern
-	 * 
-	 * @param idx
+	 * @param imageFileName
+	 * @param indexOfFilePattern
 	 * @return
 	 */
-	public List<String> getFilenameListForPatternIdx(int idx) {
-		if (matchesFilenameList.containsKey(idx)) {
-			return matchesFilenameList.get(idx);
+	public Integer getInfilePatternImgNum(String imageFileName,
+			Integer indexOfFilePattern) {
+		if (indexOfFilePattern == null || imageFileName == null) {
+			return null;
 		}
-		return Collections.emptyList();
-	}
-
-	/**
-	 * Get a list of Files that are not known and don't match any known pattern
-	 * 
-	 * @return
-	 */
-	public List<String> getUnknownFilenameList() {
-		return unknownFilenameList;
+		String filePattern = this.infilePatternMap.get(indexOfFilePattern);
+		String filePatternImgStrg = this.infilePatternImgNumMap
+				.get(indexOfFilePattern);
+		int filePatternImgNumGroup;
+		try {
+			filePatternImgNumGroup = Integer.valueOf(filePatternImgStrg);
+		} catch (NumberFormatException e) {
+			throw new NumberFormatException(
+					"Can't get a Number from imageFileName: " + imageFileName
+							+ " filePattern: " + filePattern
+							+ ". This should be a number, but is isn't: "
+							+ filePatternImgStrg);
+		}
+		if (filePatternImgNumGroup == 0) {
+			return null;
+		}
+		Pattern pattern = patternMap.get(indexOfFilePattern);
+		Matcher matcher = pattern.matcher(imageFileName);
+		String group = matcher.group(filePatternImgNumGroup - 1);
+		return null;
 	}
 }

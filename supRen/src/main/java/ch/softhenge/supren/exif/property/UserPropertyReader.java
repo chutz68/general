@@ -56,6 +56,7 @@ public class UserPropertyReader {
 		this.mapOfPropertyMap = new HashMap<PropertyName, Map<Integer, String>>();
 		Properties properties = readPropertyFile();
 		fillPropertyMap(properties);
+		verifyProperties();
 	}
 
 	public Map<PropertyName, Map<Integer, String>> getMapOfPropertyMap() {
@@ -100,6 +101,20 @@ public class UserPropertyReader {
 						this.mapOfPropertyMap.put(propEnum, propertyElement);
 					}
 				}
+			}
+		}
+	}
+	
+	private void verifyProperties() {
+		Map<Integer, String> infilePatterns = getPropertyMapOfProperty(PropertyName.InfilePattern);
+		for (Entry<Integer, String> infilePatternEntry : infilePatterns.entrySet()) {
+			int infFilePatternImgNum = Integer.valueOf(getPropertyMapOfProperty(PropertyName.InfilePatternImgNumGroup).get(infilePatternEntry.getKey()));
+			if (infFilePatternImgNum == 0) continue;
+			String numberStr = infilePatternEntry.getValue().split("\\(")[infFilePatternImgNum];
+			numberStr = numberStr.split("\\)")[0];
+			if (!"[0-9]{4}".equals(numberStr)) {
+				throw new NumberFormatException("Pattern: " + infilePatternEntry.getValue() + " is invalid or the image number index: "
+			            + infFilePatternImgNum + " doesn't match for patern with index " +  infilePatternEntry.getKey());
 			}
 		}
 	}
