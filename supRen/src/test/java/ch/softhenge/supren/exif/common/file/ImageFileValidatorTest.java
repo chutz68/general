@@ -17,17 +17,20 @@ public class ImageFileValidatorTest {
 		ImageFileValidator fileVal = new ImageFileValidator(uruserProteryReader);
 		for (TestFile testFile : TestFile.values()) {
 			Integer indexOfFilePattern = fileVal.getIndexOfKnownFilePattern(testFile.getFileName());
-			Integer infilePatternImgNum = fileVal.getInfilePatternImgNum(testFile.getFileName(), indexOfFilePattern);
+			Integer imgNum = fileVal.getInfilePatternImgNum(testFile.getFileName(), indexOfFilePattern);
 
 			switch(testFile) {
 			case CR2File: 
-				assertThat(testFile.getFileName(), indexOfFilePattern, CoreMatchers.is(3));
+				assertThat(testFile.getFileName(), 3, CoreMatchers.is(indexOfFilePattern));
+				assertEquals(testFile.getFileName(), Integer.valueOf(321), imgNum);
 				break;
 			case Ce6dImgFile:
 				assertThat(testFile.getFileName(), indexOfFilePattern, CoreMatchers.is(1));
+				assertEquals(testFile.getFileName(), Integer.valueOf(652), imgNum);
 				break;
 			case OldImgFile:
 				assertThat(testFile.getFileName(), indexOfFilePattern, CoreMatchers.is(6));
+				assertEquals(testFile.getFileName(), Integer.valueOf(9), imgNum);
 				break;
 			}
 		}

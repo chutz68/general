@@ -113,7 +113,7 @@ public class UserPropertyReader {
 			String numberStr = infilePatternEntry.getValue().split("\\(")[infFilePatternImgNum];
 			numberStr = numberStr.split("\\)")[0];
 			if (!"[0-9]{4}".equals(numberStr)) {
-				throw new NumberFormatException("Pattern: " + infilePatternEntry.getValue() + " is invalid or the image number index: "
+				throw new IllegalArgumentException("Pattern: " + infilePatternEntry.getValue() + " is invalid or the image number index: "
 			            + infFilePatternImgNum + " doesn't match for patern with index " +  infilePatternEntry.getKey());
 			}
 		}
