@@ -29,7 +29,7 @@ public class ImageServiceTestNewPhotos {
 
 	@Test
 	public void testListImageFilesToRename() {
-		imageService.listImageFilesToRename();
+		imageService.createListOfImageFilesToRename();
 	}
 	
 }

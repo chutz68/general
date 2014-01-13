@@ -57,24 +57,38 @@ public class ImageFileValidator {
 	 * patterns. Return the index of the pattern to which it matches.
 	 * 
 	 * @param imageFileName
-	 * @return pattern index if the file matches, null if the filename is of a
-	 *         unknown pattern.
+	 * @return an Entry of the matched Pattern pattern with key: index and value pattern, return an Entry containing key/value null if the filename is of an unknown pattern.
 	 */
-	public Integer getIndexOfKnownFilePattern(String imageFileName) {
+	public Entry<Integer, Pattern> getIndexOfKnownFilePattern(String imageFileName) {
 		for (Entry<Integer, Pattern> patternEntry : this.patternMap.entrySet()) {
 			Matcher matcher = patternEntry.getValue().matcher(imageFileName);
 			if (matcher.matches()) {
-				return patternEntry.getKey();
+				return patternEntry;
 			}
 		}
-		return null;
+		return new Entry<Integer, Pattern>() {
+			@Override
+			public Pattern setValue(Pattern value) {
+				return null;
+			}
+			
+			@Override
+			public Pattern getValue() {
+				return null;
+			}
+			
+			@Override
+			public Integer getKey() {
+				return null;
+			}
+		};
 	}
 
 	/**
-	 * Get the 4 digit number from the known filenamepattern with the index
-	 * indexOfFilePattern For example from the filename IMG_4711, pattern:
-	 * (^img_)([0-9]{4}) whereas img num is in second matcher group, return 4711. If the pattern is
-	 * unknown or the patternImageNum is 0, this indicates that there is no
+	 * Get the 4 digit number from the filenamepattern with the index indexOfFilePattern as String with leading zeros. 
+	 * For example from the filename IMG_4711, pattern:
+	 * (^img_)([0-9]{4}) whereas img num is in second matcher group, return 4711. 
+	 * If the pattern is unknown or the patternImageNum is 0, this indicates that there is no
 	 * known number: return null also if no Image File number can be
 	 * detected. Get the indexOfFilePattern using Method
 	 * getIndexOfKnownFilePattern before.
@@ -83,7 +97,7 @@ public class ImageFileValidator {
 	 * @param indexOfFilePattern
 	 * @return
 	 */
-	public Integer getInfilePatternImgNum(String imageFileName,
+	public String getInfilePatternImgNum(String imageFileName,
 			Integer indexOfFilePattern) {
 		if (indexOfFilePattern == null || imageFileName == null) {
 			return null;
@@ -106,7 +120,7 @@ public class ImageFileValidator {
 		Pattern pattern = patternMap.get(indexOfFilePattern);
 		Matcher matcher = pattern.matcher(imageFileName);
 		if (matcher.matches()) {
-			Integer imageNumber = Integer.valueOf(matcher.group(filePatternImgNumGroup));
+			String imageNumber = matcher.group(filePatternImgNumGroup);
 			return imageNumber;
 		}
 		LOGGER.warning("Image File: " + imageFileName + " doesn't match to pattern: " + filePattern);

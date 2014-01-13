@@ -4,8 +4,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 
@@ -47,30 +48,32 @@ public class ImageService {
 
 	
 	public void RenameFiles() {
-		
 	}
 
-	public Collection<File> listImageFilesToRename() {
+	public void createListOfImageFilesToRename() {
 		if (imageFileCollection.isEmpty()) {
 			Collection<File> listAllImageFiles = listAllImageFilesInDir();
 			for (File file : listAllImageFiles) {
 				Date pictureDate = exifService.getPictureDate(file);
 				String cameraModel = exifService.getCameraModel(file);
-				Integer imageIndex = imageFileValidator.getIndexOfKnownFilePattern(file.getName());
+				Entry<Integer, Pattern> patternEntry = imageFileValidator.getIndexOfKnownFilePattern(file.getName());
 				ImageFile imageFile;
-				if (imageIndex != null) {
-					Integer imageNumber = 0;
+				if (patternEntry.getKey() != null) {
+					String imageNumber = imageFileValidator.getInfilePatternImgNum(file.getName(), patternEntry.getKey());
 					String cameraModel4ch = "";
-					
-					imageFile = new ImageFile(file, cameraModel, pictureDate, imageNumber, cameraModel4ch, imageIndex);
+					imageFile = new ImageFile(file, cameraModel, pictureDate, imageNumber, cameraModel4ch, patternEntry.getValue().pattern());
 				} else {
-					new ImageFile(file, cameraModel, pictureDate, null, null, null);
+					imageFile = new ImageFile(file, cameraModel, pictureDate, null, null, null);
 				}
+				imageFileCollection.add(imageFile);
 			}
 		}
-		return null;
 	}
 
+	public Collection<ImageFile> getImageFileCollection() {
+		return imageFileCollection;
+	}
+	
 	/**
 	 * Empties the list of Image Files
 	 */

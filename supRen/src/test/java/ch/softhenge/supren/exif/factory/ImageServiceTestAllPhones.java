@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ImageServiceTestAllPhones {
@@ -28,8 +29,9 @@ public class ImageServiceTestAllPhones {
 	}
 
 	@Test
+	@Ignore("Test takes about 180 s")
 	public void testListImageFilesToRename() {
-		imageService.listImageFilesToRename();
+		imageService.createListOfImageFilesToRename();
 	}
 	
 }

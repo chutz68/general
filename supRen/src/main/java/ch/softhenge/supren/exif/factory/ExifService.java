@@ -30,6 +30,7 @@ public class ExifService {
 	 */
 	public Date getPictureDate(File imageFile) {
 		Metadata meta = getExifMetadata(imageFile);
+		if (meta == null) return null;
 		ExifSubIFDDirectory exifSubDir = meta.getDirectory(ExifSubIFDDirectory.class);
 		return exifSubDir == null ? null : exifSubDir.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
 	}
@@ -43,6 +44,7 @@ public class ExifService {
 	 */
 	public String getCameraModel(File imageFile) {
 		Metadata meta = getExifMetadata(imageFile);
+		if (meta == null) return null;
 		ExifIFD0Directory exifDir = meta.getDirectory(ExifIFD0Directory.class);
 		return exifDir == null ? null : exifDir.getString(ExifIFD0Directory.TAG_MODEL);	
 	}
