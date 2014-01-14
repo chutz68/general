@@ -1,11 +1,16 @@
 package ch.softhenge.supren.exif.factory;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import ch.softhenge.supren.exif.entity.ImageFile;
 
 public class ImageServiceTestAllPhotos {
 
@@ -31,6 +36,10 @@ public class ImageServiceTestAllPhotos {
 	//@Ignore("Test takes about 180 s")
 	public void testListImageFilesToRename() {
 		imageService.createListOfImageFilesToRename();
+		Map<String, Collection<ImageFile>> mapOfImageFileCollection = imageService.getMapOfImageFileCollection();
+		for (Entry<String, Collection<ImageFile>> imageFiles : mapOfImageFileCollection.entrySet()) {
+			LOGGER.info("Image Files of pattern " + imageFiles.getKey() + " has " + imageFiles.getValue().size() + " values");
+		}
 	}
 	
 }
