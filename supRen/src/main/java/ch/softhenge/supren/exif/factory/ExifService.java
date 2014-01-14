@@ -5,50 +5,54 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.logging.Logger;
 
+import ch.softhenge.supren.exif.entity.ExifFileInfo;
+
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 
+/**
+ * This service can read Exif Information out of an image File.
+ * 
+ * @author werni
+ *
+ */
 public class ExifService {
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
 	
 	/**
+	 * Return a new ExifFileInfo Object with Exif infos from the image File imageFile.
+	 * Return an ExifFileInfo Object containing null values if no Exif info is available from the file.
 	 * 
-	 */
-	public ExifService() {
-	}
-	
-	/**
-	 * Returns the Original Date of the image from Exif Tag.
-	 * If the image file has no Exif Tag, return null
+	 * Be careful when using this service with many files. The Exif Tag reading is pretty slow.
 	 * 
 	 * @param imageFile
 	 * @return
 	 */
-	public Date getPictureDate(File imageFile) {
+	public ExifFileInfo getExifInfoFromImageFile(File imageFile) {
 		Metadata meta = getExifMetadata(imageFile);
 		if (meta == null) return null;
-		ExifSubIFDDirectory exifSubDir = meta.getDirectory(ExifSubIFDDirectory.class);
-		return exifSubDir == null ? null : exifSubDir.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+
+		ExifIFD0Directory exifIFD0Directory = meta.getDirectory(ExifIFD0Directory.class);
+		String cameraModel;
+		if (exifIFD0Directory == null) {
+			cameraModel = null;
+		} else {
+			cameraModel = exifIFD0Directory.getString(ExifIFD0Directory.TAG_MODEL);
+		}
+
+		ExifSubIFDDirectory exifSubIFDDirectory = meta.getDirectory(ExifSubIFDDirectory.class);
+		Date pictureDate;
+		if (exifSubIFDDirectory == null) {
+			pictureDate = null;
+		} else {
+			pictureDate = exifSubIFDDirectory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+		}
+		return new ExifFileInfo(cameraModel, pictureDate);
 	}
-	
-	/**
-	 * Returns the camera model as String form Exif Tag
-	 * If the image file has no Exif Tag, retutn null
-	 * 
-	 * @param imageFile
-	 * @return
-	 */
-	public String getCameraModel(File imageFile) {
-		Metadata meta = getExifMetadata(imageFile);
-		if (meta == null) return null;
-		ExifIFD0Directory exifDir = meta.getDirectory(ExifIFD0Directory.class);
-		return exifDir == null ? null : exifDir.getString(ExifIFD0Directory.TAG_MODEL);	
-	}
-	
 	
 	/**
 	 * Gets the Exif Metadata from an image File
@@ -65,10 +69,10 @@ public class ExifService {
 		try {
 			meta = ImageMetadataReader.readMetadata(imageFile);
 		} catch (ImageProcessingException e) {
-			LOGGER.warning("Image " + imageFile.getName() + " cases an ImageProcessingException");
+			LOGGER.warning("Image " + imageFile.getName() + " causes an ImageProcessingException");
 			return null;
 		} catch (IOException e) {
-			LOGGER.warning("Image " + imageFile.getName() + " cases an IOException");
+			LOGGER.warning("Image " + imageFile.getName() + " causes an IOException");
 			return null;
 		}
 		return meta;

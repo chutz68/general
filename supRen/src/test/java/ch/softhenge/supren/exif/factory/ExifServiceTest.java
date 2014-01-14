@@ -5,12 +5,12 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import ch.softhenge.supren.exif.common.TestFile;
+import ch.softhenge.supren.exif.entity.ExifFileInfo;
 
 public class ExifServiceTest {
 
@@ -22,17 +22,18 @@ public class ExifServiceTest {
 	}
 
 	@Test
-	public void testGetPictureDatePositive() {
+	public void testGetExifInfoFromImageFile() {
 		TestFile ce6dimgfile = TestFile.Ce6dImgFile;
 		
 		File file = ce6dimgfile.getFile();
-		Date pictureDate = exifService.getPictureDate(file);
-		assertNotNull(pictureDate);
+		ExifFileInfo exifFileInfo = exifService.getExifInfoFromImageFile(file);
 		
 		Format fileFormat = new SimpleDateFormat("YYYYMMDD");
-		String pictureDateFormat = fileFormat.format(pictureDate);
+		String pictureDateFormat = fileFormat.format(exifFileInfo.getPictureDate());
 		String pictureExpFormat = fileFormat.format(ce6dimgfile.getExifDate().getTime());
+
 		assertEquals(pictureExpFormat, pictureDateFormat);
+		assertEquals("Canon EOS 6D", exifFileInfo.getCameraModel());
 	}
 	
 	@Test
@@ -40,27 +41,8 @@ public class ExifServiceTest {
 		TestFile oldImageFile = TestFile.OldImgFile;
 		
 		File file = oldImageFile.getFile();
-		Date pictureDate = exifService.getPictureDate(file);
-		assertNull(pictureDate);
+		ExifFileInfo exifFileInfo = exifService.getExifInfoFromImageFile(file);
+		assertNull(exifFileInfo.getPictureDate());
+		assertNull(exifFileInfo.getCameraModel());
 	}
-	
-	
-	@Test
-	public void testGetCameraModelPositive() {
-		TestFile ce6dimgfile = TestFile.Ce6dImgFile;
-		
-		File file = ce6dimgfile.getFile();
-		String cameraModel = exifService.getCameraModel(file);
-		assertEquals("Canon EOS 6D", cameraModel);
-	}
-	
-	@Test
-	public void testGetCameraModelNegative() {
-		TestFile oldImageFile = TestFile.OldImgFile;
-		
-		File file = oldImageFile.getFile();
-		String cameraModel = exifService.getCameraModel(file);
-		assertNull(cameraModel);
-	}
-	
 }

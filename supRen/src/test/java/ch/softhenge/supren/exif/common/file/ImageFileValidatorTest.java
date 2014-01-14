@@ -2,13 +2,11 @@ package ch.softhenge.supren.exif.common.file;
 
 import static org.junit.Assert.*;
 
-import java.util.Map.Entry;
-import java.util.regex.Pattern;
-
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import ch.softhenge.supren.exif.common.TestFile;
+import ch.softhenge.supren.exif.entity.FilePattern;
 import ch.softhenge.supren.exif.file.ImageFileValidator;
 import ch.softhenge.supren.exif.property.UserPropertyReader;
 
@@ -19,9 +17,16 @@ public class ImageFileValidatorTest {
 		UserPropertyReader uruserProteryReader = new UserPropertyReader("ruro.properties");
 		ImageFileValidator fileVal = new ImageFileValidator(uruserProteryReader);
 		for (TestFile testFile : TestFile.values()) {
-			Entry<Integer, Pattern> filePatternEntry = fileVal.getIndexOfKnownFilePattern(testFile.getFileName());
-			Integer indexOfFilePattern = filePatternEntry.getKey();
-			String imgNum = fileVal.getInfilePatternImgNum(testFile.getFileName(), indexOfFilePattern );
+			FilePattern filePattern = fileVal.getFilePattern(testFile.getFileName());
+			Integer indexOfFilePattern;
+			String imgNum;
+			if (filePattern != null) {
+				indexOfFilePattern = filePattern.getPatternIdx();
+				imgNum = fileVal.getInfilePatternImgNum(testFile.getFileName(), indexOfFilePattern );
+			} else {
+				indexOfFilePattern = null;
+				imgNum = null;
+			}
 
 			switch(testFile) {
 			case CR2File: 

@@ -3,13 +3,13 @@ package ch.softhenge.supren.exif.factory;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
-import java.util.Map.Entry;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 
+import ch.softhenge.supren.exif.entity.FilePattern;
 import ch.softhenge.supren.exif.entity.ImageFile;
 import ch.softhenge.supren.exif.file.ImageFileValidator;
 import ch.softhenge.supren.exif.property.UserPropertyReader;
@@ -23,6 +23,8 @@ import ch.softhenge.supren.exif.property.UserPropertyReader.PropertyName;
  */
 public class ImageService {
 
+	private static final String UNKNOWN_PATTERN = "Unknown";
+
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
 	
 	private final File baseDir;
@@ -30,7 +32,8 @@ public class ImageService {
 	private final ExifService exifService;
 	private final ImageFileValidator imageFileValidator;
 
-	private final Collection<ImageFile> imageFileCollection;
+	/**The Map with the filename pattern as key **/
+	private final Map<String, Collection<ImageFile>> mapOfImageFileCollection;
 	
 	/**
 	 * Constructor
@@ -43,7 +46,12 @@ public class ImageService {
 		this.userPropertyReader = new UserPropertyReader(resourceFileName);
 		this.exifService = new ExifService();
 		this.imageFileValidator = new ImageFileValidator(userPropertyReader);
-		this.imageFileCollection = new ArrayList<>();
+		this.mapOfImageFileCollection = new HashMap<String, Collection<ImageFile>>();
+		Map<Integer, String> infilePatternMap = this.userPropertyReader.getPropertyMapOfProperty(PropertyName.InfilePattern);
+		for (String infilePattern : infilePatternMap.values()) {
+			this.mapOfImageFileCollection.put(infilePattern, new ArrayList<ImageFile>());
+		}
+		this.mapOfImageFileCollection.put(UNKNOWN_PATTERN, new ArrayList<ImageFile>());
 	}
 
 	
@@ -51,34 +59,53 @@ public class ImageService {
 	}
 
 	public void createListOfImageFilesToRename() {
-		if (imageFileCollection.isEmpty()) {
+		if (getCollectionOfImageFiles().size() == 0) {
 			Collection<File> listAllImageFiles = listAllImageFilesInDir();
 			for (File file : listAllImageFiles) {
-				Date pictureDate = exifService.getPictureDate(file);
-				String cameraModel = exifService.getCameraModel(file);
-				Entry<Integer, Pattern> patternEntry = imageFileValidator.getIndexOfKnownFilePattern(file.getName());
+				//ExifFileInfo exifFileInfo = exifService.getExifInfoFromImageFile(file);
+				FilePattern filePattern = imageFileValidator.getFilePattern(file.getName());
 				ImageFile imageFile;
-				if (patternEntry.getKey() != null) {
-					String imageNumber = imageFileValidator.getInfilePatternImgNum(file.getName(), patternEntry.getKey());
-					String cameraModel4ch = "";
-					imageFile = new ImageFile(file, cameraModel, pictureDate, imageNumber, cameraModel4ch, patternEntry.getValue().pattern());
+				String mapKey;
+				if (filePattern != null) {
+					mapKey = filePattern.getFilePatternString();
+					String imageNumber = imageFileValidator.getInfilePatternImgNum(file.getName(), filePattern.getPatternIdx());
+					imageFile = new ImageFile(file, imageNumber, filePattern.getFilePatternString());
 				} else {
-					imageFile = new ImageFile(file, cameraModel, pictureDate, null, null, null);
+					mapKey = UNKNOWN_PATTERN;
+					imageFile = new ImageFile(file, null, null);
 				}
-				imageFileCollection.add(imageFile);
+				imageFile.setCameraModel4ch("");
+				//imageFile.setExifFileInfo(exifFileInfo);
+				this.mapOfImageFileCollection.get(mapKey).add(imageFile);
 			}
 		}
 	}
 
-	public Collection<ImageFile> getImageFileCollection() {
-		return imageFileCollection;
+	
+	public Map<String, Collection<ImageFile>> getMapOfImageFileCollection() {
+		return mapOfImageFileCollection;
 	}
 	
+	/**
+	 * 
+	 * @return a Collection of all Image Files
+	 */
+	public Collection<ImageFile> getCollectionOfImageFiles() {
+		Collection<ImageFile> resultFiles = new ArrayList<>();
+		for (Collection<ImageFile> imageFiles : this.mapOfImageFileCollection.values()) {
+			imageFiles.addAll(resultFiles);
+		}
+		return resultFiles;
+	}
+
+
 	/**
 	 * Empties the list of Image Files
 	 */
 	public void resetImageFileList() {
-		imageFileCollection.clear();
+		for (Collection<ImageFile> imageFiles : this.mapOfImageFileCollection.values()) {
+			imageFiles.clear();
+		}
 	}
 	
 	
