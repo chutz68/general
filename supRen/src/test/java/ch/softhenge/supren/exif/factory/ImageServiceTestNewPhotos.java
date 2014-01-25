@@ -23,13 +23,8 @@ public class ImageServiceTestNewPhotos {
 	}
 
 	@Test
-	public void testListFilesInDir() {
-		imageService.listAllImageFilesInDir();
-	}
-
-	@Test
 	public void testListImageFilesToRename() {
-		imageService.createListOfImageFilesToRename();
+		imageService.createImageFilesMap();
 	}
 	
 }

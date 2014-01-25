@@ -28,15 +28,10 @@ public class ImageServiceTestAllPhotos {
 	}
 
 	@Test
-	public void testListFilesInDir() {
-		imageService.listAllImageFilesInDir();
-	}
-
-	@Test
 	//@Ignore("Test takes about 180 s")
 	public void testListImageFilesToRename() {
-		imageService.createListOfImageFilesToRename();
-		Map<String, Collection<ImageFile>> mapOfImageFileCollection = imageService.getMapOfImageFileCollection();
+		imageService.createImageFilesMap();
+		Map<String, Collection<ImageFile>> mapOfImageFileCollection = imageService.getMapOfImageFiles();
 		for (Entry<String, Collection<ImageFile>> imageFiles : mapOfImageFileCollection.entrySet()) {
 			LOGGER.info("Image Files of pattern " + imageFiles.getKey() + " has " + imageFiles.getValue().size() + " values");
 		}

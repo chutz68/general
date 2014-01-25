@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
 
+import ch.softhenge.supren.exif.entity.ExifFileInfo;
 import ch.softhenge.supren.exif.entity.FilePattern;
 import ch.softhenge.supren.exif.entity.ImageFile;
 import ch.softhenge.supren.exif.file.ImageFileValidator;
@@ -33,7 +34,7 @@ public class ImageService {
 	private final ImageFileValidator imageFileValidator;
 
 	/**The Map with the filename pattern as key **/
-	private final Map<String, Collection<ImageFile>> mapOfImageFileCollection;
+	private final Map<String, Collection<ImageFile>> mapOfImageFiles;
 	
 	/**
 	 * Constructor
@@ -46,23 +47,26 @@ public class ImageService {
 		this.userPropertyReader = new UserPropertyReader(resourceFileName);
 		this.exifService = new ExifService();
 		this.imageFileValidator = new ImageFileValidator(userPropertyReader);
-		this.mapOfImageFileCollection = new HashMap<String, Collection<ImageFile>>();
+		this.mapOfImageFiles = new HashMap<String, Collection<ImageFile>>();
 		Map<Integer, String> infilePatternMap = this.userPropertyReader.getPropertyMapOfProperty(PropertyName.InfilePattern);
 		for (String infilePattern : infilePatternMap.values()) {
-			this.mapOfImageFileCollection.put(infilePattern, new ArrayList<ImageFile>());
+			this.mapOfImageFiles.put(infilePattern, new ArrayList<ImageFile>());
 		}
-		this.mapOfImageFileCollection.put(UNKNOWN_PATTERN, new ArrayList<ImageFile>());
+		this.mapOfImageFiles.put(UNKNOWN_PATTERN, new ArrayList<ImageFile>());
 	}
 
 	
 	public void RenameFiles() {
 	}
 
-	public void createListOfImageFilesToRename() {
-		if (getCollectionOfImageFiles().size() == 0) {
+	/**
+	 * Create a list of Image Files that are candidates to rename and save it
+	 * as a map and get it using getMapOfImageFiles.
+	 */
+	public void createImageFilesMap() {
+		if (getListOfImageFiles().size() == 0) {
 			Collection<File> listAllImageFiles = listAllImageFilesInDir();
 			for (File file : listAllImageFiles) {
-				//ExifFileInfo exifFileInfo = exifService.getExifInfoFromImageFile(file);
 				FilePattern filePattern = imageFileValidator.getFilePattern(file.getName());
 				ImageFile imageFile;
 				String mapKey;
@@ -74,25 +78,23 @@ public class ImageService {
 					mapKey = UNKNOWN_PATTERN;
 					imageFile = new ImageFile(file, null, null);
 				}
-				imageFile.setCameraModel4ch("");
-				//imageFile.setExifFileInfo(exifFileInfo);
-				this.mapOfImageFileCollection.get(mapKey).add(imageFile);
+				this.mapOfImageFiles.get(mapKey).add(imageFile);
 			}
 		}
 	}
 
 	
-	public Map<String, Collection<ImageFile>> getMapOfImageFileCollection() {
-		return mapOfImageFileCollection;
+	public Map<String, Collection<ImageFile>> getMapOfImageFiles() {
+		return mapOfImageFiles;
 	}
 	
 	/**
 	 * 
-	 * @return a Collection of all Image Files
+	 * @return a List of all Image Files
 	 */
-	public Collection<ImageFile> getCollectionOfImageFiles() {
+	public Collection<ImageFile> getListOfImageFiles() {
 		Collection<ImageFile> resultFiles = new ArrayList<>();
-		for (Collection<ImageFile> imageFiles : this.mapOfImageFileCollection.values()) {
+		for (Collection<ImageFile> imageFiles : this.mapOfImageFiles.values()) {
 			imageFiles.addAll(resultFiles);
 		}
 		return resultFiles;
@@ -103,7 +105,7 @@ public class ImageService {
 	 * Empties the list of Image Files
 	 */
 	public void resetImageFileList() {
-		for (Collection<ImageFile> imageFiles : this.mapOfImageFileCollection.values()) {
+		for (Collection<ImageFile> imageFiles : this.mapOfImageFiles.values()) {
 			imageFiles.clear();
 		}
 	}
@@ -114,7 +116,7 @@ public class ImageService {
 	 * 
 	 * @return
 	 */
-	Collection<File> listAllImageFilesInDir() {
+	private Collection<File> listAllImageFilesInDir() {
         String fileExtensionList = userPropertyReader.getPropertyMapOfProperty(PropertyName.fileExtensionList).get(UserPropertyReader.INDEX_IF_EXACTLYONE); 
 		String[] extensions = fileExtensionList.split(",");
 		
@@ -123,6 +125,13 @@ public class ImageService {
 		LOGGER.fine("Anz Files: " + listFiles.size() + " , took: " + (System.currentTimeMillis() - currTime) + " ms");
 		
 		return listFiles;
+	}
+	
+	private void enrichImageFileWithExifInfo(ImageFile imageFile) {
+		ExifFileInfo exifFileInfo = exifService.getExifInfoFromImageFile(imageFile.getImageFile());
+		String cameraModel4ch = imageFileValidator.getCameraModel4chForCameraModel(exifFileInfo.getCameraModel());
+		imageFile.setExifFileInfo(exifFileInfo);
+		imageFile.setCameraModel4ch(cameraModel4ch);
 	}
 	
 }

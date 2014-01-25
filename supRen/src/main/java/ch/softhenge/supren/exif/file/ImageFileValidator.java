@@ -36,13 +36,15 @@ public class ImageFileValidator {
 	/**A map with key PatternIdx, containing all known File Patterns**/
 	private final Map<Integer, FilePattern> filePatternMap;
 	
+	/**A Map with the cameraModel as key and cameraModel4ch as value**/
+	private final Map<String, String> cameraModelMap;
+	
 	/**
 	 * 
 	 * @param userPropertyReader
 	 */
 	public ImageFileValidator(UserPropertyReader userPropertyReader) {
-		Map<PropertyName, Map<Integer, String>> propertyMap = userPropertyReader
-				.getMapOfPropertyMap();
+		Map<PropertyName, Map<Integer, String>> propertyMap = userPropertyReader.getMapOfPropertyMap();
 		this.infilePatternMap = propertyMap.get(PropertyName.InfilePattern);
 		this.infilePatternImgNumMap = propertyMap.get(PropertyName.InfilePatternImgNumGroup);
 		String fileExtensionPattern = propertyMap.get(PropertyName.FileExtensionPattern).get(UserPropertyReader.INDEX_IF_EXACTLYONE);
@@ -51,6 +53,16 @@ public class ImageFileValidator {
 			Pattern pattern = Pattern.compile(stringPatternEntry.getValue() + fileExtensionPattern, Pattern.CASE_INSENSITIVE);
 			FilePattern filePattern = new FilePattern(stringPatternEntry.getValue(), stringPatternEntry.getKey(), pattern);
 			this.filePatternMap.put(stringPatternEntry.getKey(), filePattern);
+		}
+		this.cameraModelMap = new HashMap<>();
+		Map<Integer, String> cameraModelMap = propertyMap.get(PropertyName.CameraModel);
+		Map<Integer, String> cameraModel4chMap = propertyMap.get(PropertyName.CameraModel4ch);
+		for (Entry<Integer, String> cameraModelEntry : cameraModelMap.entrySet()) {
+			String cameraModel4ch = cameraModel4chMap.get(cameraModelEntry.getKey());
+			if (cameraModel4ch == null) {
+				throw new IllegalArgumentException("No containing cameramodel4ch found for camermodel " + cameraModelEntry.getValue() + " with index " + cameraModelEntry.getKey());
+			}
+			this.cameraModelMap.put(cameraModelEntry.getValue(), cameraModel4ch);
 		}
 	}
 
@@ -112,4 +124,15 @@ public class ImageFileValidator {
 		LOGGER.warning("Image File: " + imageFileName + " doesn't match to pattern: " + filePattern);
 		return null;
 	}
+	
+	/**
+	 * Return cameraModel4ch for CameraModel
+	 * 
+	 * @param cameraModel
+	 * @return
+	 */
+	public String getCameraModel4chForCameraModel(String cameraModel) {
+		return this.cameraModelMap.get(cameraModel);
+	}
+	
 }
