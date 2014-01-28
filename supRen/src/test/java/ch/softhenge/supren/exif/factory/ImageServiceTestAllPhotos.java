@@ -20,7 +20,7 @@ public class ImageServiceTestAllPhotos {
 
 	@Before
 	public void setUp() throws Exception {
-		imageService = new ImageService("ruro.properties", "D:\\photos");
+		imageService = new ImageService("ruro.properties", "C:\\photos");
 		LOGGER.setLevel(Level.FINE);
         ConsoleHandler handler = new ConsoleHandler();
         handler.setLevel(Level.FINE);
@@ -28,8 +28,8 @@ public class ImageServiceTestAllPhotos {
 	}
 
 	@Test
-	//@Ignore("Test takes about 180 s")
 	public void testListImageFilesToRename() {
+		imageService.createImageFilesMap();
 		imageService.createImageFilesMap();
 		Map<String, Collection<ImageFile>> mapOfImageFileCollection = imageService.getMapOfImageFiles();
 		for (Entry<String, Collection<ImageFile>> imageFiles : mapOfImageFileCollection.entrySet()) {

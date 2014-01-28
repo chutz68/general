@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
@@ -55,6 +56,9 @@ public class ImageService {
 		this.mapOfImageFiles.put(UNKNOWN_PATTERN, new ArrayList<ImageFile>());
 	}
 
+	public void getMvCommandToRenameFiles() {
+		
+	}
 	
 	public void RenameFiles() {
 	}
@@ -90,7 +94,7 @@ public class ImageService {
 	
 	/**
 	 * 
-	 * @return a List of all Image Files
+	 * @return a List of all Image Files no mather wheter they are known or not
 	 */
 	public Collection<ImageFile> getListOfImageFiles() {
 		Collection<ImageFile> resultFiles = new ArrayList<>();
@@ -100,6 +104,21 @@ public class ImageService {
 		return resultFiles;
 	}
 
+	/**
+	 * 
+	 * @return a List of all unknown Image Files
+	 */
+	public Collection<ImageFile> getListOfUnknownImageFiles() {
+		Collection<ImageFile> resultFiles = new ArrayList<>();
+		for (Entry<String, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
+			if (UNKNOWN_PATTERN.equals(imageFilesEntry.getKey())) {
+				resultFiles.addAll(imageFilesEntry.getValue());
+				break;
+			}
+		}
+		return resultFiles;
+	}
+	
 
 	/**
 	 * Empties the list of Image Files
