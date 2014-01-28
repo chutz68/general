@@ -95,7 +95,7 @@ public class ImageService {
 	public Collection<ImageFile> getListOfImageFiles() {
 		Collection<ImageFile> resultFiles = new ArrayList<>();
 		for (Collection<ImageFile> imageFiles : this.mapOfImageFiles.values()) {
-			imageFiles.addAll(resultFiles);
+			resultFiles.addAll(imageFiles);
 		}
 		return resultFiles;
 	}
