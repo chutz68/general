@@ -20,7 +20,7 @@ public class ImageServiceTestAllPhotos {
 
 	@Before
 	public void setUp() throws Exception {
-		imageService = new ImageService("ruro.properties", "C:\\photos");
+		imageService = new ImageService("ruro.properties", "D:\\photos");
 		LOGGER.setLevel(Level.FINE);
         ConsoleHandler handler = new ConsoleHandler();
         handler.setLevel(Level.FINE);

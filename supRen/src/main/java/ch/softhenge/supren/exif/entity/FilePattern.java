@@ -14,6 +14,8 @@ public class FilePattern {
 	private final Integer patternIdx;
 	private final Pattern filePattern;
 	
+	public final static FilePattern UNKNOWN_FILE_PATTERN = new FilePattern("", 0, null);
+	
 	/**
 	 * Constructor
 	 * 

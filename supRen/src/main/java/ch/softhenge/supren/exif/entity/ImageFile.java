@@ -8,8 +8,8 @@ public class ImageFile {
 	private final File imageFile;
 	/**Camera Model from Exif Tag: ExifIFD0Directory.TAG_MODEL**/
 	private final String imageNumber;
-	/**File Pattern that matched**/
-	private final String filePattern;
+	/**File Pattern Object that matched**/
+	private final FilePattern filePattern;
 	
 	/**The exif info of the image file**/
 	private ExifFileInfo exifFileInfo;
@@ -23,7 +23,7 @@ public class ImageFile {
 	 * @param imageNumber
 	 * @param filePattern
 	 */
-	public ImageFile(File imageFile, String imageNumber, String filePattern)  {
+	public ImageFile(File imageFile, String imageNumber, FilePattern filePattern)  {
 		this.imageFile = imageFile;
 		this.imageNumber = imageNumber;
 		this.filePattern = filePattern;
@@ -31,6 +31,7 @@ public class ImageFile {
 		assert imageFile != null;
 		assert imageNumber == null || (Integer.valueOf(imageNumber) >= 1000 && Integer.valueOf(imageNumber) <= 9999);
 		assert cameraModel4ch == null || cameraModel4ch.length() == 4;
+		assert filePattern != null: "filePattern must not be null";
 	}
 
 	public ExifFileInfo getExifFileInfo() {
@@ -57,10 +58,8 @@ public class ImageFile {
 		return imageNumber;
 	}
 
-	public String getFilePattern() {
+	public FilePattern getFilePattern() {
 		return filePattern;
 	}
-	
-	
 	
 }

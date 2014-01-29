@@ -35,7 +35,11 @@ public class ImageService {
 	private final ImageFileValidator imageFileValidator;
 
 	/**The Map with the filename pattern as key **/
-	private final Map<String, Collection<ImageFile>> mapOfImageFiles;
+	private Map<String, Collection<ImageFile>> mapOfImageFiles;
+	/**This is the mv command that could be used to rename files**/
+	private String mvCommand;
+	/**This is the mv undo command that could be used to undo renamed files**/
+	private String mvUndoCommand;
 	
 	/**
 	 * Constructor
@@ -48,16 +52,29 @@ public class ImageService {
 		this.userPropertyReader = new UserPropertyReader(resourceFileName);
 		this.exifService = new ExifService();
 		this.imageFileValidator = new ImageFileValidator(userPropertyReader);
-		this.mapOfImageFiles = new HashMap<String, Collection<ImageFile>>();
-		Map<Integer, String> infilePatternMap = this.userPropertyReader.getPropertyMapOfProperty(PropertyName.InfilePattern);
-		for (String infilePattern : infilePatternMap.values()) {
-			this.mapOfImageFiles.put(infilePattern, new ArrayList<ImageFile>());
-		}
-		this.mapOfImageFiles.put(UNKNOWN_PATTERN, new ArrayList<ImageFile>());
+		resetImageFileList();
 	}
 
-	public void getMvCommandToRenameFiles() {
-		
+	/**
+	 * Create a mv command file that could be run in a unix environment.
+	 * 
+	 * @return
+	 */
+	public String getMvCommandToRenameFiles() {
+		StringBuilder sb = new StringBuilder();
+		for (Entry<String, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
+			for (ImageFile imageFile : imageFilesEntry.getValue()) {
+				if (imageFilesEntry.getKey().equals(UNKNOWN_PATTERN)) {
+					sb.append("# ImageFile ").append(imageFile.getImageFile().getName()).append(" can't be renamed. Filepattern is unknown\n");
+				} else if (imageFile.getFilePattern().getPatternIdx() == 0) {
+					sb.append("# ImageFile ").append(imageFile.getImageFile().getName()).append(" can't be renamed. No image number available\n");
+				} else {
+					enrichImageFileWithExifInfo(imageFile);
+					sb.append("mv ").append(imageFile.getImageFile().getName()).append(" ").append("\n");
+				}
+			}
+		}
+		return sb.toString();
 	}
 	
 	public void RenameFiles() {
@@ -77,10 +94,10 @@ public class ImageService {
 				if (filePattern != null) {
 					mapKey = filePattern.getFilePatternString();
 					String imageNumber = imageFileValidator.getInfilePatternImgNum(file.getName(), filePattern.getPatternIdx());
-					imageFile = new ImageFile(file, imageNumber, filePattern.getFilePatternString());
+					imageFile = new ImageFile(file, imageNumber, filePattern);
 				} else {
 					mapKey = UNKNOWN_PATTERN;
-					imageFile = new ImageFile(file, null, null);
+					imageFile = new ImageFile(file, null, FilePattern.UNKNOWN_FILE_PATTERN);
 				}
 				this.mapOfImageFiles.get(mapKey).add(imageFile);
 			}
@@ -109,14 +126,7 @@ public class ImageService {
 	 * @return a List of all unknown Image Files
 	 */
 	public Collection<ImageFile> getListOfUnknownImageFiles() {
-		Collection<ImageFile> resultFiles = new ArrayList<>();
-		for (Entry<String, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
-			if (UNKNOWN_PATTERN.equals(imageFilesEntry.getKey())) {
-				resultFiles.addAll(imageFilesEntry.getValue());
-				break;
-			}
-		}
-		return resultFiles;
+		return this.mapOfImageFiles.get(UNKNOWN_PATTERN);
 	}
 	
 
@@ -124,9 +134,14 @@ public class ImageService {
 	 * Empties the list of Image Files
 	 */
 	public void resetImageFileList() {
-		for (Collection<ImageFile> imageFiles : this.mapOfImageFiles.values()) {
-			imageFiles.clear();
+		this.mapOfImageFiles = new HashMap<String, Collection<ImageFile>>();
+		Map<Integer, String> infilePatternMap = this.userPropertyReader.getPropertyMapOfProperty(PropertyName.InfilePattern);
+		for (String infilePattern : infilePatternMap.values()) {
+			this.mapOfImageFiles.put(infilePattern, new ArrayList<ImageFile>());
 		}
+		this.mapOfImageFiles.put(UNKNOWN_PATTERN, new ArrayList<ImageFile>());
+		this.mvCommand = "";
+		this.mvUndoCommand = "";
 	}
 	
 	
@@ -147,10 +162,12 @@ public class ImageService {
 	}
 	
 	private void enrichImageFileWithExifInfo(ImageFile imageFile) {
-		ExifFileInfo exifFileInfo = exifService.getExifInfoFromImageFile(imageFile.getImageFile());
-		String cameraModel4ch = imageFileValidator.getCameraModel4chForCameraModel(exifFileInfo.getCameraModel());
-		imageFile.setExifFileInfo(exifFileInfo);
-		imageFile.setCameraModel4ch(cameraModel4ch);
+		if (imageFile.getExifFileInfo() == null) {
+			ExifFileInfo exifFileInfo = exifService.getExifInfoFromImageFile(imageFile.getImageFile());
+			String cameraModel4ch = imageFileValidator.getCameraModel4chForCameraModel(exifFileInfo.getCameraModel());
+			imageFile.setExifFileInfo(exifFileInfo);
+			imageFile.setCameraModel4ch(cameraModel4ch);
+		}
 	}
 	
 }

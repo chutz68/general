@@ -20,7 +20,7 @@ public class ImageServiceTestNewPhotos {
 
 	@Before
 	public void setUp() throws Exception {
-		imageService = new ImageService("ruro.properties", "C:\\photos\\2013_07_Schwarzwald");
+		imageService = new ImageService("ruro.properties", "D:\\photos\\2013_07_Schwarzwald");
 		LOGGER.setLevel(Level.FINE);
         ConsoleHandler handler = new ConsoleHandler();
         handler.setLevel(Level.FINE);
@@ -29,6 +29,8 @@ public class ImageServiceTestNewPhotos {
 
 	@Test
 	public void testListImageFilesToRename() {
+		imageService.createImageFilesMap();
+		imageService.resetImageFileList();
 		imageService.createImageFilesMap();
 	}
 	
