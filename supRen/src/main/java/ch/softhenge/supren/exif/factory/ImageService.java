@@ -85,7 +85,7 @@ public class ImageService {
 	 * as a map and get it using getMapOfImageFiles.
 	 */
 	public void createImageFilesMap() {
-		if (this.mapOfImageFiles.values().isEmpty()) {
+		if (getListOfImageFiles().isEmpty()) {
 			Collection<File> listAllImageFiles = listAllImageFilesInDir();
 			for (File file : listAllImageFiles) {
 				FilePattern filePattern = imageFileValidator.getFilePattern(file.getName());
