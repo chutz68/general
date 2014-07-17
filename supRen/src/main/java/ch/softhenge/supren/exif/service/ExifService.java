@@ -1,4 +1,4 @@
-package ch.softhenge.supren.exif.factory;
+package ch.softhenge.supren.exif.service;
 
 import java.io.File;
 import java.io.IOException;

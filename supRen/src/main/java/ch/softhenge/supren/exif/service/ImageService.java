@@ -1,4 +1,4 @@
-package ch.softhenge.supren.exif.factory;
+package ch.softhenge.supren.exif.service;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -61,20 +61,23 @@ public class ImageService {
 	 * @return
 	 */
 	public String getMvCommandToRenameFiles() {
-		StringBuilder sb = new StringBuilder();
-		for (Entry<String, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
-			for (ImageFile imageFile : imageFilesEntry.getValue()) {
-				if (imageFilesEntry.getKey().equals(UNKNOWN_PATTERN)) {
-					sb.append("# ImageFile ").append(imageFile.getImageFile().getName()).append(" can't be renamed. Filepattern is unknown\n");
-				} else if (imageFile.getFilePattern().getPatternIdx() == 0) {
-					sb.append("# ImageFile ").append(imageFile.getImageFile().getName()).append(" can't be renamed. No image number available\n");
-				} else {
-					enrichImageFileWithExifInfo(imageFile);
-					sb.append("mv ").append(imageFile.getImageFile().getName()).append(" ").append("\n");
+		if (mvCommand == null) {
+			StringBuilder sb = new StringBuilder();
+			for (Entry<String, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
+				for (ImageFile imageFile : imageFilesEntry.getValue()) {
+					if (imageFilesEntry.getKey().equals(UNKNOWN_PATTERN)) {
+						sb.append("# ImageFile ").append(imageFile.getImageFile().getName()).append(" can't be renamed. Filepattern is unknown\n");
+					} else if (imageFile.getFilePattern().getPatternIdx() == 0) {
+						sb.append("# ImageFile ").append(imageFile.getImageFile().getName()).append(" can't be renamed. No image number available\n");
+					} else {
+						enrichImageFileWithExifInfo(imageFile);
+						sb.append("mv ").append(imageFile.getImageFile().getName()).append(" ").append("\n");
+					}
 				}
 			}
+			mvCommand = sb.toString();	
 		}
-		return sb.toString();
+		return mvCommand;
 	}
 	
 	public void RenameFiles() {
@@ -140,8 +143,8 @@ public class ImageService {
 			this.mapOfImageFiles.put(infilePattern, new ArrayList<ImageFile>());
 		}
 		this.mapOfImageFiles.put(UNKNOWN_PATTERN, new ArrayList<ImageFile>());
-		this.mvCommand = "";
-		this.mvUndoCommand = "";
+		this.mvCommand = null;
+		this.mvUndoCommand = null;
 	}
 	
 	

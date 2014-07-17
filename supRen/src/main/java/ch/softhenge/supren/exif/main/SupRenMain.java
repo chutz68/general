@@ -1,4 +1,4 @@
-package ch.softhenge.supren.exif.factory;
+package ch.softhenge.supren.exif.main;
 
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;

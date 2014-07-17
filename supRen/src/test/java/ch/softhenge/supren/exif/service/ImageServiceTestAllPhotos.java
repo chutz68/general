@@ -1,8 +1,8 @@
-package ch.softhenge.supren.exif.factory;
-
-import static org.junit.Assert.*;
+package ch.softhenge.supren.exif.service;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,8 +11,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ch.softhenge.supren.exif.entity.ImageFile;
+import ch.softhenge.supren.exif.service.ImageService;
 
-public class ImageServiceTestNewPhotos {
+public class ImageServiceTestAllPhotos {
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
 
@@ -20,7 +21,7 @@ public class ImageServiceTestNewPhotos {
 
 	@Before
 	public void setUp() throws Exception {
-		imageService = new ImageService("ruro.properties", "D:\\photos\\2013_07_Schwarzwald");
+		imageService = new ImageService("ruro.properties", "D:\\photos");
 		LOGGER.setLevel(Level.FINE);
         ConsoleHandler handler = new ConsoleHandler();
         handler.setLevel(Level.FINE);
@@ -30,14 +31,11 @@ public class ImageServiceTestNewPhotos {
 	@Test
 	public void testListImageFilesToRename() {
 		imageService.createImageFilesMap();
-		imageService.resetImageFileList();
 		imageService.createImageFilesMap();
-	}
-	
-	@Test
-	public void testGetListOfUnknownImageFiles() {
-		Collection<ImageFile> imageFiles = imageService.getListOfUnknownImageFiles();
-		assertEquals(imageFiles.size(), 0);
+		Map<String, Collection<ImageFile>> mapOfImageFileCollection = imageService.getMapOfImageFiles();
+		for (Entry<String, Collection<ImageFile>> imageFiles : mapOfImageFileCollection.entrySet()) {
+			LOGGER.info("Image Files of pattern " + imageFiles.getKey() + " has " + imageFiles.getValue().size() + " values");
+		}
 	}
 	
 }

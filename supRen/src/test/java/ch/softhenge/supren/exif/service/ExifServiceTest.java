@@ -1,4 +1,4 @@
-package ch.softhenge.supren.exif.factory;
+package ch.softhenge.supren.exif.service;
 
 import static org.junit.Assert.*;
 
@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import ch.softhenge.supren.exif.common.TestFile;
 import ch.softhenge.supren.exif.entity.ExifFileInfo;
+import ch.softhenge.supren.exif.service.ExifService;
 
 public class ExifServiceTest {
 
