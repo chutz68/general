@@ -1,7 +1,9 @@
 package ch.softhenge.supren.exif.file;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 /**
@@ -19,7 +21,9 @@ public class OutFilenameGenerator {
 	
 	private final String outFilePattern;
 	private final TreeMap<Integer, String> outfilePatternGroupMap;
+	private SimpleDateFormat pictureDateFormat;
 
+	
 	/**
 	 * Constructor
 	 * 
@@ -30,6 +34,8 @@ public class OutFilenameGenerator {
 		int patternsFound = 0;
 		for (String outfilePattern : outfilePatternGroupMap.values()) {
 			if (outfilePattern.contains(PICTURE_DATE)) {
+				String dateFormatString = outfilePattern.substring(outfilePattern.indexOf("[") + 1, outfilePattern.indexOf("]"));
+				pictureDateFormat = new SimpleDateFormat(dateFormatString);
 				patternsFound++;
 			}
 			if (outfilePattern.contains(CAMERA_MODEL4CH)) {
@@ -38,13 +44,12 @@ public class OutFilenameGenerator {
 			if (outfilePattern.contains(IMG_NR)) {
 				patternsFound++;
 			}
-			if (outfilePattern.contains(SEPARATOR)) {
+			if (outfilePattern.equals(SEPARATOR)) {
 				patternsFound++;
 			}
 		}
 		assert patternsFound == 5: "Expected 5 pattern but found " + patternsFound ;
 		this.outfilePatternGroupMap = new TreeMap<Integer, String>(outfilePatternGroupMap);
-
 	}
 	
 	/**
@@ -57,19 +62,22 @@ public class OutFilenameGenerator {
 	 */
 	public String createFileName(Date pictureDate, String cameraModel4ch, Integer imageNumber) {
 		assert 0 <= imageNumber && imageNumber <= 9999: "imageNumber is not valid, should be between 0 and 9999 but is " + imageNumber;
+		StringBuilder outFileName = new StringBuilder();
 		
-		for (String outfilePattern : outfilePatternGroupMap.values()) {
-			if (outfilePattern.contains(PICTURE_DATE)) {
-				String fileNamePart1 = createFileNamePart1PictureDate(outfilePattern, pictureDate);
+		for (Entry<Integer, String> outfilePatternEntry : outfilePatternGroupMap.entrySet()) {
+			if (outfilePatternEntry.getValue().contains(PICTURE_DATE)) {
+				outFileName.append(pictureDateFormat.format(pictureDate));
+			}
+			if (outfilePatternEntry.getValue().contains(CAMERA_MODEL4CH)) {
+				outFileName.append(cameraModel4ch);
+			}
+			if (outfilePatternEntry.getValue().contains(IMG_NR)) {
+				outFileName.append(String.format("%04d", imageNumber));
+			}
+			if (outfilePatternEntry.getValue().equals(SEPARATOR)) {
+				outFileName.append(outfilePatternEntry.getValue());
 			}
 		}
-
-		return "";
+		return outFileName.toString();
 	}
-
-	private String createFileNamePart1PictureDate(String pictureDatePattern, Date pictureDate) {
-		String dateFormat = pictureDatePattern.substring(pictureDatePattern.indexOf("[") + 1, pictureDatePattern.indexOf("]") - 1);
-		return null;
-	}
-	
 }
