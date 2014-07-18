@@ -20,7 +20,7 @@ public class UserPropertyReaderTest {
 		UserPropertyReader ur = new UserPropertyReader("ruro.properties");
 		Map<PropertyName, Map<Integer, String>> propertyMap = ur.getMapOfPropertyMap();
 
-		assertThat(propertyMap.size(), is(9));
+		assertThat(propertyMap.size(), is(10));
 		int expect;
 		for (Entry<PropertyName, Map<Integer, String>> propertyEntry : propertyMap.entrySet()) {
 			switch (propertyEntry.getKey()) {
@@ -48,6 +48,8 @@ public class UserPropertyReaderTest {
 				break;
 			case OutfilePattern:
 				assertThat(propertyEntry.getValue().size(), is(1));
+				String property = propertyEntry.getValue().get(UserPropertyReader.INDEX_IF_EXACTLYONE);
+				assertNotNull(property);
 				break;
 			case OutfilePatternImgNumGroup:
 				assertThat(propertyEntry.getValue().size(), is(1));

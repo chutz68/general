@@ -28,7 +28,7 @@ public class UserPropertyReader {
 		InfilePatternImgNumGroup("(infilePatternImgNumGroup)([0-9]{3})", 2, Occurence.OnceOrMultiple),
 		OutfilePattern("outfilePattern", null, Occurence.ExactlyOnce),
 		OutfilePatternImgNumGroup("outfilePatternImgNumGroup", null, Occurence.ExactlyOnce),
-		OutfilePatternGroup("outfilePatternGroup", 5, Occurence.OnceOrMultiple),
+		OutfilePatternGroup("(outfilePatternGroup)([0-9]{3})", 2, Occurence.OnceOrMultiple),
 		OutfileCase("outfileCase", null, Occurence.ExactlyOnce),
 		CameraModel("(cameraModel)([0-9]{3})", 2, Occurence.OnceOrMultiple),
 		CameraModel4ch("(cameraModel4ch)([0-9]{3})", 2, Occurence.OnceOrMultiple);

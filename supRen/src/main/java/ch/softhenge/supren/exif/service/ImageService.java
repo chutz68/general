@@ -40,6 +40,8 @@ public class ImageService {
 	private String mvCommand;
 	/**This is the mv undo command that could be used to undo renamed files**/
 	private String mvUndoCommand;
+	/**No mv command for those files possible.*/
+	private String mvError;
 	
 	/**
 	 * Constructor
@@ -55,49 +57,33 @@ public class ImageService {
 		resetImageFileList();
 	}
 
-	/**
-	 * Create or get mv command file that could be run in a unix environment.
-	 * 
-	 * @return
-	 */
-	public String getMvCommandToRenameFiles() {
-		if (mvCommand == null) {
-			StringBuilder sb = getMvAndUndoCommands();
-			mvCommand = sb.toString();
-			mvUndoCommand = "";
-		}
-		return mvCommand;
-	}
-	
-	/**
-	 * Create or get undo mv command file that could be run in a unix environment.
-	 * 
-	 * @return
-	 */
-	public String getMvUndoCommandToRenameFiles() {
-		if (mvCommand == null) {
-			StringBuilder sb = getMvAndUndoCommands();
-			mvCommand = sb.toString();
-			mvUndoCommand = "";
-		}
-		return mvUndoCommand;
-	}
 
-	private StringBuilder getMvAndUndoCommands() {
-		StringBuilder sb = new StringBuilder();
+	/**
+	 * Create necessary mv and undo commands of the files to be renamed
+	 */
+	public void createMvAndUndoCommands() {
+		createImageFilesMap();
+		StringBuilder sbmv = new StringBuilder();
+		StringBuilder sbundomv = new StringBuilder();
+		StringBuilder sberror = new StringBuilder();
 		for (Entry<String, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
 			for (ImageFile imageFile : imageFilesEntry.getValue()) {
 				if (imageFilesEntry.getKey().equals(UNKNOWN_PATTERN)) {
-					sb.append("# ImageFile ").append(imageFile.getImageFile().getName()).append(" can't be renamed. Filepattern is unknown\n");
+					sberror.append("# ImageFile ").append(imageFile.getOriginalFileName()).append(" can't be renamed. Filepattern is unknown\n");
 				} else if (imageFile.getFilePattern().getPatternIdx() == 0) {
-					sb.append("# ImageFile ").append(imageFile.getImageFile().getName()).append(" can't be renamed. No image number available\n");
+					sberror.append("# ImageFile ").append(imageFile.getOriginalFileName()).append(" can't be renamed. No image number available\n");
 				} else {
 					enrichImageFileWithExifInfo(imageFile);
-					sb.append("mv ").append(imageFile.getImageFile().getName()).append(" ").append("\n");
+					sbmv.append("mv ").append(imageFile.getFilePath()).append(File.separator).append(imageFile.getOriginalFileName()).append(" ");
+					sbmv.append(imageFile.getFilePath()).append(File.separator).append(imageFile.getNewFileName()).append("\n");
+					sbundomv.append("mv ").append(imageFile.getFilePath()).append(File.separator).append(imageFile.getNewFileName()).append(" ");
+					sbundomv.append(imageFile.getFilePath()).append(File.separator).append(imageFile.getOriginalFileName()).append("\n");						
 				}
 			}
 		}
-		return sb;
+		this.mvCommand = sbmv.toString();
+		this.mvUndoCommand = sbundomv.toString();
+		this.mvError = sberror.toString();
 	}
 	
 	public void RenameFiles() {
@@ -139,7 +125,7 @@ public class ImageService {
 	
 	/**
 	 * 
-	 * @return a List of all Image Files no mather wheter they are known or not
+	 * @return a List of all Image Files no mater whether they are known or not
 	 */
 	public Collection<ImageFile> getListOfImageFiles() {
 		Collection<ImageFile> resultFiles = new ArrayList<>();
@@ -157,6 +143,21 @@ public class ImageService {
 		return this.mapOfImageFiles.get(UNKNOWN_PATTERN);
 	}
 	
+
+	public String getMvCommand() {
+		return mvCommand;
+	}
+
+
+	public String getMvUndoCommand() {
+		return mvUndoCommand;
+	}
+
+
+	public String getMvError() {
+		return mvError;
+	}
+
 
 	/**
 	 * Empties the list of Image Files

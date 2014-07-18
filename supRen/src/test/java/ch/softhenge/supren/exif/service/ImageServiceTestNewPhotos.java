@@ -3,8 +3,6 @@ package ch.softhenge.supren.exif.service;
 import static org.junit.Assert.*;
 
 import java.util.Collection;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ch.softhenge.supren.exif.entity.ImageFile;
-import ch.softhenge.supren.exif.service.ImageService;
 
 public class ImageServiceTestNewPhotos {
 
@@ -35,14 +32,21 @@ public class ImageServiceTestNewPhotos {
 		imageService.createImageFilesMap();
 		imageService.resetImageFileList();
 		imageService.createImageFilesMap();
+		imageService.createImageFilesMap();
 	}
 
 	@Test
 	public void testMvCommand() {
-		imageService.createImageFilesMap();
-		imageService.getMvCommandToRenameFiles();
-		String mvCommand = imageService.getMvCommandToRenameFiles();
+		imageService.createMvAndUndoCommands();
+		String mvCommand = imageService.getMvCommand();
+		LOGGER.fine("mvCommands");
 		LOGGER.fine(mvCommand);
+		String mvUndoCommand = imageService.getMvUndoCommand();
+		LOGGER.fine("mvUndoCommand");
+		LOGGER.fine(mvUndoCommand);
+		String mvError = imageService.getMvError();
+		LOGGER.fine("mvError");
+		LOGGER.fine(mvError);
 	}
 	
 	@Test
