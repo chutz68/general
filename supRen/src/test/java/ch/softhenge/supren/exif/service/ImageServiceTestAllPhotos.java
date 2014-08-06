@@ -8,10 +8,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import ch.softhenge.supren.exif.entity.ImageFile;
-import ch.softhenge.supren.exif.service.ImageService;
 
 public class ImageServiceTestAllPhotos {
 
@@ -29,6 +29,7 @@ public class ImageServiceTestAllPhotos {
 	}
 
 	@Test
+	@Ignore
 	public void testListImageFilesToRename() {
 		imageService.createImageFilesMap();
 		imageService.createImageFilesMap();

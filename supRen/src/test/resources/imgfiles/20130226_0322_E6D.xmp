@@ -1,0 +1,81 @@
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 5.5-c002 1.148022, 2012/07/15-18:06:45        ">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+    xmlns:tiff="http://ns.adobe.com/tiff/1.0/"
+    xmlns:exif="http://ns.adobe.com/exif/1.0/"
+    xmlns:aux="http://ns.adobe.com/exif/1.0/aux/"
+    xmlns:photoshop="http://ns.adobe.com/photoshop/1.0/"
+    xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"
+    xmlns:stEvt="http://ns.adobe.com/xap/1.0/sType/ResourceEvent#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:crs="http://ns.adobe.com/camera-raw-settings/1.0/"
+   xmp:ModifyDate="2013-02-26T23:36:58.00"
+   xmp:CreateDate="2013-02-26T23:36:58.00"
+   xmp:MetadataDate="2014-02-16T14:30+01:00"
+   tiff:Make="Canon"
+   tiff:Model="Canon EOS 6D"
+   tiff:Orientation="1"
+   tiff:ImageWidth="5472"
+   tiff:ImageLength="3648"
+   exif:ExifVersion="0230"
+   exif:ExposureTime="1/20"
+   exif:ShutterSpeedValue="4321928/1000000"
+   exif:FNumber="8/1"
+   exif:ApertureValue="6/1"
+   exif:ExposureProgram="1"
+   exif:SensitivityType="2"
+   exif:RecommendedExposureIndex="12800"
+   exif:ExposureBiasValue="0/1"
+   exif:MaxApertureValue="4/1"
+   exif:MeteringMode="5"
+   exif:FocalLength="58/1"
+   exif:CustomRendered="0"
+   exif:ExposureMode="1"
+   exif:WhiteBalance="0"
+   exif:SceneCaptureType="0"
+   exif:FocalPlaneXResolution="4980736/32768"
+   exif:FocalPlaneYResolution="4980736/32768"
+   exif:FocalPlaneResolutionUnit="4"
+   exif:DateTimeOriginal="2013-02-26T23:36:58.00"
+   exif:PixelXDimension="5472"
+   exif:PixelYDimension="3648"
+   aux:SerialNumber="023023004348"
+   aux:LensInfo="24/1 105/1 0/0 0/0"
+   aux:Lens="EF24-105mm f/4L IS USM"
+   aux:LensID="237"
+   aux:LensSerialNumber="0000434e32"
+   aux:ImageNumber="0"
+   aux:ApproximateFocusDistance="148/100"
+   aux:FlashCompensation="0/1"
+   aux:Firmware="1.1.2"
+   photoshop:DateCreated="2013-02-26T23:36:58.00"
+   xmpMM:DocumentID="CBE92BBD7890FB26E77D645B7A2EC9D0"
+   xmpMM:OriginalDocumentID="CBE92BBD7890FB26E77D645B7A2EC9D0"
+   xmpMM:InstanceID="xmp.iid:45af8b0e-84c6-0b49-b893-a984ff4f0344"
+   dc:format="image/x-canon-cr2"
+   crs:RawFileName="20130226_0322_E6D.CR2">
+   <exif:ISOSpeedRatings>
+    <rdf:Seq>
+     <rdf:li>12800</rdf:li>
+    </rdf:Seq>
+   </exif:ISOSpeedRatings>
+   <exif:Flash
+    exif:Fired="False"
+    exif:Return="0"
+    exif:Mode="2"
+    exif:Function="False"
+    exif:RedEyeMode="False"/>
+   <xmpMM:History>
+    <rdf:Seq>
+     <rdf:li
+      stEvt:action="saved"
+      stEvt:instanceID="xmp.iid:45af8b0e-84c6-0b49-b893-a984ff4f0344"
+      stEvt:when="2014-02-16T14:30+01:00"
+      stEvt:softwareAgent="Adobe Photoshop Lightroom 4.4 (Windows)"
+      stEvt:changed="/metadata"/>
+    </rdf:Seq>
+   </xmpMM:History>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>
