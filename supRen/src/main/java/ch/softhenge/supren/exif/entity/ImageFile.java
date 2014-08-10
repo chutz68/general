@@ -36,7 +36,8 @@ public class ImageFile {
 		this.filePattern = filePattern;
 		
 		assert imageFile != null;
-		assert Integer.valueOf(imageNumber) >= 1000 && Integer.valueOf(imageNumber) <= 9999;
+		assert Integer.valueOf(imageNumber) >= 0;
+		assert Integer.valueOf(imageNumber) <= 9999;
 		assert cameraModel4ch == null || cameraModel4ch.length() == 4;
 		assert filePattern != null: "filePattern must not be null";
 	}
@@ -66,6 +67,7 @@ public class ImageFile {
 	}
 	
 	public String getNewFileName() {
+		//TODO: What to return?
 		return "hihi";
 	}
 	
