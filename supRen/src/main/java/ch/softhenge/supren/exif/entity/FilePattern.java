@@ -3,7 +3,7 @@ package ch.softhenge.supren.exif.entity;
 import java.util.regex.Pattern;
 
 /**
- * An object Containing all information about a File Pattern
+ * An object Containing all information about a Pattern of a File that can be understood by the program.
  * 
  * @author werni
  *
@@ -12,11 +12,12 @@ public class FilePattern {
 	private final String filePatternString;
 	private final Integer patternIdx;
 	private final Pattern filePattern;
+	private final Integer groupOfImageNumber;
 	private final boolean isOutPattern;
 	
 	private static final String UNKNOWN_PATTERN = "Unknown";
 
-	public static final FilePattern UNKNOWN_FILE_PATTERN = new FilePattern(UNKNOWN_PATTERN, 0, null, false);
+	public static final FilePattern UNKNOWN_FILE_PATTERN = new FilePattern(UNKNOWN_PATTERN, 0, null, 0, false);
 	
 	/**
 	 * Constructor
@@ -24,12 +25,14 @@ public class FilePattern {
 	 * @param filePatternString
 	 * @param patternIdx
 	 * @param filePattern
+	 * @param groupOfImageNumber The Group where the image number of the filename can be used, from the pattern
 	 * @param isOutPattern
 	 */
-	public FilePattern(String filePatternString, Integer patternIdx, Pattern filePattern, boolean isOutPattern) {
+	public FilePattern(String filePatternString, Integer patternIdx, Pattern filePattern, Integer groupOfImageNumber, boolean isOutPattern) {
 		this.filePatternString = filePatternString;
 		this.filePattern = filePattern;
 		this.patternIdx = patternIdx;
+		this.groupOfImageNumber = groupOfImageNumber;
 		this.isOutPattern = isOutPattern;
 	}
 
@@ -65,6 +68,18 @@ public class FilePattern {
 
 	public Pattern getFilePattern() {
 		return filePattern;
+	}
+	
+	public Integer getGroupOfImageNumber() {
+		return groupOfImageNumber;
+	}
+	
+	/**
+	 * @return true if the pattern contains the image number in the pattern.
+	 * use getGroupOfImageNumber() to get the concrete group.
+	 */
+	public boolean hasImageNumberInFilePattern() {
+		return groupOfImageNumber > 0;
 	}
 	
 	public boolean isOutPattern() {

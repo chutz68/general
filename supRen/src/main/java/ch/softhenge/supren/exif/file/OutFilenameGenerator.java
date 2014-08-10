@@ -48,6 +48,7 @@ public class OutFilenameGenerator {
 				patternsFound++;
 			}
 		}
+		//TODO Not ok like that. Better check with outfilepattern
 		assert patternsFound == 5: "Expected 5 pattern but found " + patternsFound ;
 		this.outfilePatternGroupMap = new TreeMap<Integer, String>(outfilePatternGroupMap);
 	}

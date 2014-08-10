@@ -22,7 +22,7 @@ public class ImageFileValidatorTest {
 			String imgNum;
 			if (filePattern != null) {
 				indexOfFilePattern = filePattern.getPatternIdx();
-				imgNum = fileVal.getInfilePatternImgNum(testFile.getFileName(), indexOfFilePattern );
+				imgNum = fileVal.getInfilePatternImgNum(testFile.getFileName(), indexOfFilePattern);
 			} else {
 				indexOfFilePattern = null;
 				imgNum = null;

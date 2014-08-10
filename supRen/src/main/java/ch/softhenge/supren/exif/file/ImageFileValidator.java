@@ -22,18 +22,6 @@ public class ImageFileValidator {
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
 	
-	/**
-	 * This map contains all known filename patterns. The map key is the index
-	 * number
-	 **/
-	private final Map<Integer, String> infilePatternMap;
-	
-	/**
-	 * This map contains from all known filename patterns the position of the
-	 * image number. The map key is the index number
-	 **/
-	private final Map<Integer, String> infilePatternImgNumMap;
-	
 	/**A map with key PatternIdx, containing all known File Patterns**/
 	private final Map<Integer, FilePattern> filePatternMap;
 	
@@ -50,9 +38,9 @@ public class ImageFileValidator {
 	 */
 	public ImageFileValidator(UserPropertyReader userPropertyReader) {
 		Map<PropertyName, Map<Integer, String>> propertyMap = userPropertyReader.getMapOfPropertyMap();
-		this.infilePatternMap = propertyMap.get(PropertyName.InfilePattern);
+		Map<Integer, String> infilePatternMap = propertyMap.get(PropertyName.InfilePattern);
 		String outFilePattern = propertyMap.get(PropertyName.OutfilePattern).get(UserPropertyReader.INDEX_IF_EXACTLYONE);
-		this.infilePatternImgNumMap = propertyMap.get(PropertyName.InfilePatternImgNumGroup);
+		Map<Integer, String> infilePatternImgNumMap = propertyMap.get(PropertyName.InfilePatternImgNumGroup);
 		String fileExtensionPattern = propertyMap.get(PropertyName.FileExtensionPattern).get(UserPropertyReader.INDEX_IF_EXACTLYONE);
 		this.filePatternMap = new HashMap<Integer, FilePattern>();
 		boolean foundOutFilePattern = false;
@@ -61,13 +49,17 @@ public class ImageFileValidator {
 			Pattern pattern = Pattern.compile(stringPatternEntry.getValue() + fileExtensionPattern, Pattern.CASE_INSENSITIVE);
 			boolean isOutFilePattern = outFilePattern.equals(stringPatternEntry.getValue());
 			foundOutFilePattern = isOutFilePattern | foundOutFilePattern;
-			FilePattern filePattern = new FilePattern(stringPatternEntry.getValue(), stringPatternEntry.getKey(), pattern, isOutFilePattern);
+			String groupOfImgNumberString = infilePatternImgNumMap.get(stringPatternEntry.getKey());
+			Integer groupOfImgNumber = Integer.valueOf(groupOfImgNumberString);
+			FilePattern filePattern = new FilePattern(stringPatternEntry.getValue(), stringPatternEntry.getKey(), pattern, groupOfImgNumber, isOutFilePattern);
 			largestPatternIdx = Math.max(largestPatternIdx, stringPatternEntry.getKey());
 			this.filePatternMap.put(stringPatternEntry.getKey(), filePattern);
 		}
 		if (!foundOutFilePattern) {
-			Pattern pattern = Pattern.compile(outFilePattern + fileExtensionPattern, Pattern.CASE_INSENSITIVE);		
-			FilePattern filePattern = new FilePattern(outFilePattern, largestPatternIdx + 1, pattern, true);
+			Pattern pattern = Pattern.compile(outFilePattern + fileExtensionPattern, Pattern.CASE_INSENSITIVE);
+			String groupOfImgNumberString = propertyMap.get(PropertyName.OutfilePatternImgNumGroup).get(UserPropertyReader.INDEX_IF_EXACTLYONE);
+			Integer groupOfImgNumber = Integer.valueOf(groupOfImgNumberString);
+			FilePattern filePattern = new FilePattern(outFilePattern, largestPatternIdx + 1, pattern, groupOfImgNumber, true);
 			this.filePatternMap.put(largestPatternIdx + 1, filePattern);
 		}
 		this.cameraModelMap = new HashMap<>();
@@ -125,28 +117,17 @@ public class ImageFileValidator {
 		if (indexOfFilePattern == null || imageFileName == null) {
 			return null;
 		}
-		String filePattern = this.infilePatternMap.get(indexOfFilePattern);
-		String filePatternImgStrg = this.infilePatternImgNumMap.get(indexOfFilePattern);
-		int filePatternImgNumGroup;
-		try {
-			filePatternImgNumGroup = Integer.valueOf(filePatternImgStrg);
-		} catch (NumberFormatException e) {
-			throw new NumberFormatException(
-					"Can't get a Number from imageFileName: " + imageFileName
-							+ " filePattern: " + filePattern
-							+ ". This should be a number, but is isn't: "
-							+ filePatternImgStrg);
-		}
-		if (filePatternImgNumGroup == 0) {
+		FilePattern filePattern = filePatternMap.get(indexOfFilePattern);
+		if (filePattern.getGroupOfImageNumber() == 0) {
 			return null;
 		}
-		Pattern pattern = filePatternMap.get(indexOfFilePattern).getFilePattern();
+		Pattern pattern = filePattern.getFilePattern();
 		Matcher matcher = pattern.matcher(imageFileName);
 		if (matcher.matches()) {
-			String imageNumber = matcher.group(filePatternImgNumGroup);
+			String imageNumber = matcher.group(filePattern.getGroupOfImageNumber());
 			return imageNumber;
 		}
-		LOGGER.warning("Image File: " + imageFileName + " doesn't match to pattern: " + filePattern);
+		LOGGER.warning("Image File: " + imageFileName + " doesn't match to pattern: " + filePattern.getFilePatternString());
 		return null;
 	}
 	
