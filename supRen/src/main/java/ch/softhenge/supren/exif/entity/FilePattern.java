@@ -12,10 +12,11 @@ public class FilePattern {
 	private final String filePatternString;
 	private final Integer patternIdx;
 	private final Pattern filePattern;
+	private final boolean isOutPattern;
 	
 	private static final String UNKNOWN_PATTERN = "Unknown";
 
-	public static final FilePattern UNKNOWN_FILE_PATTERN = new FilePattern(UNKNOWN_PATTERN, 0, null);
+	public static final FilePattern UNKNOWN_FILE_PATTERN = new FilePattern(UNKNOWN_PATTERN, 0, null, false);
 	
 	/**
 	 * Constructor
@@ -23,22 +24,18 @@ public class FilePattern {
 	 * @param filePatternString
 	 * @param patternIdx
 	 * @param filePattern
+	 * @param isOutPattern
 	 */
-	public FilePattern(String filePatternString, Integer patternIdx, Pattern filePattern) {
+	public FilePattern(String filePatternString, Integer patternIdx, Pattern filePattern, boolean isOutPattern) {
 		this.filePatternString = filePatternString;
 		this.filePattern = filePattern;
 		this.patternIdx = patternIdx;
+		this.isOutPattern = isOutPattern;
 	}
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime
-				* result
-				+ ((filePatternString == null) ? 0 : filePatternString
-						.hashCode());
-		return result;
+		return filePatternString == null ? 0 : filePatternString.hashCode();
 	}
 
 	@Override
@@ -68,5 +65,17 @@ public class FilePattern {
 
 	public Pattern getFilePattern() {
 		return filePattern;
+	}
+	
+	public boolean isOutPattern() {
+		return isOutPattern;
+	}
+
+	public String toString() {
+		String stringVar = patternIdx + ": " + filePatternString;
+		if (isOutPattern) {
+			stringVar = stringVar + " is Outfile Pattern";
+		}
+		return stringVar;
 	}
 }

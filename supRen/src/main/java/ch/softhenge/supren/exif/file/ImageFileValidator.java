@@ -41,19 +41,34 @@ public class ImageFileValidator {
 	private final Map<String, String> cameraModelMap;
 	
 	/**
+	 * Constructor
+	 * 
+	 * Read in and out patterns and camera models and read it into map.
+	 * If reading infile pattern, make sure that outfile pattern is also an infile pattern
 	 * 
 	 * @param userPropertyReader
 	 */
 	public ImageFileValidator(UserPropertyReader userPropertyReader) {
 		Map<PropertyName, Map<Integer, String>> propertyMap = userPropertyReader.getMapOfPropertyMap();
 		this.infilePatternMap = propertyMap.get(PropertyName.InfilePattern);
+		String outFilePattern = propertyMap.get(PropertyName.OutfilePattern).get(UserPropertyReader.INDEX_IF_EXACTLYONE);
 		this.infilePatternImgNumMap = propertyMap.get(PropertyName.InfilePatternImgNumGroup);
 		String fileExtensionPattern = propertyMap.get(PropertyName.FileExtensionPattern).get(UserPropertyReader.INDEX_IF_EXACTLYONE);
 		this.filePatternMap = new HashMap<Integer, FilePattern>();
+		boolean foundOutFilePattern = false;
+		int largestPatternIdx = -1;
 		for (Entry<Integer, String> stringPatternEntry : infilePatternMap.entrySet()) {
 			Pattern pattern = Pattern.compile(stringPatternEntry.getValue() + fileExtensionPattern, Pattern.CASE_INSENSITIVE);
-			FilePattern filePattern = new FilePattern(stringPatternEntry.getValue(), stringPatternEntry.getKey(), pattern);
+			boolean isOutFilePattern = outFilePattern.equals(stringPatternEntry.getValue());
+			foundOutFilePattern = isOutFilePattern | foundOutFilePattern;
+			FilePattern filePattern = new FilePattern(stringPatternEntry.getValue(), stringPatternEntry.getKey(), pattern, isOutFilePattern);
+			largestPatternIdx = Math.max(largestPatternIdx, stringPatternEntry.getKey());
 			this.filePatternMap.put(stringPatternEntry.getKey(), filePattern);
+		}
+		if (!foundOutFilePattern) {
+			Pattern pattern = Pattern.compile(outFilePattern + fileExtensionPattern, Pattern.CASE_INSENSITIVE);		
+			FilePattern filePattern = new FilePattern(outFilePattern, largestPatternIdx + 1, pattern, true);
+			this.filePatternMap.put(largestPatternIdx + 1, filePattern);
 		}
 		this.cameraModelMap = new HashMap<>();
 		Map<Integer, String> cameraModelMap = propertyMap.get(PropertyName.CameraModel);
