@@ -1,5 +1,6 @@
 package ch.softhenge.supren.exif.file;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -81,6 +82,15 @@ public class ImageFileValidator {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Get all File Patterns
+	 * 
+	 * @return
+	 */
+	public Collection<FilePattern> getFilePatterns() {
+		return filePatternMap.values();
 	}
 
 	/**

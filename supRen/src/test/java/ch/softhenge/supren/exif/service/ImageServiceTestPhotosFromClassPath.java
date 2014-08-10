@@ -3,6 +3,7 @@ package ch.softhenge.supren.exif.service;
 import static org.junit.Assert.*;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,6 +11,7 @@ import java.util.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.softhenge.supren.exif.entity.FilePattern;
 import ch.softhenge.supren.exif.entity.ImageFile;
 
 /**
@@ -40,6 +42,7 @@ public class ImageServiceTestPhotosFromClassPath {
 		imageService.resetImageFileList();
 		imageService.createImageFilesMap();
 		imageService.createImageFilesMap();
+		Map<FilePattern, Collection<ImageFile>> mapOfImageFiles = imageService.getMapOfImageFiles();
 	}
 
 	@Test

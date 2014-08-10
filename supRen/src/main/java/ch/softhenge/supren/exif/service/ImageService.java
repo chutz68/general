@@ -25,8 +25,6 @@ import ch.softhenge.supren.exif.property.UserPropertyReader.PropertyName;
  */
 public class ImageService {
 
-	private static final String UNKNOWN_PATTERN = "Unknown";
-
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
 	
 	private final File baseDir;
@@ -35,7 +33,7 @@ public class ImageService {
 	private final ImageFileValidator imageFileValidator;
 
 	/**The Map with the filename pattern as key **/
-	private Map<String, Collection<ImageFile>> mapOfImageFiles;
+	private Map<FilePattern, Collection<ImageFile>> mapOfImageFiles;
 	/**This is the mv command that could be used to rename files**/
 	private String mvCommand;
 	/**This is the mv undo command that could be used to undo renamed files**/
@@ -66,9 +64,9 @@ public class ImageService {
 		StringBuilder sbmv = new StringBuilder();
 		StringBuilder sbundomv = new StringBuilder();
 		StringBuilder sberror = new StringBuilder();
-		for (Entry<String, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
+		for (Entry<FilePattern, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
 			for (ImageFile imageFile : imageFilesEntry.getValue()) {
-				if (imageFilesEntry.getKey().equals(UNKNOWN_PATTERN)) {
+				if (imageFilesEntry.getKey().equals(FilePattern.UNKNOWN_FILE_PATTERN)) {
 					sberror.append("# ImageFile ").append(imageFile.getOriginalFileName()).append(" can't be renamed. Filepattern is unknown\n");
 				} else if (imageFile.getFilePattern().getPatternIdx() == 0) {
 					sberror.append("# ImageFile ").append(imageFile.getOriginalFileName()).append(" can't be renamed. No image number available\n");
@@ -86,9 +84,6 @@ public class ImageService {
 		this.mvError = sberror.toString();
 	}
 	
-	public void RenameFiles() {
-	}
-
 	/**
 	 * Create a list of Image Files that are candidates to rename and save it
 	 * as a map and get it using getMapOfImageFiles.
@@ -99,27 +94,25 @@ public class ImageService {
 			for (File file : listAllImageFiles) {
 				FilePattern filePattern = imageFileValidator.getFilePattern(file.getName());
 				ImageFile imageFile;
-				String mapKey;
 				if (filePattern != null) {
-					mapKey = filePattern.getFilePatternString();
 					String imageNumber = imageFileValidator.getInfilePatternImgNum(file.getName(), filePattern.getPatternIdx());
 					if (imageNumber == null) {
-						imageNumber = String.format("%04d", this.mapOfImageFiles.get(mapKey).size() + ImageFile.FIRST_IMAGE_NUMBER);
+						imageNumber = String.format("%04d", this.mapOfImageFiles.get(filePattern).size() + ImageFile.FIRST_IMAGE_NUMBER);
 						imageFile = new ImageFile(file, imageNumber, false, filePattern);
 					} else {
 						imageFile = new ImageFile(file, imageNumber, true, filePattern);
 					}
 				} else {
-					mapKey = UNKNOWN_PATTERN;
-					imageFile = new ImageFile(file, null, false, FilePattern.UNKNOWN_FILE_PATTERN);
+					filePattern = FilePattern.UNKNOWN_FILE_PATTERN;
+					imageFile = new ImageFile(file, null, false, filePattern);
 				}
-				this.mapOfImageFiles.get(mapKey).add(imageFile);
+				this.mapOfImageFiles.get(filePattern).add(imageFile);
 			}
 		}
 	}
 
 	
-	public Map<String, Collection<ImageFile>> getMapOfImageFiles() {
+	public Map<FilePattern, Collection<ImageFile>> getMapOfImageFiles() {
 		return mapOfImageFiles;
 	}
 	
@@ -140,7 +133,7 @@ public class ImageService {
 	 * @return a List of all unknown Image Files
 	 */
 	public Collection<ImageFile> getListOfUnknownImageFiles() {
-		return this.mapOfImageFiles.get(UNKNOWN_PATTERN);
+		return this.mapOfImageFiles.get(FilePattern.UNKNOWN_FILE_PATTERN);
 	}
 	
 
@@ -163,19 +156,19 @@ public class ImageService {
 	 * Empties the list of Image Files
 	 */
 	public void resetImageFileList() {
-		this.mapOfImageFiles = new HashMap<String, Collection<ImageFile>>();
-		Map<Integer, String> infilePatternMap = this.userPropertyReader.getPropertyMapOfProperty(PropertyName.InfilePattern);
-		for (String infilePattern : infilePatternMap.values()) {
-			this.mapOfImageFiles.put(infilePattern, new ArrayList<ImageFile>());
+		this.mapOfImageFiles = new HashMap<FilePattern, Collection<ImageFile>>();
+		Collection<FilePattern> filePatterns = this.imageFileValidator.getFilePatterns();
+		for (FilePattern filePattern : filePatterns) {
+			this.mapOfImageFiles.put(filePattern, new ArrayList<ImageFile>());
 		}
-		this.mapOfImageFiles.put(UNKNOWN_PATTERN, new ArrayList<ImageFile>());
+		this.mapOfImageFiles.put(FilePattern.UNKNOWN_FILE_PATTERN, new ArrayList<ImageFile>());
 		this.mvCommand = null;
 		this.mvUndoCommand = null;
 	}
 	
 	
 	/**
-	 * Return a Collection of all image Files in the base directory
+	 * Return a Collection of all image Files in the base directory recursively
 	 * 
 	 * @return
 	 */
