@@ -118,7 +118,7 @@ public class ImageFileValidator {
 			return null;
 		}
 		FilePattern filePattern = filePatternMap.get(indexOfFilePattern);
-		if (filePattern.getGroupOfImageNumber() == 0) {
+		if (!filePattern.hasImageNumberInFileThatMatchesPattern()) {
 			return null;
 		}
 		Pattern pattern = filePattern.getFilePattern();

@@ -16,6 +16,8 @@ public class FilePattern {
 	private final boolean isOutPattern;
 	
 	private static final String UNKNOWN_PATTERN = "Unknown";
+	/**If no Imagefile Number is within the filename matching the pattern **/
+	private static final int GROUP_OF_IMAGEFILE_NO_IMAGENUMBER_IN_FILE = 0;
 
 	public static final FilePattern UNKNOWN_FILE_PATTERN = new FilePattern(UNKNOWN_PATTERN, 0, null, 0, false);
 	
@@ -78,8 +80,8 @@ public class FilePattern {
 	 * @return true if the pattern contains the image number in the pattern.
 	 * use getGroupOfImageNumber() to get the concrete group.
 	 */
-	public boolean hasImageNumberInFilePattern() {
-		return groupOfImageNumber > 0;
+	public boolean hasImageNumberInFileThatMatchesPattern() {
+		return groupOfImageNumber > GROUP_OF_IMAGEFILE_NO_IMAGENUMBER_IN_FILE;
 	}
 	
 	public boolean isOutPattern() {
