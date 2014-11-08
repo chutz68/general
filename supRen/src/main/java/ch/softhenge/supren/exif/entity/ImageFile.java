@@ -38,7 +38,6 @@ public class ImageFile {
 		assert imageFile != null;
 		assert Integer.valueOf(imageNumber) >= 0;
 		assert Integer.valueOf(imageNumber) <= 9999;
-		assert cameraModel4ch == null || cameraModel4ch.length() == 4;
 		assert filePattern != null: "filePattern must not be null";
 	}
 
@@ -86,6 +85,13 @@ public class ImageFile {
 
 	public FilePattern getFilePattern() {
 		return filePattern;
+	}
+	
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(imageFile).append(";").append(imageNumber).append(";").append(filePattern).append(";");
+		sb.append(isImageNumberFromFileName).append(";").append(exifFileInfo).append(";").append(cameraModel4ch).append(";");
+		return sb.toString();
 	}
 	
 }

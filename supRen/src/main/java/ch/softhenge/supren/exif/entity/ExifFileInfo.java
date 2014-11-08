@@ -34,5 +34,11 @@ public class ExifFileInfo {
 	public Date getPictureDate() {
 		return pictureDate;
 	}
+	
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(cameraModel).append(";").append(pictureDate).append(";");
+		return sb.toString();
+	}
 
 }

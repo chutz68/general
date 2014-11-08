@@ -85,6 +85,22 @@ public class ImageService {
 	}
 	
 	/**
+	 * Create csv Files of image Files
+	 */
+	public void createCsvFileOfImageFiles() {
+		createImageFilesMap();
+		StringBuilder sbCsv = new StringBuilder();
+		for (Entry<FilePattern, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
+			for (ImageFile imageFile : imageFilesEntry.getValue()) {
+				if (!imageFilesEntry.getKey().equals(FilePattern.UNKNOWN_FILE_PATTERN)) {
+					enrichImageFileWithExifInfo(imageFile);
+				}
+				sbCsv.append(imageFile).append("\n");
+			}
+		}
+	}
+	
+	/**
 	 * Create a list of Image Files that are candidates to rename and save it
 	 * as a map and get it using getMapOfImageFiles.
 	 */
