@@ -96,7 +96,7 @@ public class ImageService {
 	/**
 	 * Create csv Files of image Files
 	 */
-	public void createCsvFileOfImageFiles() {
+	public String createCsvSeperatedStringOfImageFiles() {
 		createImageFilesMap();
 		StringBuilder sbCsv = new StringBuilder();
 		for (Entry<FilePattern, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
@@ -107,7 +107,7 @@ public class ImageService {
 				sbCsv.append(imageFile).append("\n");
 			}
 		}
-		LOGGER.info(sbCsv.toString());
+		return (sbCsv.toString());
 	}
 	
 	/**

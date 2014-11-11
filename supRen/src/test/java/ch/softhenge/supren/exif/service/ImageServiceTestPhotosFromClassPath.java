@@ -66,8 +66,9 @@ public class ImageServiceTestPhotosFromClassPath {
 	}
 	
 	@Test
-	public void testCreateCsvFileOfImageFiles() {
-		imageService.createCsvFileOfImageFiles();
+	public void testCreateCsvSeperatedStringOfImageFiles() {
+		String csvText = imageService.createCsvSeperatedStringOfImageFiles();
+		LOGGER.info(csvText);
 	}
 	
 }
