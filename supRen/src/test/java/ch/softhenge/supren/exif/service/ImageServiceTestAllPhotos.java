@@ -1,5 +1,9 @@
 package ch.softhenge.supren.exif.service;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -42,9 +46,13 @@ public class ImageServiceTestAllPhotos {
 	
 	@Test
 	@Ignore
-	public void testCreateCsvSeperatedStringOfImageFiles() {
+	public void testCreateCsvSeperatedStringOfImageFiles() throws IOException {
 		String csvText = imageService.createCsvSeperatedStringOfImageFiles();
-		LOGGER.info(csvText);
+		File file = new File("csvFileOut");
+		FileWriter fw = new FileWriter(file);
+	    BufferedWriter bw = new BufferedWriter(fw);
+	    bw.write(csvText);
+	    bw.close();
 	}
 	
 }
