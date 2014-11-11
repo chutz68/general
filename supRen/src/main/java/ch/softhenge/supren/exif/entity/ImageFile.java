@@ -20,6 +20,10 @@ public class ImageFile {
 	private ExifFileInfo exifFileInfo;
 	/**4-character camera model. Can be either 4 char or null**/
 	private String cameraModel4ch;
+	private boolean isKnownCameraModel;
+
+	/** The new Filename **/
+	private String newFileName;
 	
 	/**
 	 * Constructor
@@ -34,6 +38,9 @@ public class ImageFile {
 		this.imageNumber = imageNumber;
 		this.isImageNumberFromFileName = isImageNumberFromFileName;
 		this.filePattern = filePattern;
+		this.cameraModel4ch = "";
+		this.newFileName = "";
+		this.isKnownCameraModel = false;
 		
 		assert imageFile != null;
 		assert Integer.valueOf(imageNumber) >= 0;
@@ -57,6 +64,14 @@ public class ImageFile {
 		this.cameraModel4ch = cameraModel4ch;
 	}
 
+	public boolean isKnownCameraModel() {
+		return isKnownCameraModel;
+	}
+
+	public void setKnownCameraModel(boolean isKnownCameraModel) {
+		this.isKnownCameraModel = isKnownCameraModel;
+	}
+
 	public File getImageFile() {
 		return imageFile;
 	}
@@ -66,8 +81,11 @@ public class ImageFile {
 	}
 	
 	public String getNewFileName() {
-		//TODO: What to return?
-		return "hihi";
+		return newFileName;
+	}
+	
+	public void setNewFileName(String newFileName) {
+		this.newFileName = newFileName;
 	}
 	
 	/**Return the path of the file only excluding File separator at the end*/
@@ -91,6 +109,7 @@ public class ImageFile {
 		StringBuffer sb = new StringBuffer();
 		sb.append(imageFile).append(";").append(imageNumber).append(";").append(filePattern).append(";");
 		sb.append(isImageNumberFromFileName).append(";").append(exifFileInfo).append(";").append(cameraModel4ch).append(";");
+		sb.append(isKnownCameraModel).append(";").append(newFileName);
 		return sb.toString();
 	}
 	

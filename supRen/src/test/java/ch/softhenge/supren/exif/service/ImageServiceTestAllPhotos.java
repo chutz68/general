@@ -40,4 +40,10 @@ public class ImageServiceTestAllPhotos {
 		}
 	}
 	
+	@Test
+	@Ignore
+	public void testCreateCsvFileOfImageFiles() {
+		imageService.createCsvFileOfImageFiles();
+	}
+	
 }

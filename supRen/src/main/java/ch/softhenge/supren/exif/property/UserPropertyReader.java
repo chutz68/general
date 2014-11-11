@@ -31,7 +31,8 @@ public class UserPropertyReader {
 		OutfilePatternGroup("(outfilePatternGroup)([0-9]{3})", 2, Occurence.OnceOrMultiple),
 		OutfileCase("outfileCase", null, Occurence.ExactlyOnce),
 		CameraModel("(cameraModel)([0-9]{3})", 2, Occurence.OnceOrMultiple),
-		CameraModel4ch("(cameraModel4ch)([0-9]{3})", 2, Occurence.OnceOrMultiple);
+		CameraModel4ch("(cameraModel4ch)([0-9]{3})", 2, Occurence.OnceOrMultiple),
+		CameraModel4chUnknown("cameraModel4chUnknown", null, Occurence.ExactlyOnce);
 		
 		private String patternName;
 		private Integer patternNumGroupPos;

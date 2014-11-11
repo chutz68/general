@@ -19,18 +19,16 @@ public class OutFilenameGeneratorTest {
 	@Before
 	public void setUp() throws Exception {
 		UserPropertyReader upr = new UserPropertyReader("ruro.properties");
-		Map<Integer, String> outfilePatternMap = upr.getPropertyMapOfProperty(PropertyName.OutfilePattern);
-		String outfilePattern = outfilePatternMap.get(UserPropertyReader.INDEX_IF_EXACTLYONE);
 		Map<Integer, String> outfilePatternGroupMap = upr.getPropertyMapOfProperty(PropertyName.OutfilePatternGroup);
-		outFilenameGenerator = new OutFilenameGenerator(outfilePattern, outfilePatternGroupMap);
+		outFilenameGenerator = new OutFilenameGenerator(outfilePatternGroupMap);
 	}
 
 	@Test
 	public void testCreateFileNameE6DJuly2014() {
 		Calendar cal = new GregorianCalendar(2014, Calendar.JULY, 17);
 		String cameraModel4ch = "E-6D";
-		Integer imageNumber = 334;
-		String newFileName = outFilenameGenerator.createFileName(cal.getTime(), cameraModel4ch , imageNumber);
+		String imageNumber = "334";
+		String newFileName = outFilenameGenerator.createOutFileName(cal.getTime(), cameraModel4ch , imageNumber);
 		assertEquals("20140717_E-6D_0334", newFileName);
 	}
 

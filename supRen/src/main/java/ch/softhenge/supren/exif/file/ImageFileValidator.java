@@ -28,6 +28,8 @@ public class ImageFileValidator {
 	/**A Map with the cameraModel as key and cameraModel4ch as value**/
 	private final Map<String, String> cameraModelMap;
 	
+	private final String unknownCamera4ch;
+	
 	/**
 	 * Constructor
 	 * 
@@ -42,6 +44,7 @@ public class ImageFileValidator {
 		String outFilePattern = propertyMap.get(PropertyName.OutfilePattern).get(UserPropertyReader.INDEX_IF_EXACTLYONE);
 		Map<Integer, String> infilePatternImgNumMap = propertyMap.get(PropertyName.InfilePatternImgNumGroup);
 		String fileExtensionPattern = propertyMap.get(PropertyName.FileExtensionPattern).get(UserPropertyReader.INDEX_IF_EXACTLYONE);
+		unknownCamera4ch = propertyMap.get(PropertyName.CameraModel4chUnknown).get(UserPropertyReader.INDEX_IF_EXACTLYONE);
 		this.filePatternMap = new HashMap<Integer, FilePattern>();
 		boolean foundOutFilePattern = false;
 		int largestPatternIdx = -1;
@@ -138,7 +141,11 @@ public class ImageFileValidator {
 	 * @return
 	 */
 	public String getCameraModel4chForCameraModel(String cameraModel) {
-		return this.cameraModelMap.get(cameraModel);
+		return (this.cameraModelMap.get(cameraModel) == null) ? unknownCamera4ch : this.cameraModelMap.get(cameraModel);
+	}
+
+	public String getUnknownCamera4ch() {
+		return unknownCamera4ch;
 	}
 	
 }

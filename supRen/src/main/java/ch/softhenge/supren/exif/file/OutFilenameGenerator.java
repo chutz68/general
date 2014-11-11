@@ -19,18 +19,15 @@ public class OutFilenameGenerator {
 	private static final String IMG_NR = "${IMG_NR}";
 	private static final String SEPARATOR = "_";
 	
-	private final String outFilePattern;
 	private final TreeMap<Integer, String> outfilePatternGroupMap;
 	private SimpleDateFormat pictureDateFormat;
 
 	
 	/**
-	 * Constructor
 	 * 
-	 * @param outFilePattern
+	 * @param outfilePatternGroupMap
 	 */
-	public OutFilenameGenerator(String outFilePattern, Map<Integer, String> outfilePatternGroupMap) {
-		this.outFilePattern = outFilePattern;
+	public OutFilenameGenerator(Map<Integer, String> outfilePatternGroupMap) {
 		int patternsFound = 0;
 		for (String outfilePattern : outfilePatternGroupMap.values()) {
 			if (outfilePattern.contains(PICTURE_DATE)) {
@@ -48,7 +45,6 @@ public class OutFilenameGenerator {
 				patternsFound++;
 			}
 		}
-		//TODO Not ok like that. Better check with outfilepattern
 		assert patternsFound == 5: "Expected 5 pattern but found " + patternsFound ;
 		this.outfilePatternGroupMap = new TreeMap<Integer, String>(outfilePatternGroupMap);
 	}
@@ -61,8 +57,9 @@ public class OutFilenameGenerator {
 	 * @param imageNumber
 	 * @return
 	 */
-	public String createFileName(Date pictureDate, String cameraModel4ch, Integer imageNumber) {
-		assert 0 <= imageNumber && imageNumber <= 9999: "imageNumber is not valid, should be between 0 and 9999 but is " + imageNumber;
+	public String createOutFileName(Date pictureDate, String cameraModel4ch, String imageNumber) {
+		if (pictureDate == null) return "";
+		int imageNum = Integer.valueOf(imageNumber);
 		StringBuilder outFileName = new StringBuilder();
 		
 		for (Entry<Integer, String> outfilePatternEntry : outfilePatternGroupMap.entrySet()) {
@@ -73,7 +70,7 @@ public class OutFilenameGenerator {
 				outFileName.append(cameraModel4ch);
 			}
 			if (outfilePatternEntry.getValue().contains(IMG_NR)) {
-				outFileName.append(String.format("%04d", imageNumber));
+				outFileName.append(String.format("%04d", imageNum));
 			}
 			if (outfilePatternEntry.getValue().equals(SEPARATOR)) {
 				outFileName.append(outfilePatternEntry.getValue());

@@ -65,4 +65,9 @@ public class ImageServiceTestPhotosFromClassPath {
 		assertEquals(imageFiles.size(), 0);
 	}
 	
+	@Test
+	public void testCreateCsvFileOfImageFiles() {
+		imageService.createCsvFileOfImageFiles();
+	}
+	
 }

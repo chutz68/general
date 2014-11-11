@@ -20,7 +20,7 @@ public class UserPropertyReaderTest {
 		UserPropertyReader ur = new UserPropertyReader("ruro.properties");
 		Map<PropertyName, Map<Integer, String>> propertyMap = ur.getMapOfPropertyMap();
 
-		assertThat(propertyMap.size(), is(10));
+		assertThat(propertyMap.size(), is(11));
 		int expect;
 		for (Entry<PropertyName, Map<Integer, String>> propertyEntry : propertyMap.entrySet()) {
 			switch (propertyEntry.getKey()) {
@@ -59,6 +59,9 @@ public class UserPropertyReaderTest {
 				checkPropertyEntry(expect, propertyEntry);
 				break;
 			case OutfileCase:
+				assertThat(propertyEntry.getValue().size(), is(1));
+				break;
+			case CameraModel4chUnknown:
 				assertThat(propertyEntry.getValue().size(), is(1));
 				break;
 			default:

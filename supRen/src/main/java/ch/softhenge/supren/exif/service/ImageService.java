@@ -3,6 +3,7 @@ package ch.softhenge.supren.exif.service;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,6 +15,7 @@ import ch.softhenge.supren.exif.entity.ExifFileInfo;
 import ch.softhenge.supren.exif.entity.FilePattern;
 import ch.softhenge.supren.exif.entity.ImageFile;
 import ch.softhenge.supren.exif.file.ImageFileValidator;
+import ch.softhenge.supren.exif.file.OutFilenameGenerator;
 import ch.softhenge.supren.exif.property.UserPropertyReader;
 import ch.softhenge.supren.exif.property.UserPropertyReader.PropertyName;
 
@@ -31,6 +33,7 @@ public class ImageService {
 	private final UserPropertyReader userPropertyReader;
 	private final ExifService exifService;
 	private final ImageFileValidator imageFileValidator;
+	private final OutFilenameGenerator outFilenameGenerator;
 
 	/**The Map with the filename pattern as key **/
 	private Map<FilePattern, Collection<ImageFile>> mapOfImageFiles;
@@ -52,6 +55,8 @@ public class ImageService {
 		this.userPropertyReader = new UserPropertyReader(resourceFileName);
 		this.exifService = new ExifService();
 		this.imageFileValidator = new ImageFileValidator(userPropertyReader);
+		Map<Integer, String> outfilePatternGroupMap = userPropertyReader.getPropertyMapOfProperty(PropertyName.OutfilePatternGroup);
+		this.outFilenameGenerator = new OutFilenameGenerator(outfilePatternGroupMap);
 		resetImageFileList();
 	}
 
@@ -72,10 +77,14 @@ public class ImageService {
 					sberror.append("# ImageFile ").append(imageFile.getOriginalFileName()).append(" can't be renamed. No image number available\n");
 				} else {
 					enrichImageFileWithExifInfo(imageFile);
-					sbmv.append("mv ").append(imageFile.getFilePath()).append(File.separator).append(imageFile.getOriginalFileName()).append(" ");
-					sbmv.append(imageFile.getFilePath()).append(File.separator).append(imageFile.getNewFileName()).append("\n");
-					sbundomv.append("mv ").append(imageFile.getFilePath()).append(File.separator).append(imageFile.getNewFileName()).append(" ");
-					sbundomv.append(imageFile.getFilePath()).append(File.separator).append(imageFile.getOriginalFileName()).append("\n");						
+					if (imageFile.isKnownCameraModel()) {
+						sbmv.append("mv ").append(imageFile.getFilePath()).append(File.separator).append(imageFile.getOriginalFileName()).append(" ");
+						sbmv.append(imageFile.getFilePath()).append(File.separator).append(imageFile.getNewFileName()).append("\n");
+						sbundomv.append("mv ").append(imageFile.getFilePath()).append(File.separator).append(imageFile.getNewFileName()).append(" ");
+						sbundomv.append(imageFile.getFilePath()).append(File.separator).append(imageFile.getOriginalFileName()).append("\n");
+					} else {
+						sberror.append("# ImageFile ").append(imageFile.getOriginalFileName()).append(" can't be renamed. Unknown Camera type " + imageFile.getExifFileInfo().getCameraModel() + "\n");
+					}
 				}
 			}
 		}
@@ -98,6 +107,7 @@ public class ImageService {
 				sbCsv.append(imageFile).append("\n");
 			}
 		}
+		LOGGER.info(sbCsv.toString());
 	}
 	
 	/**
@@ -205,7 +215,16 @@ public class ImageService {
 			String cameraModel4ch = imageFileValidator.getCameraModel4chForCameraModel(exifFileInfo.getCameraModel());
 			imageFile.setExifFileInfo(exifFileInfo);
 			imageFile.setCameraModel4ch(cameraModel4ch);
+			if (!cameraModel4ch.equals(imageFileValidator.getUnknownCamera4ch())) {
+				imageFile.setKnownCameraModel(true);
+			}
+			String outFileName = generateOutFileName(imageFile.getExifFileInfo().getPictureDate(), cameraModel4ch, imageFile.getImageNumber());
+			imageFile.setNewFileName(outFileName);
 		}
+	}
+	
+	private String generateOutFileName(Date pictureDate, String cameraModel4ch, String imageNumber) {
+		return outFilenameGenerator.createOutFileName(pictureDate, cameraModel4ch, imageNumber);
 	}
 	
 }
