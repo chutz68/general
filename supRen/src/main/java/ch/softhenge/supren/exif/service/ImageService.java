@@ -1,6 +1,7 @@
 package ch.softhenge.supren.exif.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -102,13 +103,28 @@ public class ImageService {
 	public String createCsvSeperatedStringOfImageFiles() {
 		createImageFilesMap();
 		StringBuilder sbCsv = new StringBuilder();
+		enrichImageFilesWithExifInfo(sbCsv);
+		return (sbCsv.toString());
+	}
+
+
+	/**
+	 * Enrich all imageFiles with Exif Infos
+	 * This might take a while, since every file is scanned. 
+	 * 
+	 * @param append
+	 */
+	public void enrichImageFilesWithExifInfo(Appendable append) {
 		for (Entry<FilePattern, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
 			for (ImageFile imageFile : imageFilesEntry.getValue()) {
 				enrichImageFileWithExifInfo(imageFile);
-				sbCsv.append(imageFile).append("\n");
+				try {
+					append.append(imageFile.toString()).append("\n");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-		return (sbCsv.toString());
 	}
 	
 	/**

@@ -44,14 +44,30 @@ public class ImageServiceTestPhotosFromClassPath {
 		imageService.createImageFilesMap();
 		imageService.createImageFilesMap();
 		Map<FilePattern, Collection<ImageFile>> mapOfImageFiles = imageService.getMapOfImageFiles();
-		int cnt = 0;
+		imageService.enrichImageFilesWithExifInfo(new StringBuffer());
+		int cntAll = 0;
+		int cntKnown = 0;
+		int cntUnkP = 0;
+		int cntOutP = 0;
 		for (Collection<ImageFile> imageFiles : mapOfImageFiles.values()) {
 			for (ImageFile imageFile : imageFiles) {
 				LOGGER.info(imageFile.getOriginalFileName());
-				cnt++;
+				cntAll++;
+				if (imageFile.isKnownCameraModel()) {
+					cntKnown++;
+				}
+				if (imageFile.getFilePattern().isOutPattern()) {
+					cntOutP++;
+				}
+				if (imageFile.getFilePattern().isUnknownPattern()) {
+					cntUnkP++;
+				}
 			}
 		}
-		assertThat(cnt, CoreMatchers.is(20));
+		assertThat("Count all is wrong", cntAll, CoreMatchers.is(18));
+		assertThat("Count Known is wrong", cntKnown, CoreMatchers.is(16));
+		assertThat("Count Unknown Pattern is wrong", cntUnkP, CoreMatchers.is(2));
+		assertThat("Count Outfile Pettern is wrong", cntOutP, CoreMatchers.is(1));
 	}
 
 	@Test
