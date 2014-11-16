@@ -8,6 +8,7 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -43,6 +44,14 @@ public class ImageServiceTestPhotosFromClassPath {
 		imageService.createImageFilesMap();
 		imageService.createImageFilesMap();
 		Map<FilePattern, Collection<ImageFile>> mapOfImageFiles = imageService.getMapOfImageFiles();
+		int cnt = 0;
+		for (Collection<ImageFile> imageFiles : mapOfImageFiles.values()) {
+			for (ImageFile imageFile : imageFiles) {
+				LOGGER.info(imageFile.getOriginalFileName());
+				cnt++;
+			}
+		}
+		assertThat(cnt, CoreMatchers.is(20));
 	}
 
 	@Test

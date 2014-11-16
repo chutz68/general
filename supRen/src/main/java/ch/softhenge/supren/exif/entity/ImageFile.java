@@ -107,7 +107,7 @@ public class ImageFile {
 	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append(imageFile).append(";").append(imageNumber).append(";").append(filePattern).append(";");
+		sb.append(getOriginalFileName()).append(";").append(imageNumber).append(";").append(filePattern).append(";");
 		sb.append(isImageNumberFromFileName).append(";").append(exifFileInfo).append(";").append(cameraModel4ch).append(";");
 		sb.append(isKnownCameraModel).append(";").append(newFileName);
 		return sb.toString();

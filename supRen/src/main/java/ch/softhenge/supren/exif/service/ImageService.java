@@ -2,11 +2,14 @@ package ch.softhenge.supren.exif.service;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
@@ -101,9 +104,7 @@ public class ImageService {
 		StringBuilder sbCsv = new StringBuilder();
 		for (Entry<FilePattern, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
 			for (ImageFile imageFile : imageFilesEntry.getValue()) {
-				if (!imageFilesEntry.getKey().equals(FilePattern.UNKNOWN_FILE_PATTERN)) {
-					enrichImageFileWithExifInfo(imageFile);
-				}
+				enrichImageFileWithExifInfo(imageFile);
 				sbCsv.append(imageFile).append("\n");
 			}
 		}
@@ -199,14 +200,25 @@ public class ImageService {
 	 * @return
 	 */
 	private Collection<File> listAllImageFilesInDir() {
-        String fileExtensionList = userPropertyReader.getPropertyMapOfProperty(PropertyName.fileExtensionList).get(UserPropertyReader.INDEX_IF_EXACTLYONE); 
-		String[] extensions = fileExtensionList.split(",");
-		
 		long currTime = System.currentTimeMillis();
+		String [] extensions = getAllExtensions();
 		Collection<File> listFiles = FileUtils.listFiles(baseDir, extensions, true);
 		LOGGER.fine("Anz Files: " + listFiles.size() + " , took: " + (System.currentTimeMillis() - currTime) + " ms");
 		
 		return listFiles;
+	}
+	
+	/**
+	 * 
+	 * @return all extensions, also non case sensitive as an array
+	 */
+	private String[] getAllExtensions() {
+        String fileExtensionList = userPropertyReader.getPropertyMapOfProperty(PropertyName.fileExtensionList).get(UserPropertyReader.INDEX_IF_EXACTLYONE); 
+        String[] fileExtensionsLowC = fileExtensionList.toLowerCase().split(",");
+        String[] fileExtensionsUpC = fileExtensionList.toUpperCase().split(",");
+		Set<String> fileExtSet = new HashSet<String>(Arrays.asList(fileExtensionsLowC));
+		fileExtSet.addAll(Arrays.asList(fileExtensionsUpC));
+		return fileExtSet.toArray(new String[fileExtSet.size()]);
 	}
 	
 	private void enrichImageFileWithExifInfo(ImageFile imageFile) {
@@ -218,8 +230,10 @@ public class ImageService {
 			if (!cameraModel4ch.equals(imageFileValidator.getUnknownCamera4ch())) {
 				imageFile.setKnownCameraModel(true);
 			}
-			String outFileName = generateOutFileName(imageFile.getExifFileInfo().getPictureDate(), cameraModel4ch, imageFile.getImageNumber());
-			imageFile.setNewFileName(outFileName);
+			if (!imageFile.getFilePattern().isUnknownPattern()) {
+				String outFileName = generateOutFileName(imageFile.getExifFileInfo().getPictureDate(), cameraModel4ch, imageFile.getImageNumber());
+				imageFile.setNewFileName(outFileName);
+			}
 		}
 	}
 	

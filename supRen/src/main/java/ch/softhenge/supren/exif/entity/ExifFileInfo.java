@@ -37,7 +37,7 @@ public class ExifFileInfo {
 	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append(cameraModel).append(";").append(pictureDate).append(";");
+		sb.append(cameraModel).append(";").append(pictureDate);
 		return sb.toString();
 	}
 

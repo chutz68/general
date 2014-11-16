@@ -87,6 +87,10 @@ public class FilePattern {
 	public boolean isOutPattern() {
 		return isOutPattern;
 	}
+	
+	public boolean isUnknownPattern() {
+		return this.equals(UNKNOWN_FILE_PATTERN);
+	}
 
 	public String toString() {
 		String stringVar = patternIdx + ": " + filePatternString;
