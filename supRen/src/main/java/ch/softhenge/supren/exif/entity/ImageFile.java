@@ -2,6 +2,8 @@ package ch.softhenge.supren.exif.entity;
 
 import java.io.File;
 
+import org.apache.commons.io.FilenameUtils;
+
 public class ImageFile {
 
 	/**First Image number if the pattern that matches the image filename doesn't contain an image number */
@@ -79,9 +81,12 @@ public class ImageFile {
 	public String getOriginalFileName() {
 		return imageFile.getName();
 	}
-	
+
+	/**
+	 * @return new Filename without path but with extension. For example: "20130301_0321_E6D.cr2" 
+	 */
 	public String getNewFileName() {
-		return newFileName;
+		return newFileName + "." + getFileExtension();
 	}
 	
 	public void setNewFileName(String newFileName) {
@@ -95,6 +100,13 @@ public class ImageFile {
 
 	public String getImageNumber() {
 		return imageNumber;
+	}
+	
+	/**
+	 * @return fileExtension for example ".jpg" for the original file
+	 */
+	public String getFileExtension() {
+		return FilenameUtils.getExtension(getOriginalFileName());
 	}
 
 	public boolean isImageNumberFromFileName() {

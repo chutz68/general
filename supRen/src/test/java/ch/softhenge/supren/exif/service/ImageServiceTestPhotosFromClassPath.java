@@ -74,12 +74,32 @@ public class ImageServiceTestPhotosFromClassPath {
 	public void testMvCommand() {
 		imageService.createMvAndUndoCommands();
 		String mvCommand = imageService.getMvCommand();
+		checkMvCommand(mvCommand);
 		LOGGER.fine("mvCommands");
 		LOGGER.fine(mvCommand);
+	}
+
+	@Test
+	public void testMvUndoCommand() {
+		imageService.createMvAndUndoCommands();
 		String mvUndoCommand = imageService.getMvUndoCommand();
+		checkMvCommand(mvUndoCommand);
 		LOGGER.fine("mvUndoCommand");
 		LOGGER.fine(mvUndoCommand);
+	}
+
+	@Test
+	public void testMvError() {
+		imageService.createMvAndUndoCommands();
 		String mvError = imageService.getMvError();
+		int countMatches = org.apache.commons.lang3.StringUtils.countMatches(mvError, "# ImageFile ");
+		assertThat("Number of error mv commands", countMatches, CoreMatchers.is(3));
+		assertThat(mvError, CoreMatchers.containsString("C6ZH_019.JPG"));
+		assertThat(mvError, CoreMatchers.containsString("EOS600D_20121208_0583.jpg"));
+		assertThat(mvError, CoreMatchers.containsString("Img_0001.jpg"));
+		assertThat(mvError, CoreMatchers.containsString("Filepattern is unknown"));
+		assertThat(mvError, CoreMatchers.containsString("Unknown Camera type"));
+
 		LOGGER.fine("mvError");
 		LOGGER.fine(mvError);
 	}
@@ -94,6 +114,17 @@ public class ImageServiceTestPhotosFromClassPath {
 	public void testCreateCsvSeperatedStringOfImageFiles() {
 		String csvText = imageService.createCsvSeperatedStringOfImageFiles();
 		LOGGER.info(csvText);
+	}
+	
+	private void checkMvCommand(String mvCommand) {
+		int countMatches = org.apache.commons.lang3.StringUtils.countMatches(mvCommand, "mv ");
+		assertThat("Number of mv commands", countMatches, CoreMatchers.is(15));
+		assertThat(mvCommand, CoreMatchers.containsString("P9090055.JPG"));
+		assertThat(mvCommand, CoreMatchers.containsString("20010909_O210_0055.JPG"));
+		assertThat(mvCommand, CoreMatchers.containsString("DSC01939.ARW"));
+		assertThat(mvCommand, CoreMatchers.containsString("20140717_S100_1939.ARW"));
+		assertThat(mvCommand, CoreMatchers.containsString("IMG_1426.jpg"));
+		assertThat(mvCommand, CoreMatchers.containsString("20121208_E600_1426.jpg"));
 	}
 	
 }
