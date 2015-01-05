@@ -240,6 +240,7 @@ public class ImageService {
 	private void enrichImageFileWithExifInfo(ImageFile imageFile) {
 		if (imageFile.getExifFileInfo() == null) {
 			ExifFileInfo exifFileInfo = exifService.getExifInfoFromImageFile(imageFile.getImageFile());
+			if (exifFileInfo == null) return;
 			String cameraModel4ch = imageFileValidator.getCameraModel4chForCameraModel(exifFileInfo.getCameraModel());
 			imageFile.setExifFileInfo(exifFileInfo);
 			imageFile.setCameraModel4ch(cameraModel4ch);
