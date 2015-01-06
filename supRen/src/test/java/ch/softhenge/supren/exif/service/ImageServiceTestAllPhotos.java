@@ -48,11 +48,38 @@ public class ImageServiceTestAllPhotos {
 	@Ignore
 	public void testCreateCsvSeperatedStringOfImageFiles() throws IOException {
 		String csvText = imageService.createCsvSeperatedStringOfImageFiles();
-		File file = new File("csvFileOut");
+		File file = new File("csvFileOut.csv");
 		FileWriter fw = new FileWriter(file);
 	    BufferedWriter bw = new BufferedWriter(fw);
 	    bw.write(csvText);
 	    bw.close();
+	}
+	
+	@Test
+	@Ignore
+	public void testMvCommands() throws IOException {
+		imageService.createMvAndUndoCommands();
+		String mvCommand = imageService.getMvCommand();
+		File file = new File("mvCommand");
+		FileWriter fw = new FileWriter(file);
+	    BufferedWriter bw = new BufferedWriter(fw);
+	    bw.write(mvCommand);
+	    bw.close();
+
+	    String mvUndoCommand = imageService.getMvUndoCommand();
+		file = new File("mvUndoCommand");
+		fw = new FileWriter(file);
+	    bw = new BufferedWriter(fw);
+	    bw.write(mvUndoCommand);
+	    bw.close();
+	    
+	    String mvErrorCommand = imageService.getMvError();
+		file = new File("mvErrorCommand");
+		fw = new FileWriter(file);
+	    bw = new BufferedWriter(fw);
+	    bw.write(mvErrorCommand);
+	    bw.close();	
+	    
 	}
 	
 }
