@@ -119,9 +119,12 @@ public class ImageFile {
 	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append(getOriginalFileName()).append(";").append(imageNumber).append(";").append(filePattern).append(";");
-		sb.append(isImageNumberFromFileName).append(";").append(exifFileInfo).append(";").append(cameraModel4ch).append(";");
-		sb.append(isKnownCameraModel).append(";").append(newFileName);
+		sb.append(getOriginalFileName()).append(";").append(getFilePath()).append(";");
+		sb.append(getFileExtension()).append(imageNumber).append(";");
+		sb.append(filePattern).append(";");
+		sb.append(isImageNumberFromFileName).append(";").append(exifFileInfo).append(";");
+		sb.append(cameraModel4ch).append(";");
+		sb.append(isKnownCameraModel).append(";").append(getNewFileName());
 		return sb.toString();
 	}
 	

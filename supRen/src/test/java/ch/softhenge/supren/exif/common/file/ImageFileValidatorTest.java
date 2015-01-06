@@ -42,7 +42,7 @@ public class ImageFileValidatorTest {
 				assertEquals(testFile.getFileName(), "0009", imgNum);
 				break;
 			case ImgFileNoFileNum:
-				assertThat(testFile.getFileName(), indexOfFilePattern, CoreMatchers.is(9));
+				assertThat(testFile.getFileName(), indexOfFilePattern, CoreMatchers.is(10));
 				assertNull(testFile.getFileName(), imgNum);
 				break;
 			case ImgFileNoPattern:

@@ -31,19 +31,19 @@ public class UserPropertyReaderTest {
 				assertThat(propertyEntry.getValue().size(), is(1));
 				break;
 			case InfilePattern:
-				expect = 11;
+				expect = 12;
 				checkPropertyEntry(expect, propertyEntry);
 				break;
 			case InfilePatternImgNumGroup:
-				expect = 11;
+				expect = 12;
 				checkPropertyEntry(expect, propertyEntry);
 				break;
 		    case CameraModel:
-		    	expect = 17;
+		    	expect = 31;
 				checkPropertyEntry(expect, propertyEntry);
 				break;
 			case CameraModel4ch:
-				expect = 17;
+				expect = 31;
 				checkPropertyEntry(expect, propertyEntry);
 				break;
 			case OutfilePattern:
