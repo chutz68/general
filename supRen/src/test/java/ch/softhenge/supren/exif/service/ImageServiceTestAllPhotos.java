@@ -46,23 +46,19 @@ public class ImageServiceTestAllPhotos {
 	
 	@Test
 	@Ignore
-	public void testCreateCsvSeperatedStringOfImageFiles() throws IOException {
+	public void testCreateCsvSeperatedStringOfImageFilesandMv() throws IOException {
 		String csvText = imageService.createCsvSeperatedStringOfImageFiles();
 		File file = new File("csvFileOut.csv");
 		FileWriter fw = new FileWriter(file);
 	    BufferedWriter bw = new BufferedWriter(fw);
 	    bw.write(csvText);
 	    bw.close();
-	}
-	
-	@Test
-	@Ignore
-	public void testMvCommands() throws IOException {
+
 		imageService.createMvAndUndoCommands();
 		String mvCommand = imageService.getMvCommand();
-		File file = new File("mvCommand");
-		FileWriter fw = new FileWriter(file);
-	    BufferedWriter bw = new BufferedWriter(fw);
+		file = new File("mvCommand");
+		fw = new FileWriter(file);
+	    bw = new BufferedWriter(fw);
 	    bw.write(mvCommand);
 	    bw.close();
 
