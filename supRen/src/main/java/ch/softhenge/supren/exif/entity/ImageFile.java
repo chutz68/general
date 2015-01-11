@@ -97,6 +97,14 @@ public class ImageFile {
 	public String getFilePath() {
 		return imageFile.getAbsolutePath().substring(0, imageFile.getAbsolutePath().lastIndexOf(File.separator));
 	}
+	
+	/**
+	 * 
+	 * @return a UNIX / filepath
+	 */
+	public String getUnixFilePath() {
+		return getFilePath().replace(File.separatorChar, '/');
+	}
 
 	public String getImageNumber() {
 		return imageNumber;

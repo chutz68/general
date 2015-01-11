@@ -32,6 +32,7 @@ import ch.softhenge.supren.exif.property.UserPropertyReader.PropertyName;
 public class ImageService {
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
+	private final static String SEPERATOR = "/";
 	
 	private final File baseDir;
 	private final UserPropertyReader userPropertyReader;
@@ -82,12 +83,16 @@ public class ImageService {
 				} else {
 					enrichImageFileWithExifInfo(imageFile);
 					if (imageFile.isKnownCameraModel()) {
-						sbmv.append("mv ").append(imageFile.getFilePath()).append(File.separator).append(imageFile.getOriginalFileName()).append(" ");
-						sbmv.append(imageFile.getFilePath()).append(File.separator).append(imageFile.getNewFileName()).append("\n");
-						sbundomv.append("mv ").append(imageFile.getFilePath()).append(File.separator).append(imageFile.getNewFileName()).append(" ");
-						sbundomv.append(imageFile.getFilePath()).append(File.separator).append(imageFile.getOriginalFileName()).append("\n");
+						sbmv.append("mv ").append('"').append(imageFile.getUnixFilePath()).append(SEPERATOR).append(imageFile.getOriginalFileName()).append(" ");
+						sbmv.append(imageFile.getUnixFilePath()).append(SEPERATOR).append(imageFile.getNewFileName()).append('"').append("\n");
+						sbundomv.append("mv ").append('"').append(imageFile.getUnixFilePath()).append(SEPERATOR).append(imageFile.getNewFileName()).append(" ");
+						sbundomv.append(imageFile.getUnixFilePath()).append(SEPERATOR).append(imageFile.getOriginalFileName()).append('"').append("\n");
 					} else {
-						sberror.append("# ImageFile ").append(imageFile.getOriginalFileName()).append(" can't be renamed. Unknown Camera type " + imageFile.getExifFileInfo().getCameraModel() + "\n");
+						if (imageFile.getExifFileInfo() != null) {
+							sberror.append("# ImageFile ").append(imageFile.getOriginalFileName()).append(" can't be renamed. Unknown Camera type " + imageFile.getExifFileInfo().getCameraModel() + "\n");
+						} else {
+							sberror.append("# ImageFile ").append(imageFile.getOriginalFileName()).append(" can't be renamed. Unknown Camera type\n");
+						}
 					}
 				}
 			}
