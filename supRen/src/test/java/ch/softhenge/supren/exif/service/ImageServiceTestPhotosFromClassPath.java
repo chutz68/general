@@ -89,6 +89,16 @@ public class ImageServiceTestPhotosFromClassPath {
 	}
 
 	@Test
+	public void testMvAlreadyDone() {
+		imageService.createMvAndUndoCommands();
+		String mvAlreadyDone = imageService.getMvAlreadyDone();
+		assertThat(mvAlreadyDone, CoreMatchers.containsString("20091031_E400_2177.JPG"));
+
+		LOGGER.fine("mvAlreadyDone");
+		LOGGER.fine(mvAlreadyDone);
+	}
+	
+	@Test
 	public void testMvError() {
 		imageService.createMvAndUndoCommands();
 		String mvError = imageService.getMvError();
@@ -118,7 +128,7 @@ public class ImageServiceTestPhotosFromClassPath {
 	
 	private void checkMvCommand(String mvCommand) {
 		int countMatches = org.apache.commons.lang3.StringUtils.countMatches(mvCommand, "mv ");
-		assertThat("Number of mv commands", countMatches, CoreMatchers.is(15));
+		assertThat("Number of mv commands", countMatches, CoreMatchers.is(14));
 		assertThat(mvCommand, CoreMatchers.containsString("P9090055.JPG"));
 		assertThat(mvCommand, CoreMatchers.containsString("20010909_O210_0055.JPG"));
 		assertThat(mvCommand, CoreMatchers.containsString("DSC01939.ARW"));

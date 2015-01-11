@@ -48,6 +48,8 @@ public class ImageService {
 	private String mvUndoCommand;
 	/**No mv command for those files possible.*/
 	private String mvError;
+	/**Already new Filename*/
+	private String mvAlreadyDone;
 	
 	/**
 	 * Constructor
@@ -72,6 +74,7 @@ public class ImageService {
 	public void createMvAndUndoCommands() {
 		createImageFilesMap();
 		StringBuilder sbmv = new StringBuilder();
+		StringBuilder sbdone = new StringBuilder();
 		StringBuilder sbundomv = new StringBuilder();
 		StringBuilder sberror = new StringBuilder();
 		for (Entry<FilePattern, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
@@ -80,6 +83,8 @@ public class ImageService {
 					sberror.append("# ImageFile ").append(imageFile.getOriginalFileName()).append(" can't be renamed. Filepattern is unknown\n");
 				} else if (imageFile.getFilePattern().getPatternIdx() == 0) {
 					sberror.append("# ImageFile ").append(imageFile.getOriginalFileName()).append(" can't be renamed. No image number available\n");
+				} else if (imageFile.getFilePattern() != null && imageFile.getFilePattern().isOutPattern()) {
+					sbdone.append("# ImageFile ").append(imageFile.getOriginalFileName()).append(" already has new filename\n");
 				} else {
 					enrichImageFileWithExifInfo(imageFile);
 					if (imageFile.isKnownCameraModel()) {
@@ -99,6 +104,7 @@ public class ImageService {
 		}
 		this.mvCommand = sbmv.toString();
 		this.mvUndoCommand = sbundomv.toString();
+		this.mvAlreadyDone = sbdone.toString();
 		this.mvError = sberror.toString();
 	}
 	
@@ -192,6 +198,11 @@ public class ImageService {
 
 	public String getMvUndoCommand() {
 		return mvUndoCommand;
+	}
+
+
+	public String getMvAlreadyDone() {
+		return mvAlreadyDone;
 	}
 
 
