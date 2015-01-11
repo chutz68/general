@@ -4,7 +4,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.ConsoleHandler;
@@ -23,6 +26,8 @@ public class ImageServiceTestAllPhotos {
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
 
 	private ImageService imageService;
+	
+	private DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_DD-HHmm");
 
 	@Before
 	public void setUp() throws Exception {
@@ -48,7 +53,7 @@ public class ImageServiceTestAllPhotos {
 	@Ignore
 	public void testCreateCsvSeperatedStringOfImageFilesandMv() throws IOException {
 		String csvText = imageService.createCsvSeperatedStringOfImageFiles();
-		File file = new File("csvFileOut.csv");
+		File file = new File("csvFileOut_" + dateFormat.format(new Date()) + ".csv");
 		FileWriter fw = new FileWriter(file);
 	    BufferedWriter bw = new BufferedWriter(fw);
 	    bw.write(csvText);
@@ -56,21 +61,28 @@ public class ImageServiceTestAllPhotos {
 
 		imageService.createMvAndUndoCommands();
 		String mvCommand = imageService.getMvCommand();
-		file = new File("mvCommand");
+		file = new File("mvCommand_" + dateFormat.format(new Date()));
 		fw = new FileWriter(file);
 	    bw = new BufferedWriter(fw);
 	    bw.write(mvCommand);
 	    bw.close();
 
 	    String mvUndoCommand = imageService.getMvUndoCommand();
-		file = new File("mvUndoCommand");
+		file = new File("mvUndoCommand_" + dateFormat.format(new Date()));
 		fw = new FileWriter(file);
 	    bw = new BufferedWriter(fw);
 	    bw.write(mvUndoCommand);
 	    bw.close();
+
+	    String mvAlreadyDone = imageService.getMvAlreadyDone();
+		file = new File("mvAlreadyDone_" + dateFormat.format(new Date()));
+		fw = new FileWriter(file);
+	    bw = new BufferedWriter(fw);
+	    bw.write(mvAlreadyDone);
+	    bw.close();
 	    
 	    String mvErrorCommand = imageService.getMvError();
-		file = new File("mvErrorCommand");
+		file = new File("mvErrorCommand_" + dateFormat.format(new Date()));
 		fw = new FileWriter(file);
 	    bw = new BufferedWriter(fw);
 	    bw.write(mvErrorCommand);
