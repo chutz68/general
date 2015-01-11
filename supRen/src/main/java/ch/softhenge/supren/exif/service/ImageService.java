@@ -83,8 +83,8 @@ public class ImageService {
 				} else {
 					enrichImageFileWithExifInfo(imageFile);
 					if (imageFile.isKnownCameraModel()) {
-						sbmv.append("mv ").append('"').append(imageFile.getUnixFilePath()).append(SEPERATOR).append(imageFile.getOriginalFileName()).append(" ");
-						sbmv.append(imageFile.getUnixFilePath()).append(SEPERATOR).append(imageFile.getNewFileName()).append('"').append("\n");
+						sbmv.append("mv ").append('"').append(imageFile.getUnixFilePath()).append(SEPERATOR).append(imageFile.getOriginalFileName()).append('"').append(" ");
+						sbmv.append('"').append(imageFile.getUnixFilePath()).append(SEPERATOR).append(imageFile.getNewFileName()).append('"').append("\n");
 						sbundomv.append("mv ").append('"').append(imageFile.getUnixFilePath()).append(SEPERATOR).append(imageFile.getNewFileName()).append(" ");
 						sbundomv.append(imageFile.getUnixFilePath()).append(SEPERATOR).append(imageFile.getOriginalFileName()).append('"').append("\n");
 					} else {
