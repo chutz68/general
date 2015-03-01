@@ -135,6 +135,7 @@ public class ImageServiceTestPhotosFromClassPath {
 		assertThat(mvCommand, CoreMatchers.containsString("20140717_S100_1939.ARW"));
 		assertThat(mvCommand, CoreMatchers.containsString("IMG_1426.jpg"));
 		assertThat(mvCommand, CoreMatchers.containsString("20121208_E600_1426.jpg"));
+		assertThat(mvCommand, CoreMatchers.containsString("WP_20140704_13_42_24_Pro_spez.jpg"));
 	}
 	
 }
