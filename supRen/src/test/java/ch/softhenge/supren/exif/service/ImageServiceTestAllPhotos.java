@@ -27,11 +27,11 @@ public class ImageServiceTestAllPhotos {
 
 	private ImageService imageService;
 	
-	private DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_DD-HHmm");
+	private DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd-HHmm");
 
 	@Before
 	public void setUp() throws Exception {
-		imageService = new ImageService("ruro.properties", "D:\\photos");
+		imageService = new ImageService("ruro.properties", "D:\\photos\\transfer");
 		LOGGER.setLevel(Level.FINE);
         ConsoleHandler handler = new ConsoleHandler();
         handler.setLevel(Level.FINE);
@@ -49,8 +49,9 @@ public class ImageServiceTestAllPhotos {
 		}
 	}
 	
+	
 	@Test
-	@Ignore
+	//@Ignore
 	public void testCreateCsvSeperatedStringOfImageFilesandMv() throws IOException {
 		String csvText = imageService.createCsvSeperatedStringOfImageFiles();
 		File file = new File("csvFileOut_" + dateFormat.format(new Date()) + ".csv");
