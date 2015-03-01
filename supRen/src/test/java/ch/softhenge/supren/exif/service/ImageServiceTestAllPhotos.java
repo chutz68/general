@@ -51,7 +51,7 @@ public class ImageServiceTestAllPhotos {
 	
 	
 	@Test
-	//@Ignore
+	@Ignore
 	public void testCreateCsvSeperatedStringOfImageFilesandMv() throws IOException {
 		String csvText = imageService.createCsvSeperatedStringOfImageFiles();
 		File file = new File("csvFileOut_" + dateFormat.format(new Date()) + ".csv");
