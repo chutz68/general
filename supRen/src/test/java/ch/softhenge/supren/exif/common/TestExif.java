@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
@@ -53,7 +54,15 @@ public class TestExif {
 		Metadata meta = ImageMetadataReader.readMetadata(file);
 		assertNotNull(meta);
 		
-		ExifSubIFDDirectory exifSubDir = meta.getDirectory(ExifSubIFDDirectory.class);
+		Collection<ExifSubIFDDirectory> directoriesOfType = meta.getDirectoriesOfType(ExifSubIFDDirectory.class);
+		ExifSubIFDDirectory exifSubDir = null;
+		
+		if (directoriesOfType != null) {
+			for (ExifSubIFDDirectory directory : directoriesOfType) {
+				exifSubDir = directory;
+				break;
+			}	
+		}
 		
 		if (testFile.getExifDate() == null) {
 			assertNull(testFile.getExifDate());

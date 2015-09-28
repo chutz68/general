@@ -2,6 +2,7 @@ package ch.softhenge.supren.exif.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.logging.Logger;
 
@@ -36,7 +37,14 @@ public class ExifService {
 		Metadata meta = getExifMetadata(imageFile);
 		if (meta == null) return null;
 
-		ExifIFD0Directory exifIFD0Directory = meta.getDirectory(ExifIFD0Directory.class);
+		ExifIFD0Directory exifIFD0Directory = null;
+		Collection<ExifIFD0Directory> directoriesFD0 = meta.getDirectoriesOfType(ExifIFD0Directory.class);
+		if (directoriesFD0 != null) {
+			for (ExifIFD0Directory directory : directoriesFD0) {
+				exifIFD0Directory = directory;
+				break;
+			}			
+		}
 		String cameraModel;
 		if (exifIFD0Directory == null) {
 			cameraModel = null;
@@ -44,7 +52,14 @@ public class ExifService {
 			cameraModel = exifIFD0Directory.getString(ExifIFD0Directory.TAG_MODEL);
 		}
 
-		ExifSubIFDDirectory exifSubIFDDirectory = meta.getDirectory(ExifSubIFDDirectory.class);
+		ExifSubIFDDirectory exifSubIFDDirectory = null;
+		Collection<ExifSubIFDDirectory> directoriesIFD = meta.getDirectoriesOfType(ExifSubIFDDirectory.class);
+		if (directoriesIFD != null) {
+			for (ExifSubIFDDirectory directory : directoriesIFD) {
+				exifSubIFDDirectory = directory;
+				break;
+			}			
+		}
 		Date pictureDate;
 		if (exifSubIFDDirectory == null) {
 			pictureDate = null;
