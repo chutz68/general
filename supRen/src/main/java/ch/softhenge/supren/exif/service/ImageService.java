@@ -5,15 +5,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.comparator.LastModifiedFileComparator;
 
 import ch.softhenge.supren.exif.entity.ExifFileInfo;
 import ch.softhenge.supren.exif.entity.FilePattern;
@@ -143,9 +146,13 @@ public class ImageService {
 	 * as a map and get it using getMapOfImageFiles.
 	 */
 	public void createImageFilesMap() {
+		long currentDateTime = (new Date()).getTime();
 		if (getListOfImageFiles().isEmpty()) {
 			Collection<File> listAllImageFiles = listAllImageFilesInDir();
 			for (File file : listAllImageFiles) {
+				if (file.lastModified() > currentDateTime - (10 * 24 * 60 * 60)) {
+					break;
+				}
 				FilePattern filePattern = imageFileValidator.getFilePattern(file.getName());
 				ImageFile imageFile;
 				if (filePattern != null) {
@@ -235,6 +242,7 @@ public class ImageService {
 		long currTime = System.currentTimeMillis();
 		String [] extensions = getAllExtensions();
 		Collection<File> listFiles = FileUtils.listFiles(baseDir, extensions, true);
+		Collections.sort((List<File>) listFiles, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
 		LOGGER.fine("Anz Files: " + listFiles.size() + " , took: " + (System.currentTimeMillis() - currTime) + " ms");
 		
 		return listFiles;
