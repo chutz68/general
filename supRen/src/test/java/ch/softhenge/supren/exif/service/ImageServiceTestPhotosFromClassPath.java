@@ -39,10 +39,10 @@ public class ImageServiceTestPhotosFromClassPath {
 
 	@Test
 	public void testListImageFilesToRename() {
-		imageService.createImageFilesMap();
+		imageService.createImageFilesMap(null);
 		imageService.resetImageFileList();
-		imageService.createImageFilesMap();
-		imageService.createImageFilesMap();
+		imageService.createImageFilesMap(null);
+		imageService.createImageFilesMap(null);
 		Map<FilePattern, Collection<ImageFile>> mapOfImageFiles = imageService.getMapOfImageFiles();
 		imageService.enrichImageFilesWithExifInfo(new StringBuffer());
 		int cntAll = 0;
@@ -72,7 +72,7 @@ public class ImageServiceTestPhotosFromClassPath {
 
 	@Test
 	public void testMvCommand() {
-		imageService.createMvAndUndoCommands();
+		imageService.createMvAndUndoCommands(null);
 		String mvCommand = imageService.getMvCommand();
 		checkMvCommand(mvCommand);
 		LOGGER.fine("mvCommands");
@@ -81,7 +81,7 @@ public class ImageServiceTestPhotosFromClassPath {
 
 	@Test
 	public void testMvUndoCommand() {
-		imageService.createMvAndUndoCommands();
+		imageService.createMvAndUndoCommands(null);
 		String mvUndoCommand = imageService.getMvUndoCommand();
 		checkMvCommand(mvUndoCommand);
 		LOGGER.fine("mvUndoCommand");
@@ -90,7 +90,7 @@ public class ImageServiceTestPhotosFromClassPath {
 
 	@Test
 	public void testMvAlreadyDone() {
-		imageService.createMvAndUndoCommands();
+		imageService.createMvAndUndoCommands(null);
 		String mvAlreadyDone = imageService.getMvAlreadyDone();
 		assertThat(mvAlreadyDone, CoreMatchers.containsString("20091031_E400_2177.JPG"));
 
@@ -100,7 +100,7 @@ public class ImageServiceTestPhotosFromClassPath {
 	
 	@Test
 	public void testMvError() {
-		imageService.createMvAndUndoCommands();
+		imageService.createMvAndUndoCommands(null);
 		String mvError = imageService.getMvError();
 		int countMatches = org.apache.commons.lang3.StringUtils.countMatches(mvError, "# ImageFile ");
 		assertThat("Number of error mv commands", countMatches, CoreMatchers.is(3));
@@ -122,7 +122,7 @@ public class ImageServiceTestPhotosFromClassPath {
 	
 	@Test
 	public void testCreateCsvSeperatedStringOfImageFiles() {
-		String csvText = imageService.createCsvSeperatedStringOfImageFiles();
+		String csvText = imageService.createCsvSeperatedStringOfImageFiles(null);
 		LOGGER.info(csvText);
 	}
 	
