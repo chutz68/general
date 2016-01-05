@@ -31,7 +31,7 @@ public class ImageServiceTestAllPhotos {
 
 	@Before
 	public void setUp() throws Exception {
-		imageService = new ImageService("ruro.properties", "D:\\photos");
+		imageService = new ImageService("ruro.properties", "D:\\photos\\Transfer");
 		LOGGER.setLevel(Level.FINE);
         ConsoleHandler handler = new ConsoleHandler();
         handler.setLevel(Level.FINE);
@@ -41,8 +41,8 @@ public class ImageServiceTestAllPhotos {
 	@Test
 	@Ignore
 	public void testListImageFilesToRename() {
-		imageService.createImageFilesMap(20);
-		imageService.createImageFilesMap(20);
+		imageService.createImageFilesMap(20l);
+		imageService.createImageFilesMap(20l);
 		Map<FilePattern, Collection<ImageFile>> mapOfImageFileCollection = imageService.getMapOfImageFiles();
 		for (Entry<FilePattern, Collection<ImageFile>> imageFiles : mapOfImageFileCollection.entrySet()) {
 			LOGGER.info("Image Files of pattern " + imageFiles.getKey() + " has " + imageFiles.getValue().size() + " values");
@@ -52,14 +52,15 @@ public class ImageServiceTestAllPhotos {
 	
 	@Test
 	public void testCreateCsvSeperatedStringOfImageFilesandMv() throws IOException {
-		String csvText = imageService.createCsvSeperatedStringOfImageFiles(20);
+		String csvText = imageService.createCsvSeperatedStringOfImageFiles(30l);
 		File file = new File("csvFileOut_" + dateFormat.format(new Date()) + ".csv");
 		FileWriter fw = new FileWriter(file);
+		
 	    BufferedWriter bw = new BufferedWriter(fw);
 	    bw.write(csvText);
 	    bw.close();
 
-		imageService.createMvAndUndoCommands(5);
+		imageService.createMvAndUndoCommands(70l);
 		String mvCommand = imageService.getMvCommand();
 		file = new File("mvCommand_" + dateFormat.format(new Date()));
 		fw = new FileWriter(file);

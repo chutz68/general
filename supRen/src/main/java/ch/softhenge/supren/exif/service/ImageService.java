@@ -74,7 +74,7 @@ public class ImageService {
 	/**
 	 * Create necessary mv and undo commands of the files to be renamed
 	 */
-	public void createMvAndUndoCommands(Integer daysback) {
+	public void createMvAndUndoCommands(Long daysback) {
 		createImageFilesMap(daysback);
 		StringBuilder sbmv = new StringBuilder();
 		StringBuilder sbdone = new StringBuilder();
@@ -114,7 +114,7 @@ public class ImageService {
 	/**
 	 * Create csv Files of image Files
 	 */
-	public String createCsvSeperatedStringOfImageFiles(Integer daysback) {
+	public String createCsvSeperatedStringOfImageFiles(Long daysback) {
 		createImageFilesMap(daysback);
 		StringBuilder sbCsv = new StringBuilder();
 		enrichImageFilesWithExifInfo(sbCsv);
@@ -146,12 +146,13 @@ public class ImageService {
 	 * as a map and get it using getMapOfImageFiles.
 	 * daysback: Number of days to check for picture files. In case of null, check all files
 	 */
-	public void createImageFilesMap(Integer daysback) {
-		long currentDateTime = (new Date()).getTime();
+	public void createImageFilesMap(Long daysback) {
 		if (getListOfImageFiles().isEmpty()) {
+			int cnt = 0;
+			long currentDateTime = (new Date()).getTime();
 			Collection<File> listAllImageFiles = listAllImageFilesInDir();
 			for (File file : listAllImageFiles) {
-				if (daysback != null && file.lastModified() > currentDateTime - (daysback * 1000 * 24 * 60 * 60)) {
+				if (daysback != null && file.lastModified() <= currentDateTime - (daysback * 1000 * 24 * 60 * 60)) {
 					break;
 				}
 				FilePattern filePattern = imageFileValidator.getFilePattern(file.getName());
@@ -169,7 +170,9 @@ public class ImageService {
 					imageFile = new ImageFile(file, null, false, filePattern);
 				}
 				this.mapOfImageFiles.get(filePattern).add(imageFile);
+				cnt++;
 			}
+			LOGGER.fine("Anz Files filtered: " + cnt);
 		}
 	}
 
