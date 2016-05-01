@@ -52,7 +52,7 @@ public class ImageServiceTestAllPhotos {
 	
 	@Test
 	public void testCreateCsvSeperatedStringOfImageFilesandMv() throws IOException {
-		String csvText = imageService.createCsvSeperatedStringOfImageFiles(30l);
+		String csvText = imageService.createCsvSeperatedStringOfImageFiles(100l);
 		File file = new File("csvFileOut_" + dateFormat.format(new Date()) + ".csv");
 		FileWriter fw = new FileWriter(file);
 		
@@ -60,7 +60,7 @@ public class ImageServiceTestAllPhotos {
 	    bw.write(csvText);
 	    bw.close();
 
-		imageService.createMvAndUndoCommands(70l);
+		imageService.createMvAndUndoCommands(100l);
 		String mvCommand = imageService.getMvCommand();
 		file = new File("mvCommand_" + dateFormat.format(new Date()));
 		fw = new FileWriter(file);
