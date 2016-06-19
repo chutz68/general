@@ -24,14 +24,16 @@ import ch.softhenge.supren.exif.entity.ImageFile;
 public class ImageServiceTestAllPhotos {
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
-
-	private ImageService imageService;
+	private final static long DAYS_BACK = 30;
+	private final static String DIRECTORY = "D:\\photos";
+//	private final static String DIRECTORY = "D:\\photos\\transfer";
 	
+	private ImageService imageService;
 	private DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd-HHmm");
 
 	@Before
 	public void setUp() throws Exception {
-		imageService = new ImageService("ruro.properties", "D:\\photos\\Transfer");
+		imageService = new ImageService("ruro.properties", DIRECTORY);
 		LOGGER.setLevel(Level.FINE);
         ConsoleHandler handler = new ConsoleHandler();
         handler.setLevel(Level.FINE);
@@ -41,8 +43,8 @@ public class ImageServiceTestAllPhotos {
 	@Test
 	@Ignore
 	public void testListImageFilesToRename() {
-		imageService.createImageFilesMap(20l);
-		imageService.createImageFilesMap(20l);
+		imageService.createImageFilesMap(DAYS_BACK);
+		imageService.createImageFilesMap(DAYS_BACK);
 		Map<FilePattern, Collection<ImageFile>> mapOfImageFileCollection = imageService.getMapOfImageFiles();
 		for (Entry<FilePattern, Collection<ImageFile>> imageFiles : mapOfImageFileCollection.entrySet()) {
 			LOGGER.info("Image Files of pattern " + imageFiles.getKey() + " has " + imageFiles.getValue().size() + " values");
@@ -52,7 +54,7 @@ public class ImageServiceTestAllPhotos {
 	
 	@Test
 	public void testCreateCsvSeperatedStringOfImageFilesandMv() throws IOException {
-		String csvText = imageService.createCsvSeperatedStringOfImageFiles(100l);
+		String csvText = imageService.createCsvSeperatedStringOfImageFiles(DAYS_BACK);
 		File file = new File("csvFileOut_" + dateFormat.format(new Date()) + ".csv");
 		FileWriter fw = new FileWriter(file);
 		
@@ -60,7 +62,7 @@ public class ImageServiceTestAllPhotos {
 	    bw.write(csvText);
 	    bw.close();
 
-		imageService.createMvAndUndoCommands(100l);
+		imageService.createMvAndUndoCommands(DAYS_BACK);
 		String mvCommand = imageService.getMvCommand();
 		file = new File("mvCommand_" + dateFormat.format(new Date()));
 		fw = new FileWriter(file);
