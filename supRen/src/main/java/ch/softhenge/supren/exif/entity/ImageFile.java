@@ -45,8 +45,8 @@ public class ImageFile {
 		this.isKnownCameraModel = false;
 		
 		assert imageFile != null;
-		assert Integer.valueOf(imageNumber) >= 0;
-		assert Integer.valueOf(imageNumber) <= 9999;
+		//assert Integer.valueOf(imageNumber) >= 0;
+		//assert Integer.valueOf(imageNumber) <= 9999;
 		assert filePattern != null: "filePattern must not be null";
 	}
 
