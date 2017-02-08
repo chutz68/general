@@ -65,6 +65,9 @@ public class ExifService {
 			pictureDate = null;
 		} else {
 			pictureDate = exifSubIFDDirectory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+			if (pictureDate == null) {
+				pictureDate = exifIFD0Directory.getDate(ExifIFD0Directory.TAG_DATETIME);
+			}
 		}
 		return new ExifFileInfo(cameraModel, pictureDate);
 	}

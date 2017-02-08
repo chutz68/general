@@ -39,11 +39,11 @@ public class UserPropertyReaderTest {
 				checkPropertyEntry(expect, propertyEntry);
 				break;
 		    case CameraModel:
-		    	expect = 37;
+		    	expect = 38;
 				checkPropertyEntry(expect, propertyEntry);
 				break;
 			case CameraModel4ch:
-				expect = 37;
+				expect = 38;
 				checkPropertyEntry(expect, propertyEntry);
 				break;
 			case OutfilePattern:

@@ -24,9 +24,10 @@ import ch.softhenge.supren.exif.entity.ImageFile;
 public class ImageServiceTestAllPhotos {
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
-	private final static long DAYS_BACK = 90;
-	private final static String DIRECTORY = "D:\\photos\\drohne";
+	private final static long DAYS_BACK = 10;
+	private final static String DIRECTORY = "C:\\photos";
 //	private final static String DIRECTORY = "D:\\photos\\transfer";
+//	private final static String DIRECTORY = "D:\\photos\\2016_09_25MunichOktoberfest";
 	
 	private ImageService imageService;
 	private DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd-HHmm");
@@ -70,26 +71,26 @@ public class ImageServiceTestAllPhotos {
 	    bw.write(mvCommand);
 	    bw.close();
 
-	    String mvUndoCommand = imageService.getMvUndoCommand();
-		file = new File("mvUndoCommand_" + dateFormat.format(new Date()));
-		fw = new FileWriter(file);
-	    bw = new BufferedWriter(fw);
-	    bw.write(mvUndoCommand);
-	    bw.close();
+//	    String mvUndoCommand = imageService.getMvUndoCommand();
+//		file = new File("mvUndoCommand_" + dateFormat.format(new Date()));
+//		fw = new FileWriter(file);
+//	    bw = new BufferedWriter(fw);
+//	    bw.write(mvUndoCommand);
+//	    bw.close();
 
-	    String mvAlreadyDone = imageService.getMvAlreadyDone();
-		file = new File("mvAlreadyDone_" + dateFormat.format(new Date()));
-		fw = new FileWriter(file);
-	    bw = new BufferedWriter(fw);
-	    bw.write(mvAlreadyDone);
-	    bw.close();
-	    
-	    String mvErrorCommand = imageService.getMvError();
-		file = new File("mvErrorCommand_" + dateFormat.format(new Date()));
-		fw = new FileWriter(file);
-	    bw = new BufferedWriter(fw);
-	    bw.write(mvErrorCommand);
-	    bw.close();	
+//	    String mvAlreadyDone = imageService.getMvAlreadyDone();
+//		file = new File("mvAlreadyDone_" + dateFormat.format(new Date()));
+//		fw = new FileWriter(file);
+//	    bw = new BufferedWriter(fw);
+//	    bw.write(mvAlreadyDone);
+//	    bw.close();
+//	    
+//	    String mvErrorCommand = imageService.getMvError();
+//		file = new File("mvErrorCommand_" + dateFormat.format(new Date()));
+//		fw = new FileWriter(file);
+//	    bw = new BufferedWriter(fw);
+//	    bw.write(mvErrorCommand);
+//	    bw.close();	
 	    
 	}
 	
