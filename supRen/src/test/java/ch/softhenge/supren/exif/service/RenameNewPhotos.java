@@ -18,7 +18,7 @@ public class RenameNewPhotos {
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
 	private final static long DAYS_BACK = 30;
-	private final static String[] DIRECTORIES = { "C:\\photos",  "D:\\photos\\transfer" };
+	private final static String[] DIRECTORIES = { "C:\\photos\\transfer",  "D:\\photos\\transfer" };
 	
 	private ImageService imageService;
 	private DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd-HHmm");
@@ -35,24 +35,18 @@ public class RenameNewPhotos {
 	
 	@Test
 	public void testCreateCsvSeperatedStringOfImageFilesandMv() throws IOException {
-		for (String directory : DIRECTORIES) {
-			imageService = new ImageService("ruro.properties", directory);
-			String csvText = imageService.createCsvSeperatedStringOfImageFiles(DAYS_BACK);
-			File file = new File("csvFileOut_" + dateFormat.format(new Date()) + ".csv");
-			FileWriter fw = new FileWriter(file);
-			
-		    BufferedWriter bw = new BufferedWriter(fw);
-		    bw.write(csvText);
-		    bw.close();
+		File file = new File("mvCommand_" + dateFormat.format(new Date()));
+		FileWriter fw = new FileWriter(file);
+	    BufferedWriter bw = new BufferedWriter(fw);
+	    bw = new BufferedWriter(fw);
 
+	    for (String directory : DIRECTORIES) {
+			imageService = new ImageService("ruro.properties", directory);
 			imageService.createMvAndUndoCommands(DAYS_BACK);
 			String mvCommand = imageService.getMvCommand();
-			file = new File("mvCommand_" + dateFormat.format(new Date()));
-			fw = new FileWriter(file);
-		    bw = new BufferedWriter(fw);
-		    bw.write(mvCommand);
-		    bw.close();	
+			bw.write(mvCommand);
 		}
+	    bw.close();	
 	}
 	
 }
