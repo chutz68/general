@@ -17,8 +17,8 @@ import org.junit.Test;
 public class RenameNewPhotos {
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
-	private final static long DAYS_BACK = 30;
-	private final static String[] DIRECTORIES = { "C:\\photos\\transfer",  "D:\\photos\\transfer" };
+	private final static long DAYS_BACK = 1000;
+	private final static String[] DIRECTORIES = { "C:\\photos\\transfer",  "D:\\photos" };
 	
 	private ImageService imageService;
 	private DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd-HHmm");

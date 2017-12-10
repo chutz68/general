@@ -25,7 +25,7 @@ public class ImageServiceTestAllPhotos {
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
 	private final static long DAYS_BACK = 10;
-	private final static String DIRECTORY = "C:\\photos";
+	private final static String DIRECTORY = "D:\\photos\\2017_04NapoliIschia";
 //	private final static String DIRECTORY = "D:\\photos\\transfer";
 //	private final static String DIRECTORY = "D:\\photos\\2016_09_25MunichOktoberfest";
 	
