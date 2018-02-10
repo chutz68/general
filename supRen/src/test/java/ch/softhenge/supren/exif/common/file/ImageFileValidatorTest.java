@@ -29,10 +29,6 @@ public class ImageFileValidatorTest {
 			}
 
 			switch(testFile) {
-			case CR2File: 
-				assertThat(testFile.getFileName(), 3, CoreMatchers.is(indexOfFilePattern));
-				assertEquals(testFile.getFileName(), "0321", imgNum);
-				break;
 			case Ce6dImgFile:
 				assertThat(testFile.getFileName(), indexOfFilePattern, CoreMatchers.is(1));
 				assertEquals(testFile.getFileName(), "0652", imgNum);

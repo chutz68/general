@@ -36,7 +36,6 @@ public class ImageService {
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
 	private final static String UNIX_SEPERATOR = "/";
-	private final static String WIN_SEPERATOR = "\\";
 	
 	private final File baseDir;
 	private final UserPropertyReader userPropertyReader;
@@ -80,15 +79,16 @@ public class ImageService {
 		StringBuilder sbmv = new StringBuilder();
 		StringBuilder sbdone = new StringBuilder();
 		StringBuilder sbundomv = new StringBuilder();
-		StringBuilder sberror = new StringBuilder();
+		StringBuilder sbErrFilepattern = new StringBuilder();
+		StringBuilder sbErrCameraType = new StringBuilder();
 		for (Entry<FilePattern, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
 			for (ImageFile imageFile : imageFilesEntry.getValue()) {
 				if (imageFilesEntry.getKey().equals(FilePattern.UNKNOWN_FILE_PATTERN)) {
-					sberror.append("# ImageFile ").append(imageFile.getFilePath()).append(WIN_SEPERATOR).append(imageFile.getOriginalFileName()).append(" can't be renamed. Filepattern is unknown\n");
+					sbErrFilepattern.append("# ImageFile ").append(imageFile.getFileNameAndPath()).append(" can't be renamed. Filepattern is unknown\n");
 				} else if (imageFile.getFilePattern().getPatternIdx() == 0) {
-					sberror.append("# ImageFile ").append(imageFile.getFilePath()).append(WIN_SEPERATOR).append(imageFile.getOriginalFileName()).append(" can't be renamed. No image number available\n");
+					sbErrFilepattern.append("# ImageFile ").append(imageFile.getFileNameAndPath()).append(" can't be renamed. No image number available\n");
 				} else if (imageFile.getFilePattern() != null && imageFile.getFilePattern().isOutPattern()) {
-					sbdone.append("# ImageFile ").append(imageFile.getFilePath()).append(WIN_SEPERATOR).append(imageFile.getNewFileName()).append(" already has new filename\n");
+					sbdone.append("# ImageFile ").append(imageFile.getFileNameAndPath()).append(" already has new filename\n");
 				} else {
 					enrichImageFileWithExifInfo(imageFile);
 					if (imageFile.isKnownCameraModel()) {
@@ -98,9 +98,9 @@ public class ImageService {
 						sbundomv.append(imageFile.getUnixFilePath()).append(UNIX_SEPERATOR).append(imageFile.getOriginalFileName()).append('"').append("\n");
 					} else {
 						if (imageFile.getExifFileInfo() != null) {
-							sberror.append("# ImageFile ").append(imageFile.getOriginalFileName()).append(" can't be renamed. Unknown Camera type " + imageFile.getExifFileInfo().getCameraModel() + "\n");
+							sbErrCameraType.append("# ImageFile ").append(imageFile.getFileNameAndPath()).append(" can't be renamed. Unknown Camera type " + imageFile.getExifFileInfo().getCameraModel() + "\n");
 						} else {
-							sberror.append("# ImageFile ").append(imageFile.getOriginalFileName()).append(" can't be renamed. Unknown Camera type\n");
+							sbErrCameraType.append("# ImageFile ").append(imageFile.getFileNameAndPath()).append(" can't be renamed. Unknown Camera type\n");
 						}
 					}
 				}
@@ -109,7 +109,8 @@ public class ImageService {
 		this.mvCommand = sbmv.toString();
 		this.mvUndoCommand = sbundomv.toString();
 		this.mvAlreadyDone = sbdone.toString();
-		this.mvError = sberror.toString();
+		this.mvError = sbErrFilepattern.toString();
+		this.mvError += sbErrCameraType.toString();
 	}
 	
 	/**

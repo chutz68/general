@@ -40,11 +40,6 @@ public class TestExif {
 	}
 
 	@Test
-	public void testCanonRawFile() throws ImageProcessingException, IOException {
-		checkFileTags(TestFile.CR2File);
-	}	
-
-	@Test
 	public void testVeryOldJPG() throws ImageProcessingException, IOException {
 		checkFileTags(TestFile.OldImgFile);
 	}	

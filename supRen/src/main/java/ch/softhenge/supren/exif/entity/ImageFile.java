@@ -98,6 +98,11 @@ public class ImageFile {
 		return imageFile.getAbsolutePath().substring(0, imageFile.getAbsolutePath().lastIndexOf(File.separator));
 	}
 	
+	/**Return the path and name of the file*/
+	public String getFileNameAndPath() {
+		return imageFile.getAbsolutePath();
+	}
+	
 	/**
 	 * 
 	 * @return a UNIX / filepath
