@@ -35,7 +35,8 @@ import ch.softhenge.supren.exif.property.UserPropertyReader.PropertyName;
 public class ImageService {
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
-	private final static String SEPERATOR = "/";
+	private final static String UNIX_SEPERATOR = "/";
+	private final static String WIN_SEPERATOR = "\\";
 	
 	private final File baseDir;
 	private final UserPropertyReader userPropertyReader;
@@ -83,18 +84,18 @@ public class ImageService {
 		for (Entry<FilePattern, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
 			for (ImageFile imageFile : imageFilesEntry.getValue()) {
 				if (imageFilesEntry.getKey().equals(FilePattern.UNKNOWN_FILE_PATTERN)) {
-					sberror.append("# ImageFile ").append(imageFile.getOriginalFileName()).append(" can't be renamed. Filepattern is unknown\n");
+					sberror.append("# ImageFile ").append(imageFile.getFilePath()).append(WIN_SEPERATOR).append(imageFile.getOriginalFileName()).append(" can't be renamed. Filepattern is unknown\n");
 				} else if (imageFile.getFilePattern().getPatternIdx() == 0) {
-					sberror.append("# ImageFile ").append(imageFile.getOriginalFileName()).append(" can't be renamed. No image number available\n");
+					sberror.append("# ImageFile ").append(imageFile.getFilePath()).append(WIN_SEPERATOR).append(imageFile.getOriginalFileName()).append(" can't be renamed. No image number available\n");
 				} else if (imageFile.getFilePattern() != null && imageFile.getFilePattern().isOutPattern()) {
-					sbdone.append("# ImageFile ").append(imageFile.getOriginalFileName()).append(" already has new filename\n");
+					sbdone.append("# ImageFile ").append(imageFile.getFilePath()).append(WIN_SEPERATOR).append(imageFile.getNewFileName()).append(" already has new filename\n");
 				} else {
 					enrichImageFileWithExifInfo(imageFile);
 					if (imageFile.isKnownCameraModel()) {
-						sbmv.append("mv ").append('"').append(imageFile.getUnixFilePath()).append(SEPERATOR).append(imageFile.getOriginalFileName()).append('"').append(" ");
-						sbmv.append('"').append(imageFile.getUnixFilePath()).append(SEPERATOR).append(imageFile.getNewFileName()).append('"').append("\n");
-						sbundomv.append("mv ").append('"').append(imageFile.getUnixFilePath()).append(SEPERATOR).append(imageFile.getNewFileName()).append(" ");
-						sbundomv.append(imageFile.getUnixFilePath()).append(SEPERATOR).append(imageFile.getOriginalFileName()).append('"').append("\n");
+						sbmv.append("mv ").append('"').append(imageFile.getUnixFilePath()).append(UNIX_SEPERATOR).append(imageFile.getOriginalFileName()).append('"').append(" ");
+						sbmv.append('"').append(imageFile.getUnixFilePath()).append(UNIX_SEPERATOR).append(imageFile.getNewFileName()).append('"').append("\n");
+						sbundomv.append("mv ").append('"').append(imageFile.getUnixFilePath()).append(UNIX_SEPERATOR).append(imageFile.getNewFileName()).append(" ");
+						sbundomv.append(imageFile.getUnixFilePath()).append(UNIX_SEPERATOR).append(imageFile.getOriginalFileName()).append('"').append("\n");
 					} else {
 						if (imageFile.getExifFileInfo() != null) {
 							sberror.append("# ImageFile ").append(imageFile.getOriginalFileName()).append(" can't be renamed. Unknown Camera type " + imageFile.getExifFileInfo().getCameraModel() + "\n");
@@ -152,7 +153,7 @@ public class ImageService {
 			long currentDateTime = (new Date()).getTime();
 			Collection<File> listAllImageFiles = listAllImageFilesInDir();
 			for (File file : listAllImageFiles) {
-				if (daysback != null && file.lastModified() <= currentDateTime - (daysback * 1000 * 24 * 60 * 60)) {
+				if (daysback != null && daysback > 0 && file.lastModified() <= currentDateTime - (daysback * 1000 * 24 * 60 * 60)) {
 					break;
 				}
 				FilePattern filePattern = imageFileValidator.getFilePattern(file.getName());

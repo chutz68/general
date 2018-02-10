@@ -17,8 +17,9 @@ import org.junit.Test;
 public class RenameNewPhotos {
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
-	private final static long DAYS_BACK = 100;
-	private final static String[] DIRECTORIES = { "C:\\",  "D:\\photos" };
+	private final static long DAYS_BACK = 0;
+	private final static String[] DIRECTORIES = { "D:\\photos" };
+	//private final static String[] DIRECTORIES = { "D:\\photos\\transfer\\iPhoneX" };
 	
 	private ImageService imageService;
 	private DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd-HHmm");
@@ -30,8 +31,6 @@ public class RenameNewPhotos {
         handler.setLevel(Level.FINE);
 		LOGGER.addHandler(handler);
 	}
-
-	
 	
 	@Test
 	public void testCreateCsvSeperatedStringOfImageFilesandMv() throws IOException {
@@ -39,14 +38,22 @@ public class RenameNewPhotos {
 		FileWriter fw = new FileWriter(file);
 	    BufferedWriter bw = new BufferedWriter(fw);
 	    bw = new BufferedWriter(fw);
+	    
+		File fileErr = new File("error_" + dateFormat.format(new Date()));
+		FileWriter fwErr = new FileWriter(fileErr);
+	    BufferedWriter bwErr = new BufferedWriter(fwErr);
+	    bwErr = new BufferedWriter(fwErr);
 
 	    for (String directory : DIRECTORIES) {
 			imageService = new ImageService("ruro.properties", directory);
 			imageService.createMvAndUndoCommands(DAYS_BACK);
 			String mvCommand = imageService.getMvCommand();
 			bw.write(mvCommand);
+			String error = imageService.getMvError();
+			bwErr.write(error);			
 		}
 	    bw.close();	
+	    bwErr.close();	
 	}
 	
 }
