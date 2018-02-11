@@ -34,7 +34,7 @@ public class ImageServiceTestAllPhotos {
 
 	@Before
 	public void setUp() throws Exception {
-		imageService = new ImageService("ruro.properties", DIRECTORY);
+		imageService = new ImageService("ruro.properties", DIRECTORY, false);
 		LOGGER.setLevel(Level.FINE);
         ConsoleHandler handler = new ConsoleHandler();
         handler.setLevel(Level.FINE);

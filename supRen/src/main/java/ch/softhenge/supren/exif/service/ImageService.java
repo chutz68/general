@@ -53,16 +53,20 @@ public class ImageService {
 	private String mvError;
 	/**Already new Filename*/
 	private String mvAlreadyDone;
+	/**also rename files of unknown cameras with the default camera shortname*/
+	private boolean forceRenameUnknownCameras;
 	
 	/**
 	 * Constructor
 	 * 
 	 * @param resourceFileName
 	 * @param baseDirectory
+	 * @param forceRenameUnknownCameras if set true, also rename files of unknown cameras with the default camera shortname 
 	 */
-	public ImageService(String resourceFileName, String baseDirectory) {
+	public ImageService(String resourceFileName, String baseDirectory, boolean forceRenameUnknownCameras) {
 		this.baseDir = new File(baseDirectory);
 		this.userPropertyReader = new UserPropertyReader(resourceFileName);
+		this.forceRenameUnknownCameras = forceRenameUnknownCameras;
 		this.exifService = new ExifService();
 		this.imageFileValidator = new ImageFileValidator(userPropertyReader);
 		Map<Integer, String> outfilePatternGroupMap = userPropertyReader.getPropertyMapOfProperty(PropertyName.OutfilePatternGroup);
@@ -275,6 +279,8 @@ public class ImageService {
 			imageFile.setExifFileInfo(exifFileInfo);
 			imageFile.setCameraModel4ch(cameraModel4ch);
 			if (!cameraModel4ch.equals(imageFileValidator.getUnknownCamera4ch())) {
+				imageFile.setKnownCameraModel(true);
+			} else if (forceRenameUnknownCameras && !imageFile.getFilePattern().isUnknownPattern() && imageFile.getExifFileInfo().getPictureDate() != null) {
 				imageFile.setKnownCameraModel(true);
 			}
 			if (!imageFile.getFilePattern().isUnknownPattern()) {

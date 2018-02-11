@@ -30,7 +30,7 @@ public class ImageServiceTestPhotosFromClassPath {
 	@Before
 	public void setUp() throws Exception {
 		String fileURL = this.getClass().getClassLoader().getResource("imgfiles").getPath();
-		imageService = new ImageService("ruro.properties", fileURL);
+		imageService = new ImageService("ruro.properties", fileURL, false);
 		LOGGER.setLevel(Level.FINE);
         ConsoleHandler handler = new ConsoleHandler();
         handler.setLevel(Level.FINE);

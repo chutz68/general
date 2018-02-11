@@ -45,7 +45,7 @@ public class RenameNewPhotos {
 	    bwErr = new BufferedWriter(fwErr);
 
 	    for (String directory : DIRECTORIES) {
-			imageService = new ImageService("ruro.properties", directory);
+			imageService = new ImageService("ruro.properties", directory, true);
 			imageService.createMvAndUndoCommands(DAYS_BACK);
 			String mvCommand = imageService.getMvCommand();
 			bw.write(mvCommand);
