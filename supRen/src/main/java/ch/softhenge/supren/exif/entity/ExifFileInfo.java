@@ -15,6 +15,8 @@ public class ExifFileInfo {
 
 	/** Picture Date from Exit Tag: ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL **/
 	private final Date pictureDate;
+	
+	private final int rating;
 
 	/**
 	 * Constructor
@@ -22,9 +24,10 @@ public class ExifFileInfo {
 	 * @param cameraModel
 	 * @param pictureDate
 	 */
-	public ExifFileInfo(String cameraModel, Date pictureDate) {
+	public ExifFileInfo(String cameraModel, Date pictureDate, int rating) {
 		this.cameraModel = cameraModel;
 		this.pictureDate = pictureDate;
+		this.rating = rating;
 	}
 
 	public String getCameraModel() {
@@ -35,9 +38,13 @@ public class ExifFileInfo {
 		return pictureDate;
 	}
 	
+	public int getRating() {
+		return rating;
+	}
+
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append(cameraModel).append(";").append(pictureDate);
+		sb.append(cameraModel).append(";").append(pictureDate).append("; Rating: ").append(rating);
 		return sb.toString();
 	}
 
