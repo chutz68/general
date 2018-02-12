@@ -85,6 +85,7 @@ public class ImageService {
 		StringBuilder sbundomv = new StringBuilder();
 		StringBuilder sbErrFilepattern = new StringBuilder();
 		StringBuilder sbErrCameraType = new StringBuilder();
+		Set<String> unknownCameraModels = new HashSet<String>();
 		for (Entry<FilePattern, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
 			for (ImageFile imageFile : imageFilesEntry.getValue()) {
 				if (imageFilesEntry.getKey().equals(FilePattern.UNKNOWN_FILE_PATTERN)) {
@@ -94,7 +95,7 @@ public class ImageService {
 				} else if (imageFile.getFilePattern() != null && imageFile.getFilePattern().isOutPattern()) {
 					sbdone.append("# ImageFile ").append(imageFile.getFileNameAndPath()).append(" already has new filename\n");
 				} else {
-					enrichImageFileWithExifInfo(imageFile);
+					enrichImageFileWithExifInfo(imageFile, unknownCameraModels);
 					if (imageFile.isKnownCameraModel()) {
 						sbmv.append("mv ").append('"').append(imageFile.getUnixFilePath()).append(UNIX_SEPERATOR).append(imageFile.getOriginalFileName()).append('"').append(" ");
 						sbmv.append('"').append(imageFile.getUnixFilePath()).append(UNIX_SEPERATOR).append(imageFile.getNewFileName()).append('"').append("\n");
@@ -113,7 +114,11 @@ public class ImageService {
 		this.mvCommand = sbmv.toString();
 		this.mvUndoCommand = sbundomv.toString();
 		this.mvAlreadyDone = sbdone.toString();
-		this.mvError = sbErrFilepattern.toString();
+		this.mvError = new String();
+		for (String unknownCamera : unknownCameraModels) {
+			mvError = mvError + unknownCamera + "\n";
+		}
+		this.mvError += sbErrFilepattern.toString();
 		this.mvError += sbErrCameraType.toString();
 	}
 	
@@ -135,9 +140,10 @@ public class ImageService {
 	 * @param append
 	 */
 	public void enrichImageFilesWithExifInfo(Appendable append) {
+		Set<String> unknownCameraModels = new HashSet<String>();
 		for (Entry<FilePattern, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
 			for (ImageFile imageFile : imageFilesEntry.getValue()) {
-				enrichImageFileWithExifInfo(imageFile);
+				enrichImageFileWithExifInfo(imageFile, unknownCameraModels);
 				try {
 					append.append(imageFile.toString()).append("\n");
 				} catch (IOException e) {
@@ -271,7 +277,7 @@ public class ImageService {
 		return fileExtSet.toArray(new String[fileExtSet.size()]);
 	}
 	
-	private void enrichImageFileWithExifInfo(ImageFile imageFile) {
+	private void enrichImageFileWithExifInfo(ImageFile imageFile, Set<String> unknownCameraModels) {
 		if (imageFile.getExifFileInfo() == null) {
 			ExifFileInfo exifFileInfo = exifService.getExifInfoFromImageFile(imageFile.getImageFile());
 			if (exifFileInfo == null) return;
@@ -280,8 +286,11 @@ public class ImageService {
 			imageFile.setCameraModel4ch(cameraModel4ch);
 			if (!cameraModel4ch.equals(imageFileValidator.getUnknownCamera4ch())) {
 				imageFile.setKnownCameraModel(true);
-			} else if (forceRenameUnknownCameras && !imageFile.getFilePattern().isUnknownPattern() && imageFile.getExifFileInfo().getPictureDate() != null) {
-				imageFile.setKnownCameraModel(true);
+			} else if (!imageFile.getFilePattern().isUnknownPattern() && imageFile.getExifFileInfo().getPictureDate() != null) {
+				unknownCameraModels.add(imageFile.getExifFileInfo().getCameraModel());
+				if (forceRenameUnknownCameras) {
+					imageFile.setKnownCameraModel(true);
+				}
 			}
 			if (!imageFile.getFilePattern().isUnknownPattern()) {
 				String outFileName = generateOutFileName(imageFile.getExifFileInfo().getPictureDate(), cameraModel4ch, imageFile.getImageNumber());
