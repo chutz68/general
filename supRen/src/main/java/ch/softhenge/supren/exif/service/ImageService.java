@@ -60,7 +60,7 @@ public class ImageService {
 	 * Constructor
 	 * 
 	 * @param resourceFileName
-	 * @param baseDirectory
+	 * @param baseDirectory with full path
 	 * @param forceRenameUnknownCameras if set true, also rename files of unknown cameras with the default camera shortname 
 	 */
 	public ImageService(String resourceFileName, String baseDirectory, boolean forceRenameUnknownCameras) {
@@ -130,6 +130,35 @@ public class ImageService {
 		StringBuilder sbCsv = new StringBuilder();
 		enrichImageFilesWithExifInfo(sbCsv);
 		return (sbCsv.toString());
+	}
+	
+	/**
+	 * 
+	 * @param bestOfFolderName: full file name
+	 */
+	public String copyBestOfToNewFolder(String bestOfFolderName) {
+		String bestofFolderUnix = bestOfFolderName.replace("\\", UNIX_SEPERATOR);
+		StringBuilder sbcp = new StringBuilder();
+		String lastSubFolderName = "";
+		createImageFilesMap(0L);
+		StringBuilder sbCsv = new StringBuilder();
+		enrichImageFilesWithExifInfo(sbCsv);
+		for (Entry<FilePattern, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
+			for (ImageFile imageFile : imageFilesEntry.getValue()) {
+				LOGGER.info(imageFile.getFileNameAndPath() + " rating: " + imageFile.getExifFileInfo().getRating());
+				if (imageFile.getExifFileInfo() != null && imageFile.getExifFileInfo().getRating() > 1) {
+					String currentSubfolder = bestofFolderUnix + UNIX_SEPERATOR + imageFile.getFileNameAndPath().substring(baseDir.getAbsolutePath().length()).split("\\\\")[1];
+					if (!lastSubFolderName.equals(currentSubfolder)) {
+						sbcp.append("mkdir -p ").append('"').append(currentSubfolder).append('"').append("\n");
+						lastSubFolderName = currentSubfolder;
+					}
+					sbcp.append("cp -p ").append('"').append(imageFile.getUnixFilePath()).append(UNIX_SEPERATOR).append(imageFile.getOriginalFileName()).append('"')
+					.append(" ").append('"').append(currentSubfolder).append(UNIX_SEPERATOR).append('"').append("\n");
+					LOGGER.info(imageFile.getFileNameAndPath() + " was copied");
+				}
+			}
+		}
+		return sbcp.toString();
 	}
 
 

@@ -27,6 +27,12 @@ public class ImageFile {
 	/** The new Filename **/
 	private String newFileName;
 	
+	/*** C# code:
+	 * PropertyItem propItem = er.bmp.GetPropertyItem(18246);
+     * String rating = BitConverter.ToInt16(propItem.Value, 0).ToString();
+	 */
+	
+	
 	/**
 	 * Constructor
 	 * 

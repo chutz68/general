@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
-public class RenameNewPhotos {
+public class RenameNewPhotosTest {
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
 	private final static long DAYS_BACK = 0;
@@ -57,6 +57,18 @@ public class RenameNewPhotos {
 		}
 	    bw.close();	
 	    bwErr.close();	
+	}
+	
+	@Test
+	public void testCopyBestOfToNewFolderPhotos() throws IOException {
+		File file = new File("bestOfCopy_" + dateFormat.format(new Date()));
+		FileWriter fw = new FileWriter(file);
+		BufferedWriter bw = new BufferedWriter(fw);
+	    bw = new BufferedWriter(fw);
+		imageService = new ImageService("ruro.properties", "D:\\phototest", false);
+		String copyBestOfToNewFolder = imageService.copyBestOfToNewFolder("D:\\phototestBO");
+		bw.write(copyBestOfToNewFolder);
+		bw.close();
 	}
 	
 }
