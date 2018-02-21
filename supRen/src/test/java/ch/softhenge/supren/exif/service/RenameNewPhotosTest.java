@@ -7,12 +7,20 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.stream.ImageInputStream;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 public class RenameNewPhotosTest {
 
