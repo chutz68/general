@@ -79,7 +79,7 @@ public class ImageService {
 	 * Create necessary mv and undo commands of the files to be renamed
 	 */
 	public void createMvAndUndoCommands(Long daysback) {
-		createImageFilesMap(daysback);
+		createImageFilesMap(daysback, null);
 		StringBuilder sbmv = new StringBuilder();
 		StringBuilder sbdone = new StringBuilder();
 		StringBuilder sbundomv = new StringBuilder();
@@ -126,13 +126,14 @@ public class ImageService {
 	 * Create csv Files of image Files
 	 */
 	public String createCsvSeperatedStringOfImageFiles(Long daysback) {
-		createImageFilesMap(daysback);
+		createImageFilesMap(daysback, null);
 		StringBuilder sbCsv = new StringBuilder();
 		enrichImageFilesWithExifInfo(sbCsv);
 		return (sbCsv.toString());
 	}
 	
 	/**
+	 * Copy image files that have a rating > 1 from a folder and it's subfolder (recursive) to a bestOfFolder
 	 * 
 	 * @param bestOfFolderName: full file name
 	 */
@@ -140,7 +141,7 @@ public class ImageService {
 		String bestofFolderUnix = bestOfFolderName.replace("\\", UNIX_SEPERATOR);
 		StringBuilder sbcp = new StringBuilder();
 		String lastSubFolderName = "";
-		createImageFilesMap(0L);
+		createImageFilesMap(0L, null);
 		StringBuilder sbCsv = new StringBuilder();
 		enrichImageFilesWithExifInfo(sbCsv);
 		for (Entry<FilePattern, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
@@ -155,6 +156,26 @@ public class ImageService {
 					sbcp.append("cp -p ").append('"').append(imageFile.getUnixFilePath()).append(UNIX_SEPERATOR).append(imageFile.getOriginalFileName()).append('"')
 					.append(" ").append('"').append(currentSubfolder).append(UNIX_SEPERATOR).append('"').append("\n");
 					LOGGER.info(imageFile.getFileNameAndPath() + " was copied");
+				}
+			}
+		}
+		return sbcp.toString();
+	}
+
+	/**
+	 * Find Files in BestOfFolder that have no rating
+	 * 
+	 * @return
+	 */
+	public String findBestOfPhotosWithoutRating() {
+		StringBuilder sbcp = new StringBuilder();
+		createImageFilesMap(0L, "BestOf");
+		StringBuilder sbCsv = new StringBuilder();
+		enrichImageFilesWithExifInfo(sbCsv);
+		for (Entry<FilePattern, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
+			for (ImageFile imageFile : imageFilesEntry.getValue()) {
+				if (imageFile.getExifFileInfo().getRating() == 0) {
+					sbcp.append(imageFile.getUnixFilePath()).append(UNIX_SEPERATOR).append(imageFile.getOriginalFileName()).append("\n");
 				}
 			}
 		}
@@ -185,16 +206,20 @@ public class ImageService {
 	/**
 	 * Create a list of Image Files that are candidates to rename and save it
 	 * as a map and get it using getMapOfImageFiles.
-	 * daysback: Number of days to check for picture files. In case of null, check all files
+	 * @param daysback: Number of days to check for picture files. In case of null or 0, check all files
+	 * @param subFolderNameOnly: This subfoldername must exist. If null, check all subfolders
 	 */
-	public void createImageFilesMap(Long daysback) {
+	public void createImageFilesMap(Long daysback, String subFolderNameOnly) {
 		if (getListOfImageFiles().isEmpty()) {
 			int cnt = 0;
 			long currentDateTime = (new Date()).getTime();
 			Collection<File> listAllImageFiles = listAllImageFilesInDir();
 			for (File file : listAllImageFiles) {
 				if (daysback != null && daysback > 0 && file.lastModified() <= currentDateTime - (daysback * 1000 * 24 * 60 * 60)) {
-					break;
+					continue;
+				}
+				if (subFolderNameOnly != null && !file.getPath().toUpperCase().contains(subFolderNameOnly.toUpperCase())) {
+					continue;
 				}
 				FilePattern filePattern = imageFileValidator.getFilePattern(file.getName());
 				ImageFile imageFile;

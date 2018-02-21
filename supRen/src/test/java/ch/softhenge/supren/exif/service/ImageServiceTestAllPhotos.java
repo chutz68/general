@@ -44,8 +44,8 @@ public class ImageServiceTestAllPhotos {
 	@Test
 	@Ignore
 	public void testListImageFilesToRename() {
-		imageService.createImageFilesMap(DAYS_BACK);
-		imageService.createImageFilesMap(DAYS_BACK);
+		imageService.createImageFilesMap(DAYS_BACK, null);
+		imageService.createImageFilesMap(DAYS_BACK, null);
 		Map<FilePattern, Collection<ImageFile>> mapOfImageFileCollection = imageService.getMapOfImageFiles();
 		for (Entry<FilePattern, Collection<ImageFile>> imageFiles : mapOfImageFileCollection.entrySet()) {
 			LOGGER.info("Image Files of pattern " + imageFiles.getKey() + " has " + imageFiles.getValue().size() + " values");

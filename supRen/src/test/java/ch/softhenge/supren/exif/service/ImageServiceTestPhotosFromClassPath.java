@@ -39,10 +39,10 @@ public class ImageServiceTestPhotosFromClassPath {
 
 	@Test
 	public void testListImageFilesToRename() {
-		imageService.createImageFilesMap(null);
+		imageService.createImageFilesMap(null, null);
 		imageService.resetImageFileList();
-		imageService.createImageFilesMap(null);
-		imageService.createImageFilesMap(null);
+		imageService.createImageFilesMap(null, null);
+		imageService.createImageFilesMap(null, null);
 		Map<FilePattern, Collection<ImageFile>> mapOfImageFiles = imageService.getMapOfImageFiles();
 		imageService.enrichImageFilesWithExifInfo(new StringBuffer());
 		int cntAll = 0;

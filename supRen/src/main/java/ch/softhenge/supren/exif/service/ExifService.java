@@ -13,12 +13,9 @@ import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.properties.XMPProperty;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
-import com.drew.imaging.mp4.Mp4MetadataReader;
-import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
-import com.drew.metadata.file.FileSystemMetadataReader;
 import com.drew.metadata.xmp.XmpDirectory;
 
 /**
