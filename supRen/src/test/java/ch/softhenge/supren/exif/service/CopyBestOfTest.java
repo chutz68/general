@@ -30,15 +30,14 @@ public class CopyBestOfTest {
 		LOGGER.addHandler(handler);
 	}
 	
-	
 	@Test
 	public void testCopyBestOfToNewFolderPhotos() throws IOException {
 		File file = new File("bestOfCopy_" + dateFormat.format(new Date()));
 		FileWriter fw = new FileWriter(file);
 		BufferedWriter bw = new BufferedWriter(fw);
 	    bw = new BufferedWriter(fw);
-		imageService = new ImageService("ruro.properties", "D:\\phototest", false);
-		String copyBestOfToNewFolder = imageService.copyBestOfToNewFolder("D:\\phototestBO");
+		imageService = new ImageService("ruro.properties", "D:\\photos", false);
+		String copyBestOfToNewFolder = imageService.copyBestOfToNewFolder("D:\\photosBestOf\\original");
 		bw.write(copyBestOfToNewFolder);
 		bw.close();
 	}

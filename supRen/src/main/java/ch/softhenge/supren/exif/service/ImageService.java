@@ -55,6 +55,9 @@ public class ImageService {
 	private String mvAlreadyDone;
 	/**also rename files of unknown cameras with the default camera shortname*/
 	private boolean forceRenameUnknownCameras;
+	/**The total number of files*/
+	private int totalFilesCnt;
+	private int totalFilesFilteredOut;
 	
 	/**
 	 * Constructor
@@ -141,7 +144,7 @@ public class ImageService {
 		String bestofFolderUnix = bestOfFolderName.replace("\\", UNIX_SEPERATOR);
 		StringBuilder sbcp = new StringBuilder();
 		String lastSubFolderName = "";
-		createImageFilesMap(0L, null);
+		createImageFilesMap(0L, "\\20");
 		StringBuilder sbCsv = new StringBuilder();
 		enrichImageFilesWithExifInfo(sbCsv);
 		for (Entry<FilePattern, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
@@ -169,7 +172,7 @@ public class ImageService {
 	 */
 	public String findBestOfPhotosWithoutRating() {
 		StringBuilder sbcp = new StringBuilder();
-		createImageFilesMap(0L, "BestOf");
+		createImageFilesMap(0L, "\\BestOf\\");
 		StringBuilder sbCsv = new StringBuilder();
 		enrichImageFilesWithExifInfo(sbCsv);
 		for (Entry<FilePattern, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
@@ -191,6 +194,7 @@ public class ImageService {
 	 */
 	public void enrichImageFilesWithExifInfo(Appendable append) {
 		Set<String> unknownCameraModels = new HashSet<String>();
+		int cnt = 0;
 		for (Entry<FilePattern, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
 			for (ImageFile imageFile : imageFilesEntry.getValue()) {
 				enrichImageFileWithExifInfo(imageFile, unknownCameraModels);
@@ -200,6 +204,10 @@ public class ImageService {
 					e.printStackTrace();
 				}
 			}
+			if (cnt++ % 10 == 0) {
+				LOGGER.info("Got exif info of " + cnt + " fotos of a total of " + totalFilesCnt);
+			}
+			cnt++;
 		}
 	}
 	
@@ -211,14 +219,18 @@ public class ImageService {
 	 */
 	public void createImageFilesMap(Long daysback, String subFolderNameOnly) {
 		if (getListOfImageFiles().isEmpty()) {
-			int cnt = 0;
+			this.totalFilesCnt = 0;
+			this.totalFilesFilteredOut = 0;
 			long currentDateTime = (new Date()).getTime();
 			Collection<File> listAllImageFiles = listAllImageFilesInDir();
 			for (File file : listAllImageFiles) {
 				if (daysback != null && daysback > 0 && file.lastModified() <= currentDateTime - (daysback * 1000 * 24 * 60 * 60)) {
+					totalFilesFilteredOut++;
 					continue;
 				}
-				if (subFolderNameOnly != null && !file.getPath().toUpperCase().contains(subFolderNameOnly.toUpperCase())) {
+				String filePathOnly = file.getPath().substring(0, file.getPath().lastIndexOf(File.separator)+1);
+				if (subFolderNameOnly != null && !filePathOnly.toUpperCase().contains(subFolderNameOnly.toUpperCase())) {
+					totalFilesFilteredOut++;
 					continue;
 				}
 				FilePattern filePattern = imageFileValidator.getFilePattern(file.getName());
@@ -236,9 +248,10 @@ public class ImageService {
 					imageFile = new ImageFile(file, null, false, filePattern);
 				}
 				this.mapOfImageFiles.get(filePattern).add(imageFile);
-				cnt++;
+				totalFilesCnt++;
 			}
-			LOGGER.fine("Anz Files filtered: " + cnt);
+			LOGGER.fine("Anz Files used: " + totalFilesCnt);
+			LOGGER.fine("Anz Files filtered out: " + totalFilesFilteredOut);
 		}
 	}
 
