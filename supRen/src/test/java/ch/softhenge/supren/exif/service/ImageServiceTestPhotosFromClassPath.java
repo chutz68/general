@@ -30,7 +30,7 @@ public class ImageServiceTestPhotosFromClassPath {
 	@Before
 	public void setUp() throws Exception {
 		String fileURL = this.getClass().getClassLoader().getResource("imgfiles").getPath();
-		imageService = new ImageService("ruro.properties", fileURL, false);
+		imageService = new ImageService("ruro.properties", fileURL, false, new ExifServiceMetaDataExtractor());
 		LOGGER.setLevel(Level.FINE);
         ConsoleHandler handler = new ConsoleHandler();
         handler.setLevel(Level.FINE);
@@ -64,10 +64,10 @@ public class ImageServiceTestPhotosFromClassPath {
 				}
 			}
 		}
-		assertThat("Count all is wrong", cntAll, CoreMatchers.is(18));
-		assertThat("Count Known is wrong", cntKnown, CoreMatchers.is(16));
-		assertThat("Count Unknown Pattern is wrong", cntUnkP, CoreMatchers.is(2));
-		assertThat("Count Outfile Pettern is wrong", cntOutP, CoreMatchers.is(1));
+		assertThat("Count all is wrong", cntAll, CoreMatchers.is(6));
+		assertThat("Count Known is wrong", cntKnown, CoreMatchers.is(4));
+		assertThat("Count Unknown Pattern is wrong", cntUnkP, CoreMatchers.is(1));
+		assertThat("Count Outfile Pattern is wrong", cntOutP, CoreMatchers.is(3));
 	}
 
 	@Test
@@ -103,9 +103,8 @@ public class ImageServiceTestPhotosFromClassPath {
 		imageService.createMvAndUndoCommands(null);
 		String mvError = imageService.getMvError();
 		int countMatches = org.apache.commons.lang3.StringUtils.countMatches(mvError, "# ImageFile ");
-		assertThat("Number of error mv commands", countMatches, CoreMatchers.is(3));
+		assertThat("Number of error mv commands", countMatches, CoreMatchers.is(2));
 		assertThat(mvError, CoreMatchers.containsString("C6ZH_019.JPG"));
-		assertThat(mvError, CoreMatchers.containsString("EOS600D_20121208_0583.jpg"));
 		assertThat(mvError, CoreMatchers.containsString("Img_0001.jpg"));
 		assertThat(mvError, CoreMatchers.containsString("Filepattern is unknown"));
 		assertThat(mvError, CoreMatchers.containsString("Unknown Camera type"));
@@ -128,14 +127,8 @@ public class ImageServiceTestPhotosFromClassPath {
 	
 	private void checkMvCommand(String mvCommand) {
 		int countMatches = org.apache.commons.lang3.StringUtils.countMatches(mvCommand, "mv ");
-		assertThat("Number of mv commands", countMatches, CoreMatchers.is(14));
-		assertThat(mvCommand, CoreMatchers.containsString("P9090055.JPG"));
-		assertThat(mvCommand, CoreMatchers.containsString("20010909_O210_0055.JPG"));
-		assertThat(mvCommand, CoreMatchers.containsString("DSC01939.ARW"));
-		assertThat(mvCommand, CoreMatchers.containsString("20140717_S100_1939.ARW"));
-		assertThat(mvCommand, CoreMatchers.containsString("IMG_1426.jpg"));
-		assertThat(mvCommand, CoreMatchers.containsString("20121208_E600_1426.jpg"));
-		assertThat(mvCommand, CoreMatchers.containsString("WP_20140704_13_42_24_Pro_spez.jpg"));
+		assertThat("Number of mv commands", countMatches, CoreMatchers.is(1));
+		assertThat(mvCommand, CoreMatchers.containsString("IMG_0652.jpg"));
 	}
 	
 }

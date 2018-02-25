@@ -37,7 +37,7 @@ public class FindBestOfWithoutRatingTest {
 		FileWriter fw = new FileWriter(file);
 		BufferedWriter bw = new BufferedWriter(fw);
 	    bw = new BufferedWriter(fw);
-		imageService = new ImageService("ruro.properties", "D:\\photos", false);
+		imageService = new ImageService("ruro.properties", "D:\\photos\\2017_Luna", false, new ExifServiceMetaDataExtractor());
 		String bestOfWithoutRating = imageService.findBestOfPhotosWithoutRating();
 		bw.write(bestOfWithoutRating);
 		bw.close();

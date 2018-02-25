@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import ch.softhenge.supren.exif.common.TestFile;
 import ch.softhenge.supren.exif.entity.ExifFileInfo;
-import ch.softhenge.supren.exif.service.ExifService;
+import ch.softhenge.supren.exif.service.ExifServiceMetaDataExtractor;
 
 public class ExifServiceTest {
 
@@ -19,7 +19,7 @@ public class ExifServiceTest {
 
 	@Before
 	public void setUp() throws Exception {
-		exifService = new ExifService();
+		exifService = new ExifServiceMetaDataExtractor();
 	}
 
 	@Test

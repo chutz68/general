@@ -65,12 +65,13 @@ public class ImageService {
 	 * @param resourceFileName
 	 * @param baseDirectory with full path
 	 * @param forceRenameUnknownCameras if set true, also rename files of unknown cameras with the default camera shortname 
+	 * @param ExifServic. The Exif Service to be used
 	 */
-	public ImageService(String resourceFileName, String baseDirectory, boolean forceRenameUnknownCameras) {
+	public ImageService(String resourceFileName, String baseDirectory, boolean forceRenameUnknownCameras, ExifService exifService) {
 		this.baseDir = new File(baseDirectory);
 		this.userPropertyReader = new UserPropertyReader(resourceFileName);
 		this.forceRenameUnknownCameras = forceRenameUnknownCameras;
-		this.exifService = new ExifService();
+		this.exifService = exifService;
 		this.imageFileValidator = new ImageFileValidator(userPropertyReader);
 		Map<Integer, String> outfilePatternGroupMap = userPropertyReader.getPropertyMapOfProperty(PropertyName.OutfilePatternGroup);
 		this.outFilenameGenerator = new OutFilenameGenerator(outfilePatternGroupMap);
@@ -139,29 +140,37 @@ public class ImageService {
 	 * Copy image files that have a rating > 1 from a folder and it's subfolder (recursive) to a bestOfFolder
 	 * 
 	 * @param bestOfFolderName: full file name
+	 * @param subfolderFilter: The subfolder to be filtered
 	 */
-	public String copyBestOfToNewFolder(String bestOfFolderName) {
+	public String copyBestOfToNewFolder(String bestOfFolderName, String subfolderFilter) {
 		String bestofFolderUnix = bestOfFolderName.replace("\\", UNIX_SEPERATOR);
 		StringBuilder sbcp = new StringBuilder();
 		String lastSubFolderName = "";
-		createImageFilesMap(0L, "\\20");
+		resetImageFileList();
+		createImageFilesMap(0L, subfolderFilter);
 		StringBuilder sbCsv = new StringBuilder();
 		enrichImageFilesWithExifInfo(sbCsv);
+		int cntAllFilesToCheck = 0;
+		int cntAllRatedFiles = 0;
 		for (Entry<FilePattern, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
-			for (ImageFile imageFile : imageFilesEntry.getValue()) {
-				LOGGER.info(imageFile.getFileNameAndPath() + " rating: " + imageFile.getExifFileInfo().getRating());
-				if (imageFile.getExifFileInfo() != null && imageFile.getExifFileInfo().getRating() > 1) {
-					String currentSubfolder = bestofFolderUnix + UNIX_SEPERATOR + imageFile.getFileNameAndPath().substring(baseDir.getAbsolutePath().length()).split("\\\\")[1];
-					if (!lastSubFolderName.equals(currentSubfolder)) {
-						sbcp.append("mkdir -p ").append('"').append(currentSubfolder).append('"').append("\n");
-						lastSubFolderName = currentSubfolder;
+			if (imageFilesEntry != null) {
+				for (ImageFile imageFile : imageFilesEntry.getValue()) {
+					cntAllFilesToCheck++;
+					if (imageFile.getExifFileInfo() != null && imageFile.getExifFileInfo().getRating() > 1) {
+						String currentSubfolder = bestofFolderUnix + UNIX_SEPERATOR + imageFile.getFileNameAndPath().substring(baseDir.getAbsolutePath().length()).split("\\\\")[1];
+						if (!lastSubFolderName.equals(currentSubfolder)) {
+							sbcp.append("mkdir -p ").append('"').append(currentSubfolder).append('"').append("\n");
+							lastSubFolderName = currentSubfolder;
+						}
+						sbcp.append("cp -p ").append('"').append(imageFile.getUnixFilePath()).append(UNIX_SEPERATOR).append(imageFile.getOriginalFileName()).append('"')
+						.append(" ").append('"').append(currentSubfolder).append(UNIX_SEPERATOR).append('"').append("\n");
+						LOGGER.info(imageFile.getFileNameAndPath() + " was copied");
+						cntAllRatedFiles++;
 					}
-					sbcp.append("cp -p ").append('"').append(imageFile.getUnixFilePath()).append(UNIX_SEPERATOR).append(imageFile.getOriginalFileName()).append('"')
-					.append(" ").append('"').append(currentSubfolder).append(UNIX_SEPERATOR).append('"').append("\n");
-					LOGGER.info(imageFile.getFileNameAndPath() + " was copied");
-				}
+				}	
 			}
 		}
+		LOGGER.info("Copy " + cntAllRatedFiles + " files to bestof folder from " + cntAllFilesToCheck + " checked");
 		return sbcp.toString();
 	}
 
@@ -194,20 +203,22 @@ public class ImageService {
 	 */
 	public void enrichImageFilesWithExifInfo(Appendable append) {
 		Set<String> unknownCameraModels = new HashSet<String>();
-		int cnt = 0;
+		int cnt = -1;
+		int totalImages = getListOfImageFiles().size();
 		for (Entry<FilePattern, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
 			for (ImageFile imageFile : imageFilesEntry.getValue()) {
 				enrichImageFileWithExifInfo(imageFile, unknownCameraModels);
 				try {
 					append.append(imageFile.toString()).append("\n");
+					//LOGGER.info("Got exif info for image File " + imageFile);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+				if (++cnt % 100 == 0) {
+					LOGGER.info("Got exif info of " + cnt + " fotos of a total of " + totalImages);
+				}
+				cnt++;				
 			}
-			if (cnt++ % 10 == 0) {
-				LOGGER.info("Got exif info of " + cnt + " fotos of a total of " + totalFilesCnt);
-			}
-			cnt++;
 		}
 	}
 	

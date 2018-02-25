@@ -36,8 +36,8 @@ public class CopyBestOfTest {
 		FileWriter fw = new FileWriter(file);
 		BufferedWriter bw = new BufferedWriter(fw);
 	    bw = new BufferedWriter(fw);
-		imageService = new ImageService("ruro.properties", "D:\\photos", false);
-		String copyBestOfToNewFolder = imageService.copyBestOfToNewFolder("D:\\photosBestOf\\original");
+		imageService = new ImageService("ruro.properties", "D:\\photos\\2017_Luna", false, new ExifServiceMetaDataExtractor());
+		String copyBestOfToNewFolder = imageService.copyBestOfToNewFolder("D:\\photosBestOf\\original", "\\20");
 		bw.write(copyBestOfToNewFolder);
 		bw.close();
 	}
