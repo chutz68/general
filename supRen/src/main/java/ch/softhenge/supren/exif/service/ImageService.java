@@ -164,7 +164,7 @@ public class ImageService {
 						}
 						sbcp.append("cp -p ").append('"').append(imageFile.getUnixFilePath()).append(UNIX_SEPERATOR).append(imageFile.getOriginalFileName()).append('"')
 						.append(" ").append('"').append(currentSubfolder).append(UNIX_SEPERATOR).append('"').append("\n");
-						LOGGER.info(imageFile.getFileNameAndPath() + " was copied");
+						//LOGGER.info(imageFile.getFileNameAndPath() + " was copied");
 						cntAllRatedFiles++;
 					}
 				}	

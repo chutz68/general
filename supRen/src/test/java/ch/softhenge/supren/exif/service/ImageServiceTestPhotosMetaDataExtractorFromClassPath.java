@@ -21,7 +21,7 @@ import ch.softhenge.supren.exif.entity.ImageFile;
  * @author werni
  *
  */
-public class ImageServiceTestPhotosFromClassPath {
+public class ImageServiceTestPhotosMetaDataExtractorFromClassPath {
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
 

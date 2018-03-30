@@ -2,11 +2,16 @@ package ch.softhenge.supren.exif.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.logging.Logger;
 
+import org.apache.sanselan.ImageInfo;
+import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.Sanselan;
 import org.apache.sanselan.common.IImageMetadata;
 import org.apache.sanselan.formats.jpeg.JpegImageMetadata;
@@ -15,15 +20,6 @@ import org.apache.sanselan.formats.tiff.constants.ExifTagConstants;
 
 import ch.softhenge.supren.exif.entity.ExifFileInfo;
 
-import com.adobe.xmp.XMPException;
-import com.adobe.xmp.XMPMeta;
-import com.adobe.xmp.properties.XMPProperty;
-import com.drew.imaging.ImageMetadataReader;
-import com.drew.imaging.ImageProcessingException;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.exif.ExifIFD0Directory;
-import com.drew.metadata.exif.ExifSubIFDDirectory;
-import com.drew.metadata.xmp.XmpDirectory;
 
 /**
  * This service can read Exif Information out of an image File using the apache
@@ -45,34 +41,60 @@ public class ExifServiceApacheImaging implements ExifService {
 	 */
 	@Override
 	public ExifFileInfo getExifInfoFromImageFile(File imageFile) {
-		TiffField make = null;
-		HashMap<String, String> metaDataMap = new HashMap<>();
-
 		Integer rating = 0;
 		String cameraModel = null;
 		Date pictureDate = null;
 
 		try {
 			IImageMetadata metadata = Sanselan.getMetadata(imageFile);
-			if (metadata != null) {
-				for (Object x : metadata.getItems()) {
-					String xString = x.toString();
-					String[] arr = xString.split(": ");
-					// make, model, time, location, Software
-					if (arr[0].contains("Software") || arr[0].toUpperCase().equals("MODEL")
-							|| arr[0].toUpperCase().equals("MAKE") || arr[0].toUpperCase().contains("CREATE DATE")) {
-						metaDataMap.put(arr[0], arr[1]);
-					}
+			
+			if (metadata instanceof JpegImageMetadata) {
+				TiffField modelField = ((JpegImageMetadata) metadata).findEXIFValue(ExifTagConstants.EXIF_TAG_MODEL);
+				if (modelField != null) {
+					cameraModel = modelField.getStringValue();
 				}
+				TiffField ratingField = ((JpegImageMetadata) metadata).findEXIFValue(ExifTagConstants.EXIF_TAG_RATING);
+				if (ratingField != null) {
+					rating = ratingField.getIntValue();
+				}
+				
+				TiffField modifiedField = ((JpegImageMetadata) metadata).findEXIFValue(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
+				if (modifiedField == null) {
+					modifiedField = ((JpegImageMetadata) metadata).findEXIFValue(ExifTagConstants.EXIF_TAG_MODIFY_DATE);
+				}
+				if (modifiedField != null) {
+					String stringValue = modifiedField.getStringValue().trim();
 
-				if (metadata instanceof JpegImageMetadata) {
-					make = ((JpegImageMetadata) metadata).findEXIFValue(ExifTagConstants.EXIF_TAG_MAKE);
-					((JpegImageMetadata) metadata).dump();
+					String dateString = stringValue.split(" ")[0];
+					String timeString = stringValue.split(" ")[1];
+
+					String[] dateParts = dateString.split(":");
+					String[] timeParts = timeString.split(":");
+
+					LocalDate localDate = LocalDate.of(
+							Integer.valueOf(dateParts[0]),
+							Integer.valueOf(dateParts[1]),
+							Integer.valueOf(dateParts[2]));
+					LocalTime localTime = LocalTime.of(
+							Integer.valueOf(timeParts[0]),
+							Integer.valueOf(timeParts[1]),
+							Integer.valueOf(timeParts[2]));
+
+					 LocalDateTime ldt = LocalDateTime.of(localDate, localTime);
+					 ZonedDateTime zdt = ldt.atZone(ZoneId.systemDefault());
+					 pictureDate = Date.from(zdt.toInstant());
 				}
+				//((JpegImageMetadata) metadata).dump();				
 			}
+			ImageInfo imageInfo = Sanselan.getImageInfo(imageFile);
+			imageInfo.dump();
+			
 		}
-		catch (Exception e) {
-
+		catch (ImageReadException e) {
+			LOGGER.warning("Image " + imageFile.getName() + " causes an ImageReadException");
+		}
+		catch (IOException e) {
+			LOGGER.warning("Image " + imageFile.getName() + " causes an IO Exception");
 		}
 
 		return new ExifFileInfo(cameraModel, pictureDate, rating);

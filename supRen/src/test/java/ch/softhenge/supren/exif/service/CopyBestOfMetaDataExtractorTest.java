@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
@@ -15,7 +16,7 @@ import java.util.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
-public class CopyBestOfTest {
+public class CopyBestOfMetaDataExtractorTest {
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
 	
@@ -36,9 +37,11 @@ public class CopyBestOfTest {
 		FileWriter fw = new FileWriter(file);
 		BufferedWriter bw = new BufferedWriter(fw);
 	    bw = new BufferedWriter(fw);
-		imageService = new ImageService("ruro.properties", "D:\\photos\\2017_Luna", false, new ExifServiceMetaDataExtractor());
+	    bw.write("export LANG=de_CH\n");
+	    bw.write("#Start " + LocalDateTime.now() + "\n");
+		imageService = new ImageService("ruro.properties", "D:\\photos", false, new ExifServiceMetaDataExtractor());
 		String copyBestOfToNewFolder = imageService.copyBestOfToNewFolder("D:\\photosBestOf\\original", "\\20");
-		bw.write(copyBestOfToNewFolder);
+		bw.write(copyBestOfToNewFolder + "#End " + LocalDateTime.now());
 		bw.close();
 	}
 	
