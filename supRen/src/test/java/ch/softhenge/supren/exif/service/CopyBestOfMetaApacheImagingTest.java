@@ -37,7 +37,7 @@ public class CopyBestOfMetaApacheImagingTest {
 		BufferedWriter bw = new BufferedWriter(fw);
 	    bw = new BufferedWriter(fw);
 		imageService = new ImageService("ruro.properties", "D:\\photos", false, new ExifServiceApacheImaging());
-		String copyBestOfToNewFolder = imageService.copyBestOfToNewFolder("D:\\photosBestOf\\original", "\\20");
+		String copyBestOfToNewFolder = imageService.copyBestOfToNewFolder("D:\\photosBestOf\\original", "\\2018");
 		bw.write(copyBestOfToNewFolder);
 		bw.close();
 	}
