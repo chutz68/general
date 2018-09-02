@@ -110,6 +110,10 @@ public class ExifServiceMetaDataExtractor implements ExifService {
 		}
 		Metadata meta;
 		try {
+			//FIXME A ugly hack to prevet a crash of the ImageMetadataReader with the file MVI_0239.MP4
+            if (fileName.toUpperCase().endsWith("MP4")) {
+            	return null;
+            }
 			meta = ImageMetadataReader.readMetadata(imageFile);
 		} catch (ImageProcessingException e) {
 			LOGGER.warning("Image " + fileName + " causes an ImageProcessingException");

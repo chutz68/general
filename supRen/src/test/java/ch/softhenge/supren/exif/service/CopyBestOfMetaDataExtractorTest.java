@@ -32,7 +32,6 @@ public class CopyBestOfMetaDataExtractorTest {
 		LOGGER.addHandler(handler);
 	}
 	
-	@Ignore
 	@Test
 	public void testCopyBestOfToNewFolderPhotos() throws IOException {
 		File file = new File("bestOfCopy_" + dateFormat.format(new Date()));
