@@ -40,7 +40,7 @@ public class ExifServiceApacheImaging implements ExifService {
 	 * java.io.File)
 	 */
 	@Override
-	public ExifFileInfo getExifInfoFromImageFile(File imageFile) {
+	public ExifFileInfo getExifInfoFromImageFile(File imageFile, String fileName) {
 		Integer rating = 0;
 		String cameraModel = null;
 		Date pictureDate = null;

@@ -27,7 +27,7 @@ public class ExifServiceTest {
 		TestFile ce6dimgfile = TestFile.Ce6dImgFile;
 		
 		File file = ce6dimgfile.getFile();
-		ExifFileInfo exifFileInfo = exifService.getExifInfoFromImageFile(file);
+		ExifFileInfo exifFileInfo = exifService.getExifInfoFromImageFile(file, ce6dimgfile.getFileName());
 		
 		Format fileFormat = new SimpleDateFormat("YYYYMMDD");
 		String pictureDateFormat = fileFormat.format(exifFileInfo.getPictureDate());
@@ -42,7 +42,7 @@ public class ExifServiceTest {
 		TestFile oldImageFile = TestFile.OldImgFile;
 		
 		File file = oldImageFile.getFile();
-		ExifFileInfo exifFileInfo = exifService.getExifInfoFromImageFile(file);
+		ExifFileInfo exifFileInfo = exifService.getExifInfoFromImageFile(file, oldImageFile.getFileName());
 		assertNull(exifFileInfo.getPictureDate());
 		assertNull(exifFileInfo.getCameraModel());
 	}

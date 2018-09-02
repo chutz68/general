@@ -32,10 +32,10 @@ public class ExifServiceMetaDataExtractor implements ExifService {
 	 * @see ch.softhenge.supren.exif.service.ExifService#getExifInfoFromImageFile(java.io.File)
 	 */
 	@Override
-	public ExifFileInfo getExifInfoFromImageFile(File imageFile) {
-		Metadata meta = getExifMetadata(imageFile);
+	public ExifFileInfo getExifInfoFromImageFile(File imageFile, String fileName) {
+		Metadata meta = getExifMetadata(imageFile, fileName);
 		if (meta == null) {
-			LOGGER.warning(imageFile + " has no readable metadata");
+			LOGGER.warning(fileName + " has no readable metadata");
 			return null;
 		}
 		
@@ -103,19 +103,19 @@ public class ExifServiceMetaDataExtractor implements ExifService {
 	 * @param imageFile
 	 * @return
 	 */
-	private Metadata getExifMetadata(File imageFile) {
+	private Metadata getExifMetadata(File imageFile, String fileName) {
 		if (imageFile == null) {
-			LOGGER.warning("Image File is null");
+			LOGGER.warning(fileName + " Image File is null");
 			return null;
 		}
 		Metadata meta;
 		try {
 			meta = ImageMetadataReader.readMetadata(imageFile);
 		} catch (ImageProcessingException e) {
-			LOGGER.warning("Image " + imageFile.getName() + " causes an ImageProcessingException");
+			LOGGER.warning("Image " + fileName + " causes an ImageProcessingException");
 			return null;
 		} catch (IOException e) {
-			LOGGER.warning("Image " + imageFile.getName() + " causes an IOException");
+			LOGGER.warning("Image " + fileName + " causes an IOException");
 			return null;
 		}
 		return meta;

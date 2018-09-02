@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class CopyBestOfMetaApacheImagingTest {
@@ -30,6 +31,7 @@ public class CopyBestOfMetaApacheImagingTest {
 		LOGGER.addHandler(handler);
 	}
 	
+	@Ignore
 	@Test
 	public void testCopyBestOfToNewFolderPhotos() throws IOException {
 		File file = new File("bestOfCopy_" + dateFormat.format(new Date()));

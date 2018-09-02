@@ -13,8 +13,9 @@ public interface ExifService {
 	 * Be careful when using this service with many files. The Exif Tag reading is pretty slow.
 	 * 
 	 * @param imageFile
+	 * @param fileName the name and path of the file
 	 * @return
 	 */
-	ExifFileInfo getExifInfoFromImageFile(File imageFile);
+	ExifFileInfo getExifInfoFromImageFile(File imageFile, String fileName);
 
 }

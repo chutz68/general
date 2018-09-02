@@ -357,7 +357,7 @@ public class ImageService {
 	
 	private void enrichImageFileWithExifInfo(ImageFile imageFile, Set<String> unknownCameraModels) {
 		if (imageFile.getExifFileInfo() == null) {
-			ExifFileInfo exifFileInfo = exifService.getExifInfoFromImageFile(imageFile.getImageFile());
+			ExifFileInfo exifFileInfo = exifService.getExifInfoFromImageFile(imageFile.getImageFile(), imageFile.getFileNameAndPath());
 			if (exifFileInfo == null) return;
 			String cameraModel4ch = imageFileValidator.getCameraModel4chForCameraModel(exifFileInfo.getCameraModel());
 			imageFile.setExifFileInfo(exifFileInfo);

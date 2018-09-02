@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class CopyBestOfMetaDataExtractorTest {
@@ -31,6 +32,7 @@ public class CopyBestOfMetaDataExtractorTest {
 		LOGGER.addHandler(handler);
 	}
 	
+	@Ignore
 	@Test
 	public void testCopyBestOfToNewFolderPhotos() throws IOException {
 		File file = new File("bestOfCopy_" + dateFormat.format(new Date()));
@@ -40,7 +42,7 @@ public class CopyBestOfMetaDataExtractorTest {
 	    bw.write("export LANG=de_CH\n");
 	    bw.write("#Start " + LocalDateTime.now() + "\n");
 		imageService = new ImageService("ruro.properties", "D:\\photos", false, new ExifServiceMetaDataExtractor());
-		String copyBestOfToNewFolder = imageService.copyBestOfToNewFolder("D:\\photosBestOf\\original", "\\2018_07");
+		String copyBestOfToNewFolder = imageService.copyBestOfToNewFolder("D:\\photosBestOf\\original", "");
 		bw.write(copyBestOfToNewFolder + "#End " + LocalDateTime.now());
 		bw.close();
 	}
