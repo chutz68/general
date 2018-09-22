@@ -31,11 +31,11 @@ public class UserPropertyReaderTest {
 				assertThat(propertyEntry.getValue().size(), is(1));
 				break;
 			case InfilePattern:
-				expect = 36;
+				expect = 37;
 				checkPropertyEntry(expect, propertyEntry);
 				break;
 			case InfilePatternImgNumGroup:
-				expect = 36;
+				expect = 37;
 				checkPropertyEntry(expect, propertyEntry);
 				break;
 		    case CameraModel:
