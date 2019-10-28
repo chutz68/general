@@ -8,9 +8,9 @@ import java.util.logging.Logger;
 
 import ch.softhenge.supren.exif.entity.ExifFileInfo;
 
-import com.adobe.xmp.XMPException;
-import com.adobe.xmp.XMPMeta;
-import com.adobe.xmp.properties.XMPProperty;
+import com.adobe.internal.xmp.XMPException;
+import com.adobe.internal.xmp.XMPMeta;
+import com.adobe.internal.xmp.properties.XMPProperty;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;

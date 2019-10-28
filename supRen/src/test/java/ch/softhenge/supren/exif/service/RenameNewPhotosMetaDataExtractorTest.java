@@ -19,12 +19,12 @@ public class RenameNewPhotosMetaDataExtractorTest {
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
 	private final static long DAYS_BACK = 0;
 	private final static boolean FORCE_UNKNOWN_IMAGES = false;
-	private final static String[] DIRECTORIES = { "D:\\" };
-	//private final static String[] DIRECTORIES = { "D:\\photos", "C:\\Users", "C:\\photos" };
-	//private final static String[] DIRECTORIES = { "C:\\photos" };
-	//private final static String[] DIRECTORIES = { "C:\\Users", "C:\\photos" };
 	//private final static String[] DIRECTORIES = { "F:\\" };
+	//private final static String[] DIRECTORIES = { "D:\\photosbest", "C:\\Users", "E:\\photos" };
+	//private final static String[] DIRECTORIES = { "C:\\Users\\Werni" };
+	private final static String[] DIRECTORIES = { "F:\\" };
 	//private final static String[] DIRECTORIES = { "D:\\photosexport" };
+	//private final static String[] DIRECTORIES = { "D:\\photosrawimport" };
 	
 	private ImageService imageService;
 	private DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd-HHmm");
