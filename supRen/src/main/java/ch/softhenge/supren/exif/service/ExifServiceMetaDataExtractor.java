@@ -71,11 +71,11 @@ public class ExifServiceMetaDataExtractor implements ExifService {
 			}			
 		}
 		
-		String cameraModel;
-		if (exifIFD0Directory == null) {
-			cameraModel = null;
-		} else {
+		String cameraModel = null;
+		String cameraMake = null;
+		if (exifIFD0Directory != null) {
 			cameraModel = exifIFD0Directory.getString(ExifIFD0Directory.TAG_MODEL);
+			cameraMake = exifIFD0Directory.getString(ExifIFD0Directory.TAG_MAKE);
 		}
 		
 		ExifSubIFDDirectory exifSubIFDDirectory = null;
@@ -86,11 +86,34 @@ public class ExifServiceMetaDataExtractor implements ExifService {
 				break;
 			}			
 		}
-		Date pictureDate;
-		if (exifSubIFDDirectory == null) {
-			pictureDate = null;
-		} else {
+		Date pictureDate = null;
+		String aperture = null;
+		String exposureTime;
+		Integer exposureProgram;
+		String exposureMode;
+		String exposureBias;
+		String fNumber;
+		String iso;
+		String exifVersion;
+		String exposureFNumber;
+		String lensModel;
+		String lensSpecification;
+		String focalLength;
+		String shutterSpeed;
+		if (exifSubIFDDirectory != null) {
 			pictureDate = exifSubIFDDirectory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+			exposureTime = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_EXPOSURE_TIME);
+			exposureProgram = exifSubIFDDirectory.getInteger(ExifSubIFDDirectory.TAG_EXPOSURE_PROGRAM);
+			exposureMode = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_EXPOSURE_MODE);
+			exposureBias = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_EXPOSURE_BIAS);
+			exposureFNumber = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_FNUMBER);
+			iso = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_ISO_SPEED);
+			exifVersion = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_EXIF_VERSION);
+			aperture = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_APERTURE);
+			lensModel = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_LENS_MODEL);
+			lensSpecification = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_LENS_SPECIFICATION);
+			focalLength = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_FOCAL_LENGTH);
+			shutterSpeed = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_SHUTTER_SPEED);
 			if (pictureDate == null) {
 				pictureDate = exifIFD0Directory.getDate(ExifIFD0Directory.TAG_DATETIME);
 			}
@@ -113,6 +136,7 @@ public class ExifServiceMetaDataExtractor implements ExifService {
 		try {
 			//FIXME A ugly hack to prevet a crash of the ImageMetadataReader with the file MVI_0239.MP4
             if (fileName.toUpperCase().endsWith("MP4")) {
+    			LOGGER.warning(fileName + " MP4 Files are not handled, skippe file");
             	return null;
             }
 			meta = ImageMetadataReader.readMetadata(imageFile);

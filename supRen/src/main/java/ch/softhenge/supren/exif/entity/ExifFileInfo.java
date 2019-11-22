@@ -17,6 +17,9 @@ public class ExifFileInfo {
 	private final Date pictureDate;
 	
 	private final int rating;
+	
+
+	
 
 	/**
 	 * Constructor

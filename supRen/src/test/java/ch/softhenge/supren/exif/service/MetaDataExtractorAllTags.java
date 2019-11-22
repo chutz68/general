@@ -1,10 +1,5 @@
 package ch.softhenge.supren.exif.service;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
-import java.text.Format;
-import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
 
 import org.junit.Before;
@@ -31,10 +26,10 @@ public class MetaDataExtractorAllTags {
 
 	@Test
 	public void testListAllTags() {
-		
 		for (Directory directory : metadata.getDirectories()) {
 		    for (Tag tag : directory.getTags()) {
-		    	LOGGER.info(tag.toString());
+		    	LOGGER.info("Tag Type " + tag.getTagType() + ", Tag Name: " + tag.getTagName() + ", Tag Value: " + tag.getDescription());
+		    	//System.out.println(tag.getTagName().replaceAll(" ", "") + "(" + tag.getTagType() + "),");
 		    }
 		}
 	}
