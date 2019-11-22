@@ -16,7 +16,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class CopyBestOfMetaApacheImagingTest {
+public class CopyBestOfMetaApacheSalselanTest {
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
 	
@@ -32,14 +32,14 @@ public class CopyBestOfMetaApacheImagingTest {
 	}
 	
 	@Ignore
-	@Test
+	@Test // Takes 34 s as per 22.11.2019 for E:\Photos
 	public void testCopyBestOfToNewFolderPhotos() throws IOException {
 		File file = new File("bestOfCopy_" + dateFormat.format(new Date()));
 		FileWriter fw = new FileWriter(file);
 		BufferedWriter bw = new BufferedWriter(fw);
 	    bw = new BufferedWriter(fw);
-		imageService = new ImageService("ruro.properties", "D:\\photos", false, new ExifServiceApacheImaging());
-		String copyBestOfToNewFolder = imageService.copyBestOfToNewFolder("D:\\photosBestOf\\original", "\\2018");
+		imageService = new ImageService("ruro.properties", "E:\\photos", false, new ExifServiceApacheSanselan());
+		String copyBestOfToNewFolder = imageService.copyBestOfToNewFolder("D:\\photosbest", "\\2019");
 		bw.write(copyBestOfToNewFolder);
 		bw.close();
 	}

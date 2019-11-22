@@ -10,14 +10,13 @@ import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.logging.Logger;
 
-import org.apache.commons.imaging.ImageReadException;
-import org.apache.commons.imaging.Imaging;
-import org.apache.commons.imaging.common.ImageMetadata;
-import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata;
-import org.apache.commons.imaging.formats.tiff.TiffField;
-import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants;
-import org.apache.commons.imaging.formats.tiff.constants.GpsTagConstants;
-import org.apache.commons.imaging.formats.tiff.constants.TiffTagConstants;
+import org.apache.sanselan.ImageInfo;
+import org.apache.sanselan.ImageReadException;
+import org.apache.sanselan.Sanselan;
+import org.apache.sanselan.common.IImageMetadata;
+import org.apache.sanselan.formats.jpeg.JpegImageMetadata;
+import org.apache.sanselan.formats.tiff.TiffField;
+import org.apache.sanselan.formats.tiff.constants.ExifTagConstants;
 
 import ch.softhenge.supren.exif.entity.ExifFileInfo;
 
@@ -29,7 +28,7 @@ import ch.softhenge.supren.exif.entity.ExifFileInfo;
  * @author werni
  *
  */
-public class ExifServiceApacheImaging implements ExifService {
+public class ExifServiceApacheSanselan implements ExifService {
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
@@ -47,24 +46,22 @@ public class ExifServiceApacheImaging implements ExifService {
 		Date pictureDate = null;
 
 		try {
-			ImageMetadata metadata = Imaging.getMetadata(imageFile);
+			IImageMetadata metadata = Sanselan.getMetadata(imageFile);
 			
 			if (metadata instanceof JpegImageMetadata) {
-	            final JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
-	            TiffField modelField = jpegMetadata.findEXIFValueWithExactMatch(ExifTagConstants.EXIF_TAG_MODEL_2);
+				TiffField modelField = ((JpegImageMetadata) metadata).findEXIFValue(ExifTagConstants.EXIF_TAG_MODEL);
 				if (modelField != null) {
 					cameraModel = modelField.getStringValue();
 				}
-	            //TiffField ratingField = jpegMetadata.findEXIFValueWithExactMatch(ExifTagConstants.EXIF_TAG_RATING);
-				//TiffField ratingField = ((JpegImageMetadata) metadata).findEXIFValue(ExifTagConstants.EXIF_TAG_RATING);
-				//if (ratingField != null) {
-				//	rating = ratingField.getIntValue();
-				//}
+				TiffField ratingField = ((JpegImageMetadata) metadata).findEXIFValue(ExifTagConstants.EXIF_TAG_RATING);
+				if (ratingField != null) {
+					rating = ratingField.getIntValue();
+				}
 				
-	            TiffField modifiedField = jpegMetadata.findEXIFValueWithExactMatch(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
-				//if (modifiedField == null) {
-				//	modifiedField = ((JpegImageMetadata) metadata).findEXIFValue(ExifTagConstants.EXIF_TAG_MODIFY_DATE);
-				//}
+				TiffField modifiedField = ((JpegImageMetadata) metadata).findEXIFValue(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
+				if (modifiedField == null) {
+					modifiedField = ((JpegImageMetadata) metadata).findEXIFValue(ExifTagConstants.EXIF_TAG_MODIFY_DATE);
+				}
 				if (modifiedField != null) {
 					String stringValue = modifiedField.getStringValue().trim();
 
@@ -89,13 +86,18 @@ public class ExifServiceApacheImaging implements ExifService {
 				}
 				//((JpegImageMetadata) metadata).dump();				
 			}
+			//ImageInfo imageInfo = Sanselan.getImageInfo(imageFile);
+			//imageInfo.dump();
 			
 		}
 		catch (ImageReadException e) {
-			LOGGER.warning("Image " + imageFile.getName() + " causes an ImageReadException");
+			LOGGER.warning("Image " + imageFile.getName() + " causes an ImageReadException " + e.getMessage());
 		}
 		catch (IOException e) {
-			LOGGER.warning("Image " + imageFile.getName() + " causes an IO Exception");
+			LOGGER.warning("Image " + imageFile.getName() + " causes an IO Exception " + e.getMessage());
+		}
+		catch (NumberFormatException e) {
+			LOGGER.warning("Image " + imageFile.getName() + " causes an NumberFormatException " + e.getMessage());			
 		}
 
 		return new ExifFileInfo(cameraModel, pictureDate, rating);

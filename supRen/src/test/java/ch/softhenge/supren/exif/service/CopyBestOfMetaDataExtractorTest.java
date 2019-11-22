@@ -31,7 +31,7 @@ public class CopyBestOfMetaDataExtractorTest {
 		LOGGER.addHandler(handler);
 	}
 	
-	@Test
+	@Test // Takes 14.8 s as per 22.11.2019 for E:\Photos
 	public void testCopyBestOfToNewFolderPhotos() throws IOException {
 		File file = new File("bestOfCopy_" + dateFormat.format(new Date()));
 		FileWriter fw = new FileWriter(file);

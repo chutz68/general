@@ -21,7 +21,7 @@ import ch.softhenge.supren.exif.entity.ImageFile;
  * @author werni
  *
  */
-public class ImageServiceTestPhotosApacheImagingFromClassPath {
+public class ImageServiceTestPhotosApacheSanselanFromClassPath {
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
 
@@ -30,7 +30,7 @@ public class ImageServiceTestPhotosApacheImagingFromClassPath {
 	@Before
 	public void setUp() throws Exception {
 		String fileURL = this.getClass().getClassLoader().getResource("imgfiles").getPath();
-		imageService = new ImageService("ruro.properties", fileURL, false, new ExifServiceApacheImaging());
+		imageService = new ImageService("ruro.properties", fileURL, false, new ExifServiceApacheSanselan());
 		LOGGER.setLevel(Level.FINE);
         ConsoleHandler handler = new ConsoleHandler();
         handler.setLevel(Level.FINE);

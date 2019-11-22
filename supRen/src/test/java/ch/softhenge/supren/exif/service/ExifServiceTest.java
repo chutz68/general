@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.logging.Logger;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +18,9 @@ public class ExifServiceTest {
 
 	private ExifService exifService;
 
+	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
+
+	
 	@Before
 	public void setUp() throws Exception {
 		exifService = new ExifServiceMetaDataExtractor();
@@ -33,6 +37,8 @@ public class ExifServiceTest {
 		String pictureDateFormat = fileFormat.format(exifFileInfo.getPictureDate());
 		String pictureExpFormat = fileFormat.format(ce6dimgfile.getExifDate().getTime());
 
+		LOGGER.info(exifFileInfo.toString());
+		
 		assertEquals(pictureExpFormat, pictureDateFormat);
 		assertEquals("Canon EOS 6D", exifFileInfo.getCameraModel());
 	}
