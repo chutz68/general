@@ -53,7 +53,8 @@ public class ExifServiceMetaDataExtractor implements ExifService {
 					}
 					break;
 				} catch (XMPException e) {
-					e.printStackTrace();
+					LOGGER.warning(fileName + " causes an XMPException " + e.getMessage());
+					break;
 				}
 			}
 		}
