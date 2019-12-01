@@ -68,6 +68,12 @@ public enum MetaDataExtractorTags {
 		this.tagType = tagType;
 	}
 
+	public int getTagType() {
+		return tagType;
+	}
+	
+	
+	
 	public static Map<Integer, String> getAllExtractorTags() {
 		Map<Integer, String> allTags = new HashMap<>();
 		for (MetaDataExtractorTags curTag : MetaDataExtractorTags.values()) {

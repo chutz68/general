@@ -22,7 +22,7 @@ public class RenameNewPhotosMetaDataExtractorTest {
 	//private final static String[] DIRECTORIES = { "F:\\" };
 	//private final static String[] DIRECTORIES = { "D:\\photosbest", "C:\\Users", "E:\\photos" };
 	//private final static String[] DIRECTORIES = { "C:\\Users\\Werni" };
-	private final static String[] DIRECTORIES = { "F:\\" };
+	private final static String[] DIRECTORIES = { "I:\\" };
 	//private final static String[] DIRECTORIES = { "D:\\photosexport" };
 	//private final static String[] DIRECTORIES = { "D:\\photosrawimport" };
 	

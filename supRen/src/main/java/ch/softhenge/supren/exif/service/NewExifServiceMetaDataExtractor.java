@@ -2,6 +2,7 @@ package ch.softhenge.supren.exif.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -32,10 +33,27 @@ public class NewExifServiceMetaDataExtractor implements ExifService {
 			return null;
 		}
 		Map<Integer, String> allExtractorTags = MetaDataExtractorTags.getAllExtractorTags();
+		Date pictureDate = null;
+		String aperture = null;
+		String exposureTime;
+		Integer exposureProgram;
+		String exposureMode;
+		String exposureBias;
+		String fNumber;
+		String iso;
+		String exifVersion;
+		String exposureFNumber;
+		String lensModel;
+		String lensSpecification;
+		String focalLength;
+		String shutterSpeed;
 		for (Directory directory : metadata.getDirectories()) {
 		    for (Tag tag : directory.getTags()) {
 		    	if (allExtractorTags.containsKey(tag.getTagType())) {
 		    		allExtractorTags.put(tag.getTagType(), tag.getDescription());
+		    		if (MetaDataExtractorTags.DateTimeOriginal.getTagType() == tag.getTagType()) {
+		    			tag.toString();
+		    		}
 		    	}
 		    }
 		}
