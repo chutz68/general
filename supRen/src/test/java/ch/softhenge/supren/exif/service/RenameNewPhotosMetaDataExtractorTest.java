@@ -1,5 +1,8 @@
 package ch.softhenge.supren.exif.service;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -11,18 +14,16 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.junit.Before;
-import org.junit.Test;
-
 public class RenameNewPhotosMetaDataExtractorTest {
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
 	private final static long DAYS_BACK = 0;
 	private final static boolean FORCE_UNKNOWN_IMAGES = false;
-	//private final static String[] DIRECTORIES = { "E:\\" };
+	//private final static String[] DIRECTORIES = { "I:\\" };
 	//private final static String[] DIRECTORIES = { "D:\\photosbest", "C:\\Users", "E:\\photos" };
+	private final static String[] DIRECTORIES = { "D:\\photos" };
 	//private final static String[] DIRECTORIES = { "C:\\Users\\Werni" };
-	private final static String[] DIRECTORIES = { "F:\\" };
+	//private final static String[] DIRECTORIES = { "F:\\" };
 	//private final static String[] DIRECTORIES = { "D:\\temp\\rosalbaHandy" };
 	//private final static String[] DIRECTORIES = { "D:\\photosrawimport" };
 	

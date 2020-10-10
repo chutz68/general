@@ -1,22 +1,20 @@
 package ch.softhenge.supren.exif.property;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import ch.softhenge.supren.exif.property.UserPropertyReader.PropertyName;
+import org.hamcrest.number.OrderingComparison;
+import org.junit.Test;
 
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.xml.bind.ValidationException;
-
-import org.hamcrest.number.OrderingComparison;
-import org.junit.Test;
-
-import ch.softhenge.supren.exif.property.UserPropertyReader.PropertyName;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 public class UserPropertyReaderTest {
 
 	@Test
-	public void testUserPropertyReaderRuro() throws ValidationException {
+	public void testUserPropertyReaderRuro() throws Exception, Exception {
 		UserPropertyReader ur = new UserPropertyReader("ruro.properties");
 		Map<PropertyName, Map<Integer, String>> propertyMap = ur.getMapOfPropertyMap();
 
@@ -39,11 +37,11 @@ public class UserPropertyReaderTest {
 				checkPropertyEntry(expect, propertyEntry);
 				break;
 		    case CameraModel:
-		    	expect = 57;
+		    	expect = 58;
 				checkPropertyEntry(expect, propertyEntry);
 				break;
 			case CameraModel4ch:
-				expect = 57;
+				expect = 58;
 				checkPropertyEntry(expect, propertyEntry);
 				break;
 			case OutfilePattern:
@@ -65,7 +63,7 @@ public class UserPropertyReaderTest {
 				assertThat(propertyEntry.getValue().size(), is(1));
 				break;
 			default:
-				throw new ValidationException("Unhandled property: " + propertyEntry.getKey());
+				throw new Exception("Unhandled property: " + propertyEntry.getKey());
 			}
 		}
 	}

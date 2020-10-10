@@ -1,5 +1,8 @@
 package ch.softhenge.supren.exif.service;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -11,10 +14,6 @@ import java.util.Date;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-
-import org.junit.Before;
-import org.junit.Test;
 
 public class CopyBestOfMetaDataExtractorTest {
 
@@ -39,8 +38,8 @@ public class CopyBestOfMetaDataExtractorTest {
 	    bw = new BufferedWriter(fw);
 	    bw.write("export LANG=de_CH\n");
 	    bw.write("#Start " + LocalDateTime.now() + "\n");
-		imageService = new ImageService("ruro.properties", "E:\\photos", false, new ExifServiceMetaDataExtractor());
-		String copyBestOfToNewFolder = imageService.copyBestOfToNewFolder("D:\\photosbest", "2019");
+		imageService = new ImageService("ruro.properties", "D:\\photos", false, new ExifServiceMetaDataExtractor());
+		String copyBestOfToNewFolder = imageService.copyBestOfToNewFolder("C:\\photosbest", "2020_10");
 		bw.write(copyBestOfToNewFolder + "#End " + LocalDateTime.now());
 		bw.close();
 	}
