@@ -1,16 +1,6 @@
 package ch.softhenge.supren.exif.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.logging.Logger;
-
-import org.apache.sanselan.ImageInfo;
+import ch.softhenge.supren.exif.entity.ExifFileInfo;
 import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.Sanselan;
 import org.apache.sanselan.common.IImageMetadata;
@@ -18,7 +8,11 @@ import org.apache.sanselan.formats.jpeg.JpegImageMetadata;
 import org.apache.sanselan.formats.tiff.TiffField;
 import org.apache.sanselan.formats.tiff.constants.ExifTagConstants;
 
-import ch.softhenge.supren.exif.entity.ExifFileInfo;
+import java.io.File;
+import java.io.IOException;
+import java.time.*;
+import java.util.Date;
+import java.util.logging.Logger;
 
 
 /**
@@ -100,7 +94,7 @@ public class ExifServiceApacheSanselan implements ExifService {
 			LOGGER.warning("Image " + imageFile.getName() + " causes an NumberFormatException " + e.getMessage());			
 		}
 
-		return new ExifFileInfo(cameraModel, pictureDate, rating);
+		return new ExifFileInfo(null, cameraModel, pictureDate, rating, null, null, null, null, null, null, null);
 	}
 
 }

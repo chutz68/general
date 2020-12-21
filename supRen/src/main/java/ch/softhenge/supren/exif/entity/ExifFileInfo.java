@@ -10,6 +10,8 @@ import java.util.Date;
  */
 public class ExifFileInfo {
 
+	private final String cameraMake;
+
 	/** Camera Model from Exif Tag: ExifIFD0Directory.TAG_MODEL **/
 	private final String cameraModel;
 
@@ -17,20 +19,41 @@ public class ExifFileInfo {
 	private final Date pictureDate;
 	
 	private final int rating;
-	
 
-	
+	private final String exposerTime;
+
+	private final Integer exposureProgram;
+
+	private final String exposerFNumber;
+
+	private final String iso;
+
+	private final String lensModel;
+
+	private final String lensFocalLength;
+
+    private final String lensSpecification;
+
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param cameraModel
 	 * @param pictureDate
 	 */
-	public ExifFileInfo(String cameraModel, Date pictureDate, int rating) {
+	public ExifFileInfo(String cameraMake, String cameraModel, Date pictureDate, int rating, String exposerTime, Integer exposureProgram,
+						String exposerFNumber, String iso, String lensModel, String lensFocalLength, String lensSpecification) {
+		this.cameraMake = cameraMake;
 		this.cameraModel = cameraModel;
 		this.pictureDate = pictureDate;
 		this.rating = rating;
+		this.exposerTime = exposerTime;
+		this.exposureProgram = exposureProgram;
+		this.exposerFNumber = exposerFNumber;
+		this.iso = iso;
+		this.lensModel = lensModel;
+		this.lensFocalLength = lensFocalLength;
+		this.lensSpecification = lensSpecification;
 	}
 
 	public String getCameraModel() {
@@ -45,10 +68,48 @@ public class ExifFileInfo {
 		return rating;
 	}
 
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		sb.append(cameraModel).append(";").append(pictureDate).append("; Rating: ").append(rating);
-		return sb.toString();
+	public String getExposerTime() {
+		return exposerTime;
 	}
 
+	public Integer getExposureProgram() {
+		return exposureProgram;
+	}
+
+	public String getExposerFNumber() {
+		return exposerFNumber;
+	}
+
+	public String getIso() {
+		return iso;
+	}
+
+	public String getLensModel() {
+		return lensModel;
+	}
+
+	public String getLensFocalLength() {
+		return lensFocalLength;
+	}
+
+	public String getLensSpecification() {
+		return lensSpecification;
+	}
+
+	@Override
+	public String toString() {
+		return "ExifFileInfo{" +
+				"cameraMake='" + cameraMake + '\'' +
+				", cameraModel='" + cameraModel + '\'' +
+				", pictureDate=" + pictureDate +
+				", rating=" + rating +
+				", exposerTime='" + exposerTime + '\'' +
+				", exposureProgram=" + exposureProgram +
+				", exposerFNumber='" + exposerFNumber + '\'' +
+				", iso='" + iso + '\'' +
+				", lensModel='" + lensModel + '\'' +
+				", lensFocalLength='" + lensFocalLength + '\'' +
+				", lensSpecification='" + lensSpecification + '\'' +
+				'}';
+	}
 }

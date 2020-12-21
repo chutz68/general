@@ -1,23 +1,5 @@
 package ch.softhenge.supren.exif.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.comparator.LastModifiedFileComparator;
-
 import ch.softhenge.supren.exif.entity.ExifFileInfo;
 import ch.softhenge.supren.exif.entity.FilePattern;
 import ch.softhenge.supren.exif.entity.ImageFile;
@@ -25,6 +7,14 @@ import ch.softhenge.supren.exif.file.ImageFileValidator;
 import ch.softhenge.supren.exif.file.OutFilenameGenerator;
 import ch.softhenge.supren.exif.property.UserPropertyReader;
 import ch.softhenge.supren.exif.property.UserPropertyReader.PropertyName;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.comparator.LastModifiedFileComparator;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 /**
  * Image Service is able to handle image filenames and compare them against patterns.
@@ -65,7 +55,7 @@ public class ImageService {
 	 * @param resourceFileName
 	 * @param baseDirectory with full path
 	 * @param forceRenameUnknownCameras if set true, also rename files of unknown cameras with the default camera shortname 
-	 * @param ExifServic. The Exif Service to be used
+	 * @param exifService The Exif Service to be used
 	 */
 	public ImageService(String resourceFileName, String baseDirectory, boolean forceRenameUnknownCameras, ExifService exifService) {
 		this.baseDir = new File(baseDirectory);

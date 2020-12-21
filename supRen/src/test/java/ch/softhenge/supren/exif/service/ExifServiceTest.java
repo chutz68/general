@@ -1,20 +1,19 @@
 package ch.softhenge.supren.exif.service;
 
-import static org.junit.Assert.*;
+import ch.softhenge.supren.exif.common.TestFile;
+import ch.softhenge.supren.exif.entity.ExifFileInfo;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
-import ch.softhenge.supren.exif.common.TestFile;
-import ch.softhenge.supren.exif.entity.ExifFileInfo;
-import ch.softhenge.supren.exif.service.ExifServiceMetaDataExtractor;
-
-public class ExifServiceTest {
+public class  ExifServiceTest {
 
 	private ExifService exifService;
 

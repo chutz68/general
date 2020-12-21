@@ -1,13 +1,6 @@
 package ch.softhenge.supren.exif.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.logging.Logger;
-
 import ch.softhenge.supren.exif.entity.ExifFileInfo;
-
 import com.adobe.internal.xmp.XMPException;
 import com.adobe.internal.xmp.XMPMeta;
 import com.adobe.internal.xmp.properties.XMPProperty;
@@ -17,6 +10,12 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.xmp.XmpDirectory;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Date;
+import java.util.logging.Logger;
 
 /**
  * This service can read Exif Information out of an image File.
@@ -88,18 +87,19 @@ public class ExifServiceMetaDataExtractor implements ExifService {
 		}
 		Date pictureDate = null;
 		String aperture = null;
-		String exposureTime;
-		Integer exposureProgram;
+		String exposureTime = null;
+		Integer exposureProgram = null;
 		String exposureMode;
 		String exposureBias;
 		String fNumber;
-		String iso;
+		String iso = null;
 		String exifVersion;
-		String exposureFNumber;
-		String lensModel;
-		String lensSpecification;
-		String focalLength;
+		String exposureFNumber = null;
+		String lensModel = null;
+		String lensSpecification = null;
+		String lensFocalLength = null;
 		String shutterSpeed;
+		String flashTag;
 		if (exifSubIFDDirectory != null) {
 			pictureDate = exifSubIFDDirectory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
 			exposureTime = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_EXPOSURE_TIME);
@@ -107,18 +107,19 @@ public class ExifServiceMetaDataExtractor implements ExifService {
 			exposureMode = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_EXPOSURE_MODE);
 			exposureBias = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_EXPOSURE_BIAS);
 			exposureFNumber = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_FNUMBER);
-			iso = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_ISO_SPEED);
+			iso = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT);
 			exifVersion = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_EXIF_VERSION);
 			aperture = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_APERTURE);
 			lensModel = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_LENS_MODEL);
 			lensSpecification = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_LENS_SPECIFICATION);
-			focalLength = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_FOCAL_LENGTH);
+			lensFocalLength = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_FOCAL_LENGTH);
 			shutterSpeed = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_SHUTTER_SPEED);
+			flashTag = exifSubIFDDirectory.getString(ExifSubIFDDirectory.TAG_FLASH);
 			if (pictureDate == null) {
 				pictureDate = exifIFD0Directory.getDate(ExifIFD0Directory.TAG_DATETIME);
 			}
 		}
-		return new ExifFileInfo(cameraModel, pictureDate, rating);
+		return new ExifFileInfo(cameraMake, cameraModel, pictureDate, rating, exposureTime, exposureProgram, exposureFNumber, iso, lensModel, lensFocalLength, lensSpecification);
 	}
 	
 	/**
