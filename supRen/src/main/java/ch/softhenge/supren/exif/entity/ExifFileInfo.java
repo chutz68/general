@@ -56,8 +56,12 @@ public class ExifFileInfo {
 		this.lensSpecification = lensSpecification;
 	}
 
+	public String getCameraMake() {
+		return cameraMake != null ? cameraMake : "";
+	}
+
 	public String getCameraModel() {
-		return cameraModel;
+		return cameraModel != null ? cameraModel : "";
 	}
 
 	public Date getPictureDate() {
@@ -69,41 +73,41 @@ public class ExifFileInfo {
 	}
 
 	public String getExposerTime() {
-		return exposerTime;
+		return exposerTime != null ? exposerTime : "";
 	}
 
 	public Integer getExposureProgram() {
-		return exposureProgram;
+		return exposureProgram != null ? exposureProgram : -1;
 	}
 
 	public String getExposerFNumber() {
-		return exposerFNumber;
+		return exposerFNumber != null ? exposerFNumber : "";
 	}
 
 	public String getIso() {
-		return iso;
+		return iso != null ? iso : "";
 	}
 
 	public String getLensModel() {
-		return lensModel;
+		return lensModel != null ? lensModel : "";
 	}
 
 	public String getLensFocalLength() {
-		return lensFocalLength;
+		return lensFocalLength != null ? lensFocalLength : "";
 	}
 
 	public String getLensSpecification() {
-		return lensSpecification;
+		return lensSpecification != null ? lensSpecification : "";
 	}
 
 	public static String createCsvTitle(String separator) {
-		return "filename" + separator + "cameraMake" + separator + "cameraModel" + separator + "pictureDate" + separator + "rating" + separator + "exposerTime" + separator
+		return "directory" + separator + "filename" + separator + "cameraMake" + separator + "cameraModel" + separator + "pictureDate" + separator + "rating" + separator + "exposerTime" + separator
 				+ "exposureProgram" + separator + "exposerFNumber" + separator + "iso" + separator + "lensModel" +  separator + "lensFocalLength" + separator + "lensSpecification";
 	}
 
-	public String createCsvLine(String filename, String separator) {
-		return filename + separator + cameraMake + separator + cameraModel + separator + pictureDate + separator + rating + separator + exposerTime + separator
-				+ exposureProgram + separator + exposerFNumber + separator + iso + separator + lensModel +  separator + lensFocalLength + separator + lensSpecification;
+	public String createCsvLine(String directory, String filename, String separator) {
+		return directory + separator + filename + separator + getCameraMake() + separator + getCameraModel() + separator + getPictureDate() + separator + getRating() + separator + getExposerTime() + separator
+				+ getExposureProgram() + separator + getExposerFNumber() + separator + getIso() + separator + getLensModel() +  separator + getLensFocalLength() + separator + getLensSpecification();
 	}
 
 	@Override

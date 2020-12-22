@@ -103,7 +103,13 @@ public class ImageFile {
 	public String getFilePath() {
 		return imageFile.getAbsolutePath().substring(0, imageFile.getAbsolutePath().lastIndexOf(File.separator));
 	}
-	
+
+	/*return the subdirectory such as for example: "2020_05_03MyDestination"*/
+	public String getSubDirectory() {
+		String temppath = imageFile.getAbsolutePath().substring(4, imageFile.getAbsolutePath().lastIndexOf(File.separator));
+		return temppath.substring(temppath.indexOf(File.separator) + 1);
+	}
+
 	/**Return the path and name of the file*/
 	public String getFileNameAndPath() {
 		return imageFile.getAbsolutePath();
@@ -141,8 +147,9 @@ public class ImageFile {
 	}
 
 	public String createCsvLine(String separator) {
+		String subDirectory = getSubDirectory();
 		if (exifFileInfo != null) {
-			return exifFileInfo.createCsvLine(getNewFileName(), separator);
+			return exifFileInfo.createCsvLine(getSubDirectory(), getOriginalFileName(), separator);
 		}
 		return null;
 	}
