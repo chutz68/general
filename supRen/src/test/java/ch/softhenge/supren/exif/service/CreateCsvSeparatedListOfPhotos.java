@@ -18,9 +18,9 @@ public class CreateCsvSeparatedListOfPhotos {
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
 	private final static long DAYS_BACK = 0;
-//	private final static String DIRECTORY = "C:\\photosbest\";
+	private final static String DIRECTORY = "C:\\photosbest";
 //	private final static String DIRECTORY = "D:\\photos\\transfer";
-	private final static String DIRECTORY = "C:\\photosbest\\2020_10Sardinien";
+//	private final static String DIRECTORY = "C:\\photosbest\\2020_10Sardinien";
 	
 	private ImageService imageService;
 	private DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd-HHmm");

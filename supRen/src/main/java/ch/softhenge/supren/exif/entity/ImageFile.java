@@ -141,7 +141,10 @@ public class ImageFile {
 	}
 
 	public String createCsvLine(String separator) {
-		return exifFileInfo.createCsvLine(getNewFileName(), separator);
+		if (exifFileInfo != null) {
+			return exifFileInfo.createCsvLine(getNewFileName(), separator);
+		}
+		return null;
 	}
 	
 	public String toString() {
