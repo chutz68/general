@@ -20,7 +20,7 @@ public class RenameNewPhotosMetaDataExtractorTest {
 	private final static long DAYS_BACK = 0;
 	private final static boolean FORCE_UNKNOWN_IMAGES = false;
 	//private final static String[] DIRECTORIES = { "I:\\" };
-	private final static String[] DIRECTORIES = { "C:\\photosbest", "C:\\Users", "D:\\photos" };
+	private final static String[] DIRECTORIES = { "C:\\photosbest", "C:\\photosrawimport", "D:\\photos" };
 	//private final static String[] DIRECTORIES = { "D:\\photos" };
 	//private final static String[] DIRECTORIES = { "C:\\Users\\Werni" };
 	//private final static String[] DIRECTORIES = { "F:\\" };

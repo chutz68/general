@@ -96,6 +96,16 @@ public class ExifFileInfo {
 		return lensSpecification;
 	}
 
+	public static String createCsvTitle(String separator) {
+		return "filename" + separator + "cameraMake" + separator + "cameraModel" + separator + "pictureDate" + separator + "rating" + separator + "exposerTime" + separator
+				+ "exposureProgram" + separator + "exposerFNumber" + separator + "iso" + separator + "lensModel" +  separator + "lensFocalLength" + separator + "lensSpecification";
+	}
+
+	public String createCsvLine(String filename, String separator) {
+		return filename + separator + cameraMake + separator + cameraModel + separator + pictureDate + separator + rating + separator + exposerTime + separator
+				+ exposureProgram + separator + exposerFNumber + separator + iso + separator + lensModel +  separator + lensFocalLength + separator + lensSpecification;
+	}
+
 	@Override
 	public String toString() {
 		return "ExifFileInfo{" +

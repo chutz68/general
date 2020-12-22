@@ -1,8 +1,8 @@
 package ch.softhenge.supren.exif.entity;
 
-import java.io.File;
-
 import org.apache.commons.io.FilenameUtils;
+
+import java.io.File;
 
 public class ImageFile {
 
@@ -134,6 +134,14 @@ public class ImageFile {
 
 	public FilePattern getFilePattern() {
 		return filePattern;
+	}
+
+	public static String createCsvTitle(String separator) {
+		return ExifFileInfo.createCsvTitle(separator);
+	}
+
+	public String createCsvLine(String separator) {
+		return exifFileInfo.createCsvLine(getNewFileName(), separator);
 	}
 	
 	public String toString() {

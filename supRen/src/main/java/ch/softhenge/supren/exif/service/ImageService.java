@@ -119,7 +119,7 @@ public class ImageService {
 	/**
 	 * Create csv Files of image Files
 	 */
-	public String createCsvSeperatedStringOfImageFiles(Long daysback) {
+	public String createCsvSeperatedStringOfImageFiles(Long daysback) throws IOException {
 		createImageFilesMap(daysback, null);
 		StringBuilder sbCsv = new StringBuilder();
 		enrichImageFilesWithExifInfo(sbCsv);
@@ -132,7 +132,7 @@ public class ImageService {
 	 * @param bestOfFolderName: full file name
 	 * @param subfolderFilter: The subfolder to be filtered
 	 */
-	public String copyBestOfToNewFolder(String bestOfFolderName, String subfolderFilter) {
+	public String copyBestOfToNewFolder(String bestOfFolderName, String subfolderFilter) throws IOException {
 		String bestofFolderUnix = bestOfFolderName.replace("\\", UNIX_SEPERATOR);
 		StringBuilder sbcp = new StringBuilder();
 		String lastSubFolderName = "";
@@ -169,7 +169,7 @@ public class ImageService {
 	 * 
 	 * @return
 	 */
-	public String findBestOfPhotosWithoutRating() {
+	public String findBestOfPhotosWithoutRating() throws IOException {
 		StringBuilder sbcp = new StringBuilder();
 		createImageFilesMap(0L, "\\BestOf\\");
 		StringBuilder sbCsv = new StringBuilder();
@@ -189,17 +189,18 @@ public class ImageService {
 	 * Enrich all imageFiles with Exif Infos
 	 * This might take a while, since every file is scanned. 
 	 * 
-	 * @param append
+	 * @param appendable
 	 */
-	public void enrichImageFilesWithExifInfo(Appendable append) {
+	public void enrichImageFilesWithExifInfo(Appendable appendable) throws IOException {
 		Set<String> unknownCameraModels = new HashSet<String>();
 		int cnt = -1;
 		int totalImages = getListOfImageFiles().size();
+		appendable.append(ImageFile.createCsvTitle(";")).append("\n");
 		for (Entry<FilePattern, Collection<ImageFile>> imageFilesEntry : this.mapOfImageFiles.entrySet()) {
 			for (ImageFile imageFile : imageFilesEntry.getValue()) {
 				enrichImageFileWithExifInfo(imageFile, unknownCameraModels);
 				try {
-					append.append(imageFile.toString()).append("\n");
+					appendable.append(imageFile.createCsvLine(";")).append("\n");
 					//LOGGER.info("Got exif info for image File " + imageFile);
 				} catch (IOException e) {
 					e.printStackTrace();

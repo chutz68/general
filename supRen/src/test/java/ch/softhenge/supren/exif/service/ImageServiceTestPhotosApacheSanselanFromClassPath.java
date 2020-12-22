@@ -1,19 +1,20 @@
 package ch.softhenge.supren.exif.service;
 
-import static org.junit.Assert.*;
+import ch.softhenge.supren.exif.entity.FilePattern;
+import ch.softhenge.supren.exif.entity.ImageFile;
+import org.hamcrest.CoreMatchers;
+import org.junit.Before;
+import org.junit.Test;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.hamcrest.CoreMatchers;
-import org.junit.Before;
-import org.junit.Test;
-
-import ch.softhenge.supren.exif.entity.FilePattern;
-import ch.softhenge.supren.exif.entity.ImageFile;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 /**
  * Test Photos from Class Path
@@ -38,7 +39,7 @@ public class ImageServiceTestPhotosApacheSanselanFromClassPath {
 	}
 
 	@Test
-	public void testListImageFilesToRename() {
+	public void testListImageFilesToRename() throws IOException {
 		imageService.createImageFilesMap(null, null);
 		imageService.resetImageFileList();
 		imageService.createImageFilesMap(null, null);
@@ -120,7 +121,7 @@ public class ImageServiceTestPhotosApacheSanselanFromClassPath {
 	}
 	
 	@Test
-	public void testCreateCsvSeperatedStringOfImageFiles() {
+	public void testCreateCsvSeperatedStringOfImageFiles() throws IOException {
 		String csvText = imageService.createCsvSeperatedStringOfImageFiles(null);
 		LOGGER.info(csvText);
 	}
