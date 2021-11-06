@@ -20,12 +20,12 @@ public class RenameNewPhotosMetaDataExtractorTest {
 	private final static long DAYS_BACK = 0;
 	private final static boolean FORCE_UNKNOWN_IMAGES = false;
 	//private final static String[] DIRECTORIES = { "I:\\" };
-	//private final static String[] DIRECTORIES = { "C:\\photosbest", "C:\\photosrawimport", "D:\\photos" };
+	private final static String[] DIRECTORIES = { "C:\\photosbest", "C:\\photosrawimport", "D:\\photos" };
 	//private final static String[] DIRECTORIES = { "D:\\photos" };
 	//private final static String[] DIRECTORIES = { "C:\\Users\\Werni" };
 	//private final static String[] DIRECTORIES = { "F:\\" };
 	//private final static String[] DIRECTORIES = { "D:\\temp\\rosalbaHandy" };
-	private final static String[] DIRECTORIES = { "C:\\photosrawimport" };
+	//private final static String[] DIRECTORIES = { "C:\\photosrawimport" };
 	
 	private ImageService imageService;
 	private DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd-HHmm");
