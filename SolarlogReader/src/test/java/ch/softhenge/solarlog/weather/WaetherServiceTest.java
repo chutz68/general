@@ -2,27 +2,20 @@ package ch.softhenge.solarlog.weather;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.client.RestTemplate;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-@ContextConfiguration
+@SpringBootTest
 class WaetherServiceTest {
 
-    @Bean
-    public RestTemplate getRestTemplate() {
-        return new RestTemplate();
-    }
-
     @Autowired
-    WaetherService weatherService;
+    private WaetherService weatherService;
 
     @Test
     public void testWeatherService() {
-        WaetherService weatherService = new WaetherService();
-        String weatherData = weatherService.getWeatherData();
+        String weatherData = weatherService.getWeatherDataAsString();
         System.out.println(weatherData);
     }
 
