@@ -1,0 +1,10 @@
+{
+  "weatherapikey" : "c6409c4bc73119f3a3bba68f4eaebcb6",
+  "weatherunit" : "metric",
+  "weatherlocations": [
+    {
+      "locationname" : "Neuenhof",
+      "locationapiurl" : "neuenhof,ag,ch"
+    }
+  ]
+}

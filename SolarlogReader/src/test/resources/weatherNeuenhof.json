@@ -1,0 +1,43 @@
+{
+  "coord": {
+    "lon": 8.3167,
+    "lat": 47.45
+  },
+  "weather": [
+    {
+      "id": 803,
+      "main": "Clouds",
+      "description": "broken clouds",
+      "icon": "04d"
+    }
+  ],
+  "base": "stations",
+  "main": {
+    "temp": 14.42,
+    "feels_like": 14.16,
+    "temp_min": 13.73,
+    "temp_max": 15.79,
+    "pressure": 1021,
+    "humidity": 86
+  },
+  "visibility": 10000,
+  "wind": {
+    "speed": 0.51,
+    "deg": 0
+  },
+  "clouds": {
+    "all": 75
+  },
+  "dt": 1667296864,
+  "sys": {
+    "type": 2,
+    "id": 19109,
+    "country": "CH",
+    "sunrise": 1667282998,
+    "sunset": 1667319032
+  },
+  "timezone": 3600,
+  "id": 2659490,
+  "name": "Neuenhof",
+  "cod": 200
+}
