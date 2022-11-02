@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- *
+ * The Java Object that represents a weather api properties json file
  */
 public class WeatherProperties implements Serializable {
     private String weatherapikey;
@@ -35,6 +35,19 @@ public class WeatherProperties implements Serializable {
 
     public void setWeatherlocations(List<? extends Weatherlocations> weatherlocations) {
         this.weatherlocations = weatherlocations;
+    }
+
+    /**
+     *
+     * @param myLocation the location for which I want to get the URL
+     * @return the location api url based on the location
+     */
+    public String getWetherLocationApiUrlByLocationname(String myLocation) {
+        Weatherlocations searchLocation = this.weatherlocations.stream()
+                .filter((weatherLocation) -> weatherLocation.getLocationname().equals(myLocation))
+                .findFirst()
+                .orElse(null);
+        return searchLocation == null ? null: searchLocation.getLocationapiurl();
     }
 
     public static class Weatherlocations implements Serializable {
