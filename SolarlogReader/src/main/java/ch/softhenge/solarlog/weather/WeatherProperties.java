@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * The Java Object that represents a weather api properties json file
+ * The Java Object that represents a weather api properties json file which is located in the classpath
  */
 public class WeatherProperties implements Serializable {
     private String weatherapikey;
