@@ -9,7 +9,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.startsWith;
 
 /**
- * This test checks whether we can call the Solarlog device which is located in the
+ * This test checks whether we can call the Solarlog device which is located in the local network.
  */
 
 @SpringBootTest
