@@ -1,11 +1,9 @@
 package ch.softhenge.solarlog.weather;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.client.RestTemplate;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -17,35 +15,27 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 class WeatherServiceNegativeTest {
 
-    public static final String LOCATION = "NOT_EXISTING_LOCATION";
-    @Autowired
-    private RestTemplate restTemplate;
-    private WeatherService weatherService;
+    private static final String LOCATION = "NOT_EXISTING_LOCATION";
 
-    @BeforeEach
-    void beforeTest() {
-        this.weatherService = new WeatherService(LOCATION, restTemplate);
-    }
+    @Autowired
+    private WeatherService weatherService;
 
 
     @Test()
     public void testWeatherServiceWeatherDataAsString() {
-        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> weatherService.getWeatherDataAsString());
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> weatherService.getWeatherDataAsString(LOCATION));
         assertThat(runtimeException.getMessage(), startsWith("Location " + LOCATION + " does not"));
-        assertThat(LOCATION, is(equalTo(weatherService.getLocation())));
     }
 
     @Test
     public void testWeatherServiceWeatherDataAsObject() {
-        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> weatherService.getWeatherDataAsObject());
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> weatherService.getWeatherDataAsObject(LOCATION));
         assertThat(runtimeException.getMessage(), startsWith("Location " + LOCATION + " does not"));
-        assertThat(LOCATION, is(equalTo(weatherService.getLocation())));
     }
 
     @Test
     void readWeatherPropertiesFile() {
         WeatherProperties wp = weatherService.readWeatherPropertiesFile();
         Assertions.assertEquals("metric", wp.getWeatherunit());
-        assertThat(LOCATION, is(equalTo(weatherService.getLocation())));
     }
 }

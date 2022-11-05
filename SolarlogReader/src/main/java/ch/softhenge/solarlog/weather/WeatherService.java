@@ -5,6 +5,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -18,58 +20,48 @@ import java.util.Map;
  * Check <a href="https://openweathermap.org/api">...</a>
  * We are using API Version 2.5 and are allowed to do 1000 API calls per day for free.
  */
+@Service
 public class WeatherService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private static final String WEATHER_PROPERTIES_FILE_LOC = "/weatherapiproperties.json";
     private static final String WEATHER_URI_TEMPLATE = "http://api.openweathermap.org/data/2.5/weather?q=${locationapiurl}&APPID=${weatherapikey}&units=${weatherunit}";
-    private final String WEATHER_URI;
     private final RestTemplate restTemplate;
-    private final String location;
+
 
     /**
      * Creates a Weather Service for the chosen location
      *
-     * @param location     Is defined by the weatherAPI. locations can be e.g. Neuenhof
      * @param restTemplate the restTemplate
      */
-    public WeatherService(String location, RestTemplate restTemplate) {
+    @Autowired
+    public WeatherService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        this.location = location;
-        WeatherProperties weatherProperties = readWeatherPropertiesFile();
-        Map<String, String> valuesMap = new HashMap<>();
-        valuesMap.put("locationapiurl", weatherProperties.getWetherLocationApiUrlByLocationname(location));
-        valuesMap.put("weatherapikey", weatherProperties.getWeatherapikey());
-        valuesMap.put("weatherunit", weatherProperties.getWeatherunit());
-        StringSubstitutor sub = new StringSubstitutor(valuesMap);
-        WEATHER_URI = sub.replace(WEATHER_URI_TEMPLATE);
     }
 
     /**
-     *  read the API call into a simple String.
+     *  read the API call for the location into a simple String.
+     * @param location     Is defined by the weatherAPI. locations can be e.g. Neuenhof
      * @return contains the json object as a String
      */
-    public String getWeatherDataAsString() {
+    public String getWeatherDataAsString(String location) {
         try {
-            return restTemplate.getForObject(WEATHER_URI, String.class);
+            return restTemplate.getForObject(enrichWeatherURL(location), String.class);
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Location " + this.location + " does not exist");
+            throw new RuntimeException("Location " + location + " does not exist");
         }
     }
 
     /**
-     *  read the API call into the WeatherData Object.
+     *  read the API call for the location into the WeatherData Object.
+     * @param location     Is defined by the weatherAPI. locations can be e.g. Neuenhof
      * @return a new WeatherData Object
      */
-    public WeatherData getWeatherDataAsObject() {
+    public WeatherData getWeatherDataAsObject(String location) {
         try {
-            return restTemplate.getForObject(WEATHER_URI, WeatherData.class);
+            return restTemplate.getForObject(enrichWeatherURL(location), WeatherData.class);
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Location " + this.location + " does not exist");
+            throw new RuntimeException("Location " + location + " does not exist");
         }
-    }
-
-    public String getLocation() {
-        return location;
     }
 
     /**
@@ -85,5 +77,20 @@ public class WeatherService {
             logger.error("Reading the properties file {} went wrong: ", WEATHER_PROPERTIES_FILE_LOC + Arrays.toString(e.getStackTrace()));
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     *
+     * @param location     Is defined by the weatherAPI. locations can be e.g. Neuenhof
+     * @return the weather uri
+     */
+    private String enrichWeatherURL(String location) {
+        WeatherProperties weatherProperties = readWeatherPropertiesFile();
+        Map<String, String> valuesMap = new HashMap<>();
+        valuesMap.put("locationapiurl", weatherProperties.getWetherLocationApiUrlByLocationname(location));
+        valuesMap.put("weatherapikey", weatherProperties.getWeatherapikey());
+        valuesMap.put("weatherunit", weatherProperties.getWeatherunit());
+        StringSubstitutor sub = new StringSubstitutor(valuesMap);
+        return sub.replace(WEATHER_URI_TEMPLATE);
     }
 }

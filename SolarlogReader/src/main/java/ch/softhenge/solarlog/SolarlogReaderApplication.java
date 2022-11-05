@@ -1,5 +1,6 @@
 package ch.softhenge.solarlog;
 
+import ch.softhenge.solarlog.weather.WeatherService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,6 +16,11 @@ public class SolarlogReaderApplication {
 	@Bean
 	public RestTemplate getRestTemplate() {
 		return new RestTemplate();
+	}
+
+	@Bean
+	public WeatherService getWeatherService() {
+		return new WeatherService(getRestTemplate());
 	}
 
 	public static void main(String[] args) {

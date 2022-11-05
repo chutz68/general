@@ -1,11 +1,9 @@
 package ch.softhenge.solarlog.weather;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.client.RestTemplate;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -16,15 +14,10 @@ import static org.hamcrest.Matchers.*;
 @SpringBootTest
 class WeatherServicePositiveTest {
 
-    public static final String LOCATION = "Neuenhof";
-    @Autowired
-    private RestTemplate restTemplate;
-    private WeatherService weatherService;
+    private static final String LOCATION = "Neuenhof";
 
-    @BeforeEach
-    void beforeTest() {
-        this.weatherService = new WeatherService(LOCATION, restTemplate);
-    }
+    @Autowired
+    private WeatherService weatherService;
 
 
     /**
@@ -33,14 +26,13 @@ class WeatherServicePositiveTest {
      */
     @Test
     public void testWeatherServiceWeatherDataAsString() {
-        String weatherData = weatherService.getWeatherDataAsString();
+        String weatherData = weatherService.getWeatherDataAsString(LOCATION);
         assertThat(weatherData, startsWith("{\"coord\":{"));
-        assertThat(LOCATION, is(equalTo(weatherService.getLocation())));
     }
 
     @Test
     public void testWeatherServiceWeatherDataAsObject() {
-        WeatherData weatherData = weatherService.getWeatherDataAsObject();
+        WeatherData weatherData = weatherService.getWeatherDataAsObject(LOCATION);
         assertThat(weatherData.getName(), equalTo(LOCATION));
         assertThat(weatherData.getMain().getTemp(), notNullValue());
         assertThat(weatherData.getMain().getFeels_like(), notNullValue());
@@ -51,13 +43,11 @@ class WeatherServicePositiveTest {
         assertThat(weatherData.getWeather().get(0).getId(), notNullValue());
         assertThat(weatherData.getWeather().get(0).getMain(), notNullValue());
         assertThat(weatherData.getWeather().get(0).getDescription(), notNullValue());
-        assertThat(LOCATION, is(equalTo(weatherService.getLocation())));
     }
 
     @Test
     void readWeatherPropertiesFile() {
         WeatherProperties wp = weatherService.readWeatherPropertiesFile();
         Assertions.assertEquals("metric", wp.getWeatherunit());
-        assertThat(LOCATION, is(equalTo(weatherService.getLocation())));
     }
 }
