@@ -11,12 +11,11 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 /**
  * The Weather Service is responsible to get weather information from a chosen location
- * Check https://openweathermap.org/api
+ * Check <a href="https://openweathermap.org/api">...</a>
  * We are using API Version 2.5 and are allowed to do 1000 API calls per day for free.
  */
 public class WeatherService {
@@ -37,11 +36,10 @@ public class WeatherService {
         this.restTemplate = restTemplate;
         this.location = location;
         WeatherProperties weatherProperties = readWeatherPropertiesFile();
-        WeatherLocation weatherLocation = new WeatherLocation(weatherProperties, location);
         Map<String, String> valuesMap = new HashMap<>();
-        valuesMap.put("locationapiurl", weatherLocation.getLocationurl());
-        valuesMap.put("weatherapikey", weatherLocation.getApiKey());
-        valuesMap.put("weatherunit", weatherLocation.getUnit());
+        valuesMap.put("locationapiurl", weatherProperties.getWetherLocationApiUrlByLocationname(location));
+        valuesMap.put("weatherapikey", weatherProperties.getWeatherapikey());
+        valuesMap.put("weatherunit", weatherProperties.getWeatherunit());
         StringSubstitutor sub = new StringSubstitutor(valuesMap);
         WEATHER_URI = sub.replace(WEATHER_URI_TEMPLATE);
     }

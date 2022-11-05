@@ -21,15 +21,21 @@ public class SolarlogReaderApplication {
 		SpringApplication.run(SolarlogReaderApplication.class, args);
 	}
 
+	/**
+	 * To run the application, run the following command in a terminal window:
+	 * ./gradlew bootRun
+	 *
+	 * @param applicationContext the ApplicationContext
+	 * @return commandLineRunner
+	 */
 	@Bean
-	public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
+	public CommandLineRunner commandLineRunner(ApplicationContext applicationContext) {
 		return args -> {
-			System.out.println("Spring boot beans");
-			String[] beanNames = ctx.getBeanDefinitionNames();
-			Arrays.sort(beanNames);
-			for (String beanName : beanNames) {
-				System.out.println(beanName);
-			}
+			System.out.println("Spring boot beans:");
+			String[] beanNames = applicationContext.getBeanDefinitionNames();
+			Arrays.stream(beanNames)
+					.sorted()
+					.forEach(System.out::println);
 		};
 	}
 
