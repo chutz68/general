@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.client.RestTemplate;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.startsWith;
+
 /**
  * This test checks whether we can call the Solarlog device which is located in the
  */
@@ -13,13 +16,11 @@ import org.springframework.web.client.RestTemplate;
 public class SolarlogServiceIntegrationTest {
 
     @Autowired
-    private RestTemplate restTemplate;
+    private SolarlogService solarlogService;
 
     @Test
     public void testSolarlogConnection() {
-        final String uri = "http://192.168.1.39/getjp";
-        String input = "{\"801\":{\"170\":null}}";
-        String retval = restTemplate.postForObject(uri, input, String.class);
-        System.out.println(retval);
+        String jsonResult = solarlogService.getSolarlogDataFromAPIAsString("ruroslocal");
+        assertThat(jsonResult, startsWith("{\"801\":{\"170\""));
     }
 }

@@ -24,9 +24,9 @@ import java.util.Map;
 public class WeatherService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private static final String WEATHER_PROPERTIES_FILE_LOC = "/weatherapiproperties.json";
-    private static final String WEATHER_URI_TEMPLATE = "http://api.openweathermap.org/data/2.5/weather?q=${locationapiurl}&APPID=${weatherapikey}&units=${weatherunit}";
+    private static final String WEATHER_URI_TEMPLATE = "https://api.openweathermap.org/data/2.5/weather?q=${locationapiurl}&APPID=${weatherapikey}&units=${weatherunit}";
     private final RestTemplate restTemplate;
-
+    private final WeatherProperties weatherProperties;
 
     /**
      * Creates a Weather Service for the chosen location
@@ -36,6 +36,7 @@ public class WeatherService {
     @Autowired
     public WeatherService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
+        this.weatherProperties = readWeatherPropertiesFile();
     }
 
     /**
@@ -74,7 +75,7 @@ public class WeatherService {
             String jsonFile = IOUtils.resourceToString(WEATHER_PROPERTIES_FILE_LOC, StandardCharsets.UTF_8);
             return new Gson().fromJson(jsonFile, WeatherProperties.class);
         } catch (IOException e) {
-            logger.error("Reading the properties file {} went wrong: ", WEATHER_PROPERTIES_FILE_LOC + Arrays.toString(e.getStackTrace()));
+            logger.error("Reading weather the properties file {} went wrong: ", WEATHER_PROPERTIES_FILE_LOC + Arrays.toString(e.getStackTrace()));
             throw new RuntimeException(e);
         }
     }
@@ -85,7 +86,6 @@ public class WeatherService {
      * @return the weather uri
      */
     private String enrichWeatherURL(String location) {
-        WeatherProperties weatherProperties = readWeatherPropertiesFile();
         Map<String, String> valuesMap = new HashMap<>();
         valuesMap.put("locationapiurl", weatherProperties.getWetherLocationApiUrlByLocationname(location));
         valuesMap.put("weatherapikey", weatherProperties.getWeatherapikey());
