@@ -8,14 +8,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.client.RestTemplate;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.Matchers.*;
 
 /**
  * This test class tests API calls to locations that do exist
  */
 @SpringBootTest
-class WeatherServiceTestPositive {
+class WeatherServicePositiveTest {
 
     public static final String LOCATION = "Neuenhof";
     @Autowired
@@ -36,17 +35,29 @@ class WeatherServiceTestPositive {
     public void testWeatherServiceWeatherDataAsString() {
         String weatherData = weatherService.getWeatherDataAsString();
         assertThat(weatherData, startsWith("{\"coord\":{"));
+        assertThat(LOCATION, is(equalTo(weatherService.getLocation())));
     }
 
     @Test
     public void testWeatherServiceWeatherDataAsObject() {
         WeatherData weatherData = weatherService.getWeatherDataAsObject();
         assertThat(weatherData.getName(), equalTo(LOCATION));
+        assertThat(weatherData.getMain().getTemp(), notNullValue());
+        assertThat(weatherData.getMain().getFeels_like(), notNullValue());
+        assertThat(weatherData.getMain().getPressure(), is(greaterThan(800)));
+        assertThat(weatherData.getSys().getSunrise(), is(greaterThan(1000000)));
+        assertThat(weatherData.getSys().getSunset(), is(greaterThan(weatherData.getSys().getSunrise())));
+        assertThat(weatherData.getWeather().get(0).getIcon(), notNullValue());
+        assertThat(weatherData.getWeather().get(0).getId(), notNullValue());
+        assertThat(weatherData.getWeather().get(0).getMain(), notNullValue());
+        assertThat(weatherData.getWeather().get(0).getDescription(), notNullValue());
+        assertThat(LOCATION, is(equalTo(weatherService.getLocation())));
     }
 
     @Test
     void readWeatherPropertiesFile() {
         WeatherProperties wp = weatherService.readWeatherPropertiesFile();
         Assertions.assertEquals("metric", wp.getWeatherunit());
+        assertThat(LOCATION, is(equalTo(weatherService.getLocation())));
     }
 }

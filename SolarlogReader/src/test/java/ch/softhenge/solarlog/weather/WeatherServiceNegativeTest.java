@@ -8,15 +8,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.client.RestTemplate;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * This test class tests API calls to locations that do not exist or are not supported
  */
 @SpringBootTest
-class WeatherServiceTestNegative {
+class WeatherServiceNegativeTest {
 
     public static final String LOCATION = "NOT_EXISTING_LOCATION";
     @Autowired
@@ -33,17 +32,20 @@ class WeatherServiceTestNegative {
     public void testWeatherServiceWeatherDataAsString() {
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> weatherService.getWeatherDataAsString());
         assertThat(runtimeException.getMessage(), startsWith("Location " + LOCATION + " does not"));
+        assertThat(LOCATION, is(equalTo(weatherService.getLocation())));
     }
 
     @Test
     public void testWeatherServiceWeatherDataAsObject() {
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> weatherService.getWeatherDataAsObject());
         assertThat(runtimeException.getMessage(), startsWith("Location " + LOCATION + " does not"));
+        assertThat(LOCATION, is(equalTo(weatherService.getLocation())));
     }
 
     @Test
     void readWeatherPropertiesFile() {
         WeatherProperties wp = weatherService.readWeatherPropertiesFile();
         Assertions.assertEquals("metric", wp.getWeatherunit());
+        assertThat(LOCATION, is(equalTo(weatherService.getLocation())));
     }
 }
