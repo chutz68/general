@@ -1,8 +1,9 @@
 package ch.softhenge.solarlog.solarlog.service;
 
+import ch.softhenge.solarlog.solarlog.pojo.Solarlog300Data;
 import ch.softhenge.solarlog.solarlog.property.SolarlogProperties;
 import ch.softhenge.solarlog.solarlog.property.Solarlogproperty;
-import com.google.gson.Gson;
+import com.google.gson.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;

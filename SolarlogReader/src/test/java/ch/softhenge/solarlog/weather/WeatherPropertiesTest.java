@@ -10,7 +10,7 @@ import java.util.List;
 
 class WeatherPropertiesTest {
 
-    private WeatherProperties weatherPropertiesOk = new WeatherProperties();
+    private final WeatherProperties weatherPropertiesOk = new WeatherProperties();
 
     @BeforeEach
     void fillWeatherProperties() {

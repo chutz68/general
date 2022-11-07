@@ -1,5 +1,7 @@
 package ch.softhenge.solarlog.solarlog.service;
 
+import ch.softhenge.solarlog.solarlog.pojo.Solarlog300Data;
+import org.hibernate.validator.internal.IgnoreForbiddenApisErrors;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,5 +24,11 @@ public class SolarlogServiceIntegrationTest {
     public void testSolarlogConnection() {
         String jsonResult = solarlogService.getSolarlogDataFromAPIAsString("ruroslocal");
         assertThat(jsonResult, startsWith("{\"801\":{\"170\""));
+
+        Solarlog300Data solarlog300Data = new Solarlog300Data(jsonResult);
+        System.out.println("creaDate: " + solarlog300Data.getCreatedDate());
+        System.out.println("pACWrAll: " + solarlog300Data.getPacWrAll());
     }
+
+
 }
