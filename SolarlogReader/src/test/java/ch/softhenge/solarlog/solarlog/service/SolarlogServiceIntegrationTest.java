@@ -1,11 +1,9 @@
 package ch.softhenge.solarlog.solarlog.service;
 
 import ch.softhenge.solarlog.solarlog.pojo.Solarlog300Data;
-import org.hibernate.validator.internal.IgnoreForbiddenApisErrors;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.client.RestTemplate;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.startsWith;
@@ -26,8 +24,9 @@ public class SolarlogServiceIntegrationTest {
         assertThat(jsonResult, startsWith("{\"801\":{\"170\""));
 
         Solarlog300Data solarlog300Data = new Solarlog300Data(jsonResult);
-        System.out.println("creaDate: " + solarlog300Data.getCreatedDate());
-        System.out.println("pACWrAll: " + solarlog300Data.getPacWrAll());
+        System.out.println("creaDate: " + solarlog300Data.getSolarlogDateField(Solarlog300Data.SOLARLOG300_REGISTER.CREATEDDATE));
+        System.out.println("pACWrAll: " + solarlog300Data.getSolarlogIntegerField(Solarlog300Data.SOLARLOG300_REGISTER.PACWRALL));
+        System.out.println("eACDaySumCnt: " + solarlog300Data.getSolarlogIntegerField(Solarlog300Data.SOLARLOG300_REGISTER.EAC_DAYSUM_CNT));
     }
 
 
