@@ -22,13 +22,13 @@ import java.util.Map;
  * This Service is able to read the Solarlog REST Interface as well as the solarlog csv exports
  */
 @Service
-public class SolarlogService {
+public class SolarlogService implements ISolarlogService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private static final String SOLARLOG_PROPERTIES_FILE_LOC = "/solarlogproperties.json";
     private static final String SOLARLOG_URI_TEMPLATE = "${baseURL}/getjp";
 
-    private static final String SOLARLOG_POST = "{\"801\":{\"170\":null}}";
+    private static final String SOLARLOG_300_POST = "{\"801\":{\"170\":null}}";
 
     private final RestTemplate restTemplate;
     private final SolarlogProperties solarlogProperties;
@@ -50,18 +50,30 @@ public class SolarlogService {
      * @param solarlogName the name of the solarlog according to the solarlog properties file
      * @return the JSON return as a String
      */
-    public String getSolarlogDataFromAPIAsString(String solarlogName) {
+    @Override
+    public String getSolarlog300DataFromAPIAsString(String solarlogName) {
         try {
-            return restTemplate.postForObject(enrichSolarlogURL(solarlogName), SOLARLOG_POST, String.class);
+            return restTemplate.postForObject(enrichSolarlogURL(solarlogName), SOLARLOG_300_POST, String.class);
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Solarlog with the name " + solarlogName + " does not exist");
+            throw new RuntimeException("Solarlog 300 with the name " + solarlogName + " does not exist " + e);
         }
+    }
+
+    /**
+     * Reads the Solarlog 300 and returns the Object that was created out of the json
+     *
+     * @param solarlogName the name of the solarlog according to the solarlog properties file
+     * @return the Solarlog300Object
+     */
+    @Override
+    public Solarlog300Data getSolarog300DataFromAPI(String solarlogName) {
+        return new Solarlog300Data(getSolarlog300DataFromAPIAsString(solarlogName));
     }
 
     /**
      * read the solarlog properties file from classpath
      *
-     * @return
+     * @return the solarlogProperties file
      */
     protected SolarlogProperties readSolarlogPropertiesFile() {
         try {
@@ -74,6 +86,15 @@ public class SolarlogService {
     }
 
     /**
+     *
+     * @param solarlogName the name of the solarlog according to the solarlog properties file
+     * @return the solarlogProperty object
+     */
+    protected Solarlogproperty getSolarlogproperty(String solarlogName) {
+        return solarlogProperties.getSolarlogPropertyBySolarlogName(solarlogName);
+    }
+
+    /**
      * returns the base URL for the solarlog
      *
      * @param solarlogName the name of the solarlog according to the solarlog properties file
@@ -81,7 +102,10 @@ public class SolarlogService {
      */
     private String enrichSolarlogURL(String solarlogName) {
         Map<String, String> valuesMap = new HashMap<>();
-        Solarlogproperty solarlogProperty = solarlogProperties.getSolarlogPropertyBySolarlogName(solarlogName);
+        Solarlogproperty solarlogProperty = getSolarlogproperty(solarlogName);
+        if (solarlogProperty == null) {
+            throw new RuntimeException("The Solarlog Property File " + SOLARLOG_PROPERTIES_FILE_LOC + " doesn't contain the solarlogger with the name '" + solarlogName + "'");
+        }
         valuesMap.put("baseURL", solarlogProperty.getSolarlogbaseurl());
         StringSubstitutor sub = new StringSubstitutor(valuesMap);
         return sub.replace(SOLARLOG_URI_TEMPLATE);
