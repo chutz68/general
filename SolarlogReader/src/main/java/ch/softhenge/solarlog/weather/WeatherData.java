@@ -34,6 +34,10 @@ public class WeatherData implements Serializable {
 
     private Wind wind;
 
+    private Rain rain;
+
+    private Snow snow;
+
     public Integer getVisibility() {
         return this.visibility;
     }
@@ -136,6 +140,18 @@ public class WeatherData implements Serializable {
 
     public void setWind(Wind wind) {
         this.wind = wind;
+    }
+
+    public Rain getRain() { return this.rain; }
+
+    public void setRain(Rain rain) {
+        this.rain = rain;
+    }
+
+    public Snow getSnow() { return this.snow; }
+
+    public void setSnow(Snow snow) {
+        this.snow = snow;
     }
 
     public static class Main implements Serializable {
@@ -348,5 +364,47 @@ public class WeatherData implements Serializable {
         public void setSpeed(Double speed) {
             this.speed = speed;
         }
+    }
+
+    public static class Rain implements Serializable {
+        private Double _1h;
+
+        public Double get_1h() {
+            return _1h;
+        }
+
+        public void set_1h(Double _1h) {
+            this._1h = _1h;
+        }
+    }
+
+    public static class Snow implements Serializable {
+        private Double _1h;
+
+        public Double get_1h() {
+            return _1h;
+        }
+
+        public void set_1h(Double _1h) {
+            this._1h = _1h;
+        }
+    }
+
+    /**
+     *
+     * @return an Essential Weather Data object
+     */
+    public EssentialWeatherData createEssentialWeatherData() {
+        Double rainLastHour = 0.0;
+        if (getRain() != null) {
+            rainLastHour = getRain().get_1h();
+        }
+        Double snowLastHour = 0.0;
+        if (getSnow() != null) {
+            snowLastHour = getSnow().get_1h();
+        }
+        return new EssentialWeatherData(coord.getLon(), coord.getLat(), weather.get(0).getMain(),
+                weather.get(0).getDescription(), weather.get(0).getIcon(), clouds.getAll(), main.getTemp(), main.getFeels_like(),
+                main.getPressure(), main.getHumidity(), wind.getSpeed(), wind.getDeg(), getVisibility(), getTimezone(), rainLastHour, snowLastHour);
     }
 }

@@ -12,7 +12,7 @@ import static org.hamcrest.Matchers.*;
  * This test class tests API calls to locations that do exist
  */
 @SpringBootTest
-class WeatherServicePositiveTest {
+class WeatherServiceIntegrationTest {
 
     private static final String LOCATION = "Neuenhof";
 
@@ -43,6 +43,9 @@ class WeatherServicePositiveTest {
         assertThat(weatherData.getWeather().get(0).getId(), notNullValue());
         assertThat(weatherData.getWeather().get(0).getMain(), notNullValue());
         assertThat(weatherData.getWeather().get(0).getDescription(), notNullValue());
+        EssentialWeatherData essentialWeatherData = weatherData.createEssentialWeatherData();
+        //FIXME: All fields are null!
+        System.out.println(essentialWeatherData);
     }
 
     @Test
