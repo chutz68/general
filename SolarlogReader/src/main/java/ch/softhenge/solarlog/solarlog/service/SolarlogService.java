@@ -1,6 +1,6 @@
 package ch.softhenge.solarlog.solarlog.service;
 
-import ch.softhenge.solarlog.solarlog.pojo.Solarlog300Data;
+import ch.softhenge.solarlog.solarlog.pojo.SolarlogData;
 import ch.softhenge.solarlog.solarlog.property.SolarlogProperties;
 import ch.softhenge.solarlog.solarlog.property.Solarlogproperty;
 import com.google.gson.*;
@@ -28,7 +28,7 @@ public class SolarlogService implements ISolarlogService {
     private static final String SOLARLOG_PROPERTIES_FILE_LOC = "/solarlogproperties.json";
     private static final String SOLARLOG_URI_TEMPLATE = "${baseURL}/getjp";
 
-    private static final String SOLARLOG_300_POST = "{\"801\":{\"170\":null}}";
+    private static final String SOLARLOG_POST = "{\"801\":{\"170\":null}}";
 
     private final RestTemplate restTemplate;
     private final SolarlogProperties solarlogProperties;
@@ -51,23 +51,23 @@ public class SolarlogService implements ISolarlogService {
      * @return the JSON return as a String
      */
     @Override
-    public String getSolarlog300DataFromAPIAsString(String solarlogName) {
+    public String getSolarlogDataFromAPIAsString(String solarlogName) {
         try {
-            return restTemplate.postForObject(enrichSolarlogURL(solarlogName), SOLARLOG_300_POST, String.class);
+            return restTemplate.postForObject(enrichSolarlogURL(solarlogName), SOLARLOG_POST, String.class);
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Solarlog 300 with the name " + solarlogName + " does not exist " + e);
+            throw new RuntimeException("Solarlog with the name " + solarlogName + " does not exist " + e);
         }
     }
 
     /**
-     * Reads the Solarlog 300 and returns the Object that was created out of the json
+     * Reads the Solarlog and returns the Object that was created out of the json
      *
      * @param solarlogName the name of the solarlog according to the solarlog properties file
-     * @return the Solarlog300Object
+     * @return the SolarlogObject
      */
     @Override
-    public Solarlog300Data getSolarog300DataFromAPI(String solarlogName) {
-        return new Solarlog300Data(getSolarlog300DataFromAPIAsString(solarlogName));
+    public SolarlogData getSolarogDataFromAPI(String solarlogName) {
+        return new SolarlogData(getSolarlogDataFromAPIAsString(solarlogName));
     }
 
     /**

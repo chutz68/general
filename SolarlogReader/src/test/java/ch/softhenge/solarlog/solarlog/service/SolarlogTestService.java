@@ -1,6 +1,6 @@
 package ch.softhenge.solarlog.solarlog.service;
 
-import ch.softhenge.solarlog.solarlog.pojo.Solarlog300Data;
+import ch.softhenge.solarlog.solarlog.pojo.SolarlogData;
 import org.apache.commons.io.IOUtils;
 import org.springframework.web.client.RestTemplate;
 
@@ -21,7 +21,7 @@ public class SolarlogTestService implements ISolarlogService{
     }
 
     @Override
-    public String getSolarlog300DataFromAPIAsString(String solarlogName) {
+    public String getSolarlogDataFromAPIAsString(String solarlogName) {
         if (solarlogService.getSolarlogproperty(solarlogName) == null) {
             throw new RuntimeException("The Solarlog Property File doesn't contain the solarlogger with the name '" + solarlogName + "'");
         }
@@ -29,10 +29,10 @@ public class SolarlogTestService implements ISolarlogService{
     }
 
     @Override
-    public Solarlog300Data getSolarog300DataFromAPI(String solarlogName) {
+    public SolarlogData getSolarogDataFromAPI(String solarlogName) {
         if (solarlogService.getSolarlogproperty(solarlogName) == null) {
             throw new RuntimeException("The Solarlog Property File doesn't contain the solarlogger with the name '" + solarlogName + "'");
         }
-        return new Solarlog300Data(jsonFile);
+        return new SolarlogData(jsonFile);
     }
 }

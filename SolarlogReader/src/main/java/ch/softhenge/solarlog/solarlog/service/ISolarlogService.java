@@ -1,24 +1,24 @@
 package ch.softhenge.solarlog.solarlog.service;
 
-import ch.softhenge.solarlog.solarlog.pojo.Solarlog300Data;
+import ch.softhenge.solarlog.solarlog.pojo.SolarlogData;
 
 /**
  * The Interface of the Solarlog Service
  */
 public interface ISolarlogService {
     /**
-     * Returns the solarlog 300 json result as String
+     * Returns the solarlog json result as String
      *
      * @param solarlogName the name of the solarlog
      * @return the json as string
      */
-    String getSolarlog300DataFromAPIAsString(String solarlogName);
+    String getSolarlogDataFromAPIAsString(String solarlogName);
 
     /**
-     * Returns the solarlog 300 json result as a Solarloglog300Data object
+     * Returns the solarlog json result as a SolarloglogData object
      *
      * @param solarlogName the name of the solarlog
-     * @return the Solarloglog300Data
+     * @return the SolarloglogData
      */
-    Solarlog300Data getSolarog300DataFromAPI(String solarlogName);
+    SolarlogData getSolarogDataFromAPI(String solarlogName);
 }

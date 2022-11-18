@@ -12,14 +12,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This is an object that contains the solarlog 300 json data in HashMaps
+ * This is an object that contains the solarlog json data in HashMaps
  */
-public class Solarlog300Data implements Serializable {
+public class SolarlogData implements Serializable {
 
     /**
      * This enum represents the json fields in the solarlog return value
      */
-    public enum SOLARLOG300_REGISTER {
+    public enum SOLARLOG_REGISTER {
         CREATEDDATE("100", LocalDateTime.class),
         PACWRALL( "101", Integer.class),
         PDCWRALL("102", Integer.class),
@@ -40,19 +40,19 @@ public class Solarlog300Data implements Serializable {
         private final String register;
         private final Class<?> fieldClass;
 
-        SOLARLOG300_REGISTER(String register, Class<?> fieldClass) {
+        SOLARLOG_REGISTER(String register, Class<?> fieldClass) {
             this.register = register;
             this.fieldClass = fieldClass;
         }
 
     }
 
-    private final static String SOLARLOG300_JSON_OBJID_1 = "801";
-    private final static String SOLARLOG300_JSON_OBJID_2 = "170";
+    private final static String SOLARLOG_JSON_OBJID_1 = "801";
+    private final static String SOLARLOG_JSON_OBJID_2 = "170";
     private final static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm:ss");
 
-    private final Map<SOLARLOG300_REGISTER, Integer> solarlogIntegerMap;
-    private final Map<SOLARLOG300_REGISTER, LocalDateTime> solarlogDateMap;
+    private final Map<SOLARLOG_REGISTER, Integer> solarlogIntegerMap;
+    private final Map<SOLARLOG_REGISTER, LocalDateTime> solarlogDateMap;
 
 
     /**
@@ -60,17 +60,17 @@ public class Solarlog300Data implements Serializable {
      *
      * @param solarlogLogJsonString the JSON as String
      */
-    public Solarlog300Data(String solarlogLogJsonString) {
+    public SolarlogData(String solarlogLogJsonString) {
         solarlogIntegerMap = new HashMap<>();
         solarlogDateMap = new HashMap<>();
 
         JsonParser parser = new JsonParser();
         JsonElement jsonElement = parser.parse(solarlogLogJsonString);
         JsonObject jsonObj = jsonElement.getAsJsonObject();
-        jsonObj = jsonObj.getAsJsonObject(Solarlog300Data.SOLARLOG300_JSON_OBJID_1);
-        jsonObj = jsonObj.getAsJsonObject(Solarlog300Data.SOLARLOG300_JSON_OBJID_2);
+        jsonObj = jsonObj.getAsJsonObject(SolarlogData.SOLARLOG_JSON_OBJID_1);
+        jsonObj = jsonObj.getAsJsonObject(SolarlogData.SOLARLOG_JSON_OBJID_2);
 
-        for (SOLARLOG300_REGISTER slr : SOLARLOG300_REGISTER.values()) {
+        for (SOLARLOG_REGISTER slr : SOLARLOG_REGISTER.values()) {
             JsonPrimitive jsonPrimitive = jsonObj.get(slr.register).getAsJsonPrimitive();
             if (Integer.class.equals(slr.fieldClass)) {
                 solarlogIntegerMap.put(slr, jsonPrimitive.getAsInt());
@@ -89,7 +89,7 @@ public class Solarlog300Data implements Serializable {
      * @param register the key that was requested
      * @return the integer belonging to the key
      */
-    public Integer getSolarlogIntegerField(SOLARLOG300_REGISTER register) {
+    public Integer getSolarlogIntegerField(SOLARLOG_REGISTER register) {
         return solarlogIntegerMap.get(register);
     }
 
@@ -99,7 +99,7 @@ public class Solarlog300Data implements Serializable {
      * @param register the key that was requested
      * @return the date belonging to the key
      */
-    public LocalDateTime getSolarlogDateField(SOLARLOG300_REGISTER register) {
+    public LocalDateTime getSolarlogDateField(SOLARLOG_REGISTER register) {
         return solarlogDateMap.get(register);
     }
 

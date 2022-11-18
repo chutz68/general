@@ -1,8 +1,12 @@
 {
   "solarlogproperties" : [
     {
-      "solarlogname" : "ruroslocal",
+      "solarlogname" : "ruros300",
       "solarlogbaseurl" : "http://192.168.1.39"
+    },
+    {
+      "solarlogname" : "ruros1200",
+      "solarlogbaseurl" : "http://192.168.1.17"
     }
   ]
 }

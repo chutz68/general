@@ -1,6 +1,6 @@
 package ch.softhenge.solarlog.solarlog.service;
 
-import ch.softhenge.solarlog.solarlog.pojo.Solarlog300Data;
+import ch.softhenge.solarlog.solarlog.pojo.SolarlogData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,8 +28,8 @@ public class SolarlogServiceTest {
     }
 
     @Test
-    public void testGetSolarlog300DataFromAPIAsString() {
-        String jsonResult = solarlogService.getSolarlog300DataFromAPIAsString("ruroslocal");
+    public void testGetSolarlogDataFromAPIAsString() {
+        String jsonResult = solarlogService.getSolarlogDataFromAPIAsString("ruros300");
         assertThat(jsonResult, startsWith("{"));
         assertThat(jsonResult, containsString("\"801\":"));
         assertThat(jsonResult, containsString("\"170\":"));
@@ -37,23 +37,23 @@ public class SolarlogServiceTest {
 
     @Test
     public void testGet() {
-        Solarlog300Data solarlogData = solarlogService.getSolarog300DataFromAPI("ruroslocal");
+        SolarlogData solarlogData = solarlogService.getSolarogDataFromAPI("ruros300");
         LocalDateTime ldtexpected = LocalDateTime.of(2022, Month.NOVEMBER, 5, 12, 50);
-        assertThat(solarlogData.getSolarlogDateField(Solarlog300Data.SOLARLOG300_REGISTER.CREATEDDATE), is(equalTo(ldtexpected)));
-        assertThat(solarlogData.getSolarlogIntegerField(Solarlog300Data.SOLARLOG300_REGISTER.PACWRALL), is(equalTo(1036)));
-        assertThat(solarlogData.getSolarlogIntegerField(Solarlog300Data.SOLARLOG300_REGISTER.EAC_DAYSUM_CNT), is(equalTo(7370)));
-        assertThat(solarlogData.getSolarlogIntegerField(Solarlog300Data.SOLARLOG300_REGISTER.EAC_TOTAL_CNT), is(equalTo(27495067)));
+        assertThat(solarlogData.getSolarlogDateField(SolarlogData.SOLARLOG_REGISTER.CREATEDDATE), is(equalTo(ldtexpected)));
+        assertThat(solarlogData.getSolarlogIntegerField(SolarlogData.SOLARLOG_REGISTER.PACWRALL), is(equalTo(1036)));
+        assertThat(solarlogData.getSolarlogIntegerField(SolarlogData.SOLARLOG_REGISTER.EAC_DAYSUM_CNT), is(equalTo(7370)));
+        assertThat(solarlogData.getSolarlogIntegerField(SolarlogData.SOLARLOG_REGISTER.EAC_TOTAL_CNT), is(equalTo(27495067)));
     }
 
     @Test
-    public void testGetSolarlog300DataAsStringNotExists() {
-        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> solarlogService.getSolarlog300DataFromAPIAsString("notexists"));
+    public void testGetSolarlogDataAsStringNotExists() {
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> solarlogService.getSolarlogDataFromAPIAsString("notexists"));
         assertThat(runtimeException.getMessage(), startsWith("The Solarlog Property File"));
     }
 
     @Test
-    public void testGetSolarlog300DataNotExists() {
-        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> solarlogService.getSolarog300DataFromAPI("notexists"));
+    public void testGetSolarlogDataNotExists() {
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> solarlogService.getSolarogDataFromAPI("notexists"));
         assertThat(runtimeException.getMessage(), startsWith("The Solarlog Property File"));
     }
 
