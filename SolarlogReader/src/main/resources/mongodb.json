@@ -1,0 +1,18 @@
+{
+  "mongodbcluster" : "wernch",
+  "mongodbuser" : "wern-user",
+  "mongodbpassword" : "TW9uZ29XZXJuRG9vZiQwMQ==",
+  "mongodburl" : "mongodb+srv://${user}:${password}@${mongodbcluster}.6jpqs67.mongodb.net/?retryWrites=true&w=majority",
+  "mongodbdatabases": [
+    {
+      "name" : "prod",
+      "databasename" : "RuRoSolarProd"
+    },
+    {
+      "name" : "test",
+      "databasename" : "RuRoSolarTest"
+    }
+  ],
+  "mongodbcollection1min" : "minute1data",
+  "mongodbcollection5min" : "minute5data"
+}

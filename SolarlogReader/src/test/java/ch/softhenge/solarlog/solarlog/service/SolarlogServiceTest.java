@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * This test checks whether we can call the Solarlog device which is located in the local network.
  */
-
 @SpringBootTest
 public class SolarlogServiceTest {
 
