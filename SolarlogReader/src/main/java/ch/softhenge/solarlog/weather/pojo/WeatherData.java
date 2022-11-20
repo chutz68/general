@@ -1,12 +1,11 @@
 package ch.softhenge.solarlog.weather.pojo;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
  * This is a Business Object containing Weather Data that was created by the Weather Service
  */
-public class WeatherData implements Serializable {
+public class WeatherData {
 
     private Integer visibility;
 
@@ -154,7 +153,7 @@ public class WeatherData implements Serializable {
         this.snow = snow;
     }
 
-    public static class Main implements Serializable {
+    public static class Main {
         private Double temp;
 
         private Double temp_min;
@@ -216,7 +215,7 @@ public class WeatherData implements Serializable {
         }
     }
 
-    public static class Clouds implements Serializable {
+    public static class Clouds {
         private Integer all;
 
         public Integer getAll() {
@@ -228,7 +227,7 @@ public class WeatherData implements Serializable {
         }
     }
 
-    public static class Sys implements Serializable {
+    public static class Sys {
         private String country;
 
         private Integer sunrise;
@@ -280,7 +279,7 @@ public class WeatherData implements Serializable {
         }
     }
 
-    public static class Coord implements Serializable {
+    public static class Coord {
         private Double lon;
 
         private Double lat;
@@ -302,7 +301,7 @@ public class WeatherData implements Serializable {
         }
     }
 
-    public static class Weather implements Serializable {
+    public static class Weather {
         private String icon;
 
         private String description;
@@ -344,7 +343,7 @@ public class WeatherData implements Serializable {
         }
     }
 
-    public static class Wind implements Serializable {
+    public static class Wind {
         private Integer deg;
 
         private Double speed;
@@ -366,7 +365,7 @@ public class WeatherData implements Serializable {
         }
     }
 
-    public static class Rain implements Serializable {
+    public static class Rain {
         private Double _1h;
 
         public Double get_1h() {
@@ -378,7 +377,7 @@ public class WeatherData implements Serializable {
         }
     }
 
-    public static class Snow implements Serializable {
+    public static class Snow {
         private Double _1h;
 
         public Double get_1h() {
