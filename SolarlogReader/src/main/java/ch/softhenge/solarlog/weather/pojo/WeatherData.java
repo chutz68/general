@@ -1,4 +1,4 @@
-package ch.softhenge.solarlog.weather;
+package ch.softhenge.solarlog.weather.pojo;
 
 import java.io.Serializable;
 import java.util.List;

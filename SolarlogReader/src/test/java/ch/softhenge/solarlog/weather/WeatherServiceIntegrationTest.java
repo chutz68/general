@@ -1,5 +1,7 @@
 package ch.softhenge.solarlog.weather;
 
+import ch.softhenge.solarlog.weather.pojo.EssentialWeatherData;
+import ch.softhenge.solarlog.weather.pojo.WeatherData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +46,9 @@ class WeatherServiceIntegrationTest {
         assertThat(weatherData.getWeather().get(0).getMain(), notNullValue());
         assertThat(weatherData.getWeather().get(0).getDescription(), notNullValue());
         EssentialWeatherData essentialWeatherData = weatherData.createEssentialWeatherData();
-        //FIXME: All fields are null!
-        System.out.println(essentialWeatherData);
+        assertThat(weatherData.getWeather().get(0).getDescription(), is(essentialWeatherData.getWeatherDescription()));
+        assertThat(weatherData.getMain().getTemp(), is(essentialWeatherData.getTempReal()));
+        assertThat(weatherData.getMain().getFeels_like(), is(essentialWeatherData.getTempFeel()));
     }
 
     @Test

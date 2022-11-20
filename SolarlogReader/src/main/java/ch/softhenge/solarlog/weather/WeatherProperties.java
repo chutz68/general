@@ -1,12 +1,11 @@
 package ch.softhenge.solarlog.weather;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
  * The Java Object that represents a weather api properties json file which is located in the classpath
  */
-public class WeatherProperties implements Serializable {
+public class WeatherProperties {
     private String weatherapikey;
 
     private String weatherunit;
@@ -50,7 +49,7 @@ public class WeatherProperties implements Serializable {
         return searchLocation == null ? null: searchLocation.getLocationapiurl();
     }
 
-    public static class Weatherlocations implements Serializable {
+    public static class Weatherlocations {
         private String locationname;
 
         private String locationapiurl;

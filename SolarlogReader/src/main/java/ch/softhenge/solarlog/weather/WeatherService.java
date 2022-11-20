@@ -1,5 +1,6 @@
 package ch.softhenge.solarlog.weather;
 
+import ch.softhenge.solarlog.weather.pojo.WeatherData;
 import com.google.gson.Gson;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringSubstitutor;

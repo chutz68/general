@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -14,7 +13,7 @@ import java.util.Map;
 /**
  * This is an object that contains the solarlog json data in HashMaps
  */
-public class SolarlogData implements Serializable {
+public class SolarlogData {
 
     /**
      * This enum represents the json fields in the solarlog return value
