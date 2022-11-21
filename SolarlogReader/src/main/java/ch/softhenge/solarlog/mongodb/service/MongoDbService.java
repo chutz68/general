@@ -2,6 +2,7 @@ package ch.softhenge.solarlog.mongodb.service;
 
 import ch.softhenge.solarlog.mongodb.property.MongodbProperties;
 import ch.softhenge.solarlog.mongodb.property.Mongodbdatabasis;
+import ch.softhenge.solarlog.solarlog.pojo.SolarlogData5Min;
 import com.google.gson.Gson;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
@@ -9,18 +10,27 @@ import com.mongodb.ServerApi;
 import com.mongodb.ServerApiVersion;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.InsertOneResult;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.mongodb.client.model.Filters.eq;
 
 /**
  * This service offers connection to the MongoDB and diverse Methods to connect to it
@@ -67,21 +77,44 @@ public class MongodbService {
     }
 
     /**
-     * Get the Name of the Collection that stores the 1 minute data
+     * Get the Collection that stores the 1 minute data
      *
-     * @return the 1min data Collection Name as String
+     * @return the Collection
      */
-    public String getCollectionName1MinData() {
-        return mongodbProperties.getMongodbcollection1min();
+    public MongoCollection<Document>  getCollection1MinData() {
+        return mongoDB.getCollection(mongodbProperties.getMongodbcollection1min());
     }
 
     /**
-     * Get the Name of the Collection that stores the 5 minute data
+     * Get the Collection that stores the 5 minute data
      *
-     * @return the 5min data Collection Name as String
+     * @return the Collection
      */
-    public String getCollectionName5MinData() {
-        return mongodbProperties.getMongodbcollection5min();
+    public MongoCollection<Document> getCollection5MinData() {
+        return mongoDB.getCollection(mongodbProperties.getMongodbcollection5min());
+    }
+
+    /**
+     * Insert one SolarlogData5Min into the 5-min collection
+     *
+     * @param solarlogData5Min the object that should be written
+     * @return the result
+     */
+    public InsertOneResult insertOneInto5MinData(SolarlogData5Min solarlogData5Min) {
+        String solDataAsJson = new Gson().toJson(solarlogData5Min);
+        return getCollection5MinData().insertOne(Document.parse(solDataAsJson));
+    }
+
+    /**
+     * Delete one record from the 5-min collection based on the createddate
+     *
+     * @param createdDateTime the datetime object of the record
+     * @return the result
+     */
+    public DeleteResult deleteOneFrom5MinData(LocalDateTime createdDateTime) {
+        String createdDateTimeAsString = createdDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        Bson query = eq("record_timestamp", createdDateTimeAsString);
+        return getCollection5MinData().deleteOne(query);
     }
 
     /**
