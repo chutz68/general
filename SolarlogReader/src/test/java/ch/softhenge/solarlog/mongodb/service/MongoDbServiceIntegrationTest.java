@@ -11,6 +11,6 @@ public class MongoDbServiceIntegrationTest {
 
     @Test
     public void testMongoDbService() {
-        mongoDbService = new MongodbService("test");
+        mongoDbService = new MongodbService("dev");
     }
 }

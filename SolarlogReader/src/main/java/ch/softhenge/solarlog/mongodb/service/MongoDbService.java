@@ -3,6 +3,13 @@ package ch.softhenge.solarlog.mongodb.service;
 import ch.softhenge.solarlog.mongodb.property.MongodbProperties;
 import ch.softhenge.solarlog.mongodb.property.Mongodbdatabasis;
 import com.google.gson.Gson;
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.ServerApi;
+import com.mongodb.ServerApiVersion;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -26,7 +33,7 @@ public class MongodbService {
 
     private final MongodbProperties mongodbProperties;
     private final String mongodbUrl;
-    private final String mongodbdatabase;
+    private final MongoDatabase mongoDB;
 
     /**
      * Constructor
@@ -49,7 +56,15 @@ public class MongodbService {
         if (mongodbdatabasis == null) {
             throw new RuntimeException("The Database with the name " + databasename + " does not exist in the mongodb properties file");
         }
-        mongodbdatabase = mongodbdatabasis.getDatabasename();
+        ConnectionString connectionString = new ConnectionString(mongodbUrl);
+        MongoClientSettings settings = MongoClientSettings.builder()
+                .applyConnectionString(connectionString)
+                .serverApi(ServerApi.builder()
+                        .version(ServerApiVersion.V1)
+                        .build())
+                .build();
+        MongoClient mongoClient = MongoClients.create(settings);
+        mongoDB = mongoClient.getDatabase(mongodbdatabasis.getDatabasename());
     }
 
     /**
@@ -68,15 +83,3 @@ public class MongodbService {
     }
 
 }
-
-/**    ConnectionString connectionString = new ConnectionString("mongodb+srv://wern-user:<password>@wernch.6jpqs67.mongodb.net/?retryWrites=true&w=majority");
-    MongoClientSettings settings = MongoClientSettings.builder()
-            .applyConnectionString(connectionString)
-            .serverApi(ServerApi.builder()
-                    .version(ServerApiVersion.V1)
-                    .build())
-            .build();
-    MongoClient mongoClient = MongoClients.create(settings);
-    MongoDatabase database = mongoClient.getDatabase("test");
-
- **/

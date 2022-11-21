@@ -11,6 +11,10 @@
     {
       "name" : "test",
       "databasename" : "RuRoSolarTest"
+    },
+    {
+      "name" : "dev",
+      "databasename" : "RuRoSolarDev"
     }
   ],
   "mongodbcollection1min" : "minute1data",
