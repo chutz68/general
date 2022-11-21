@@ -32,7 +32,6 @@ public class MongodbService {
     private static final String MONGODB_PROPERTIES_FILE_LOC = "/mongodb.json";
 
     private final MongodbProperties mongodbProperties;
-    private final String mongodbUrl;
     private final MongoDatabase mongoDB;
 
     /**
@@ -48,13 +47,13 @@ public class MongodbService {
         valuesMap.put("password", new String(pwd, StandardCharsets.UTF_8));
         valuesMap.put("mongodbcluster", mongodbProperties.getMongodbcluster());
         StringSubstitutor sub = new StringSubstitutor(valuesMap);
-        mongodbUrl = sub.replace(mongodbProperties.getMongodburl());
+        String mongodbUrl = sub.replace(mongodbProperties.getMongodburl());
         Mongodbdatabasis mongodbdatabasis = mongodbProperties.getMongodbdatabases().stream()
                 .filter((myDatabase) -> myDatabase.getName().equals(databasename))
                 .findFirst()
                 .orElse(null);
         if (mongodbdatabasis == null) {
-            throw new RuntimeException("The Database with the name " + databasename + " does not exist in the mongodb properties file");
+            throw new RuntimeException("The Database with the name '" + databasename + "' does not exist in the mongodb properties file");
         }
         ConnectionString connectionString = new ConnectionString(mongodbUrl);
         MongoClientSettings settings = MongoClientSettings.builder()
@@ -65,6 +64,24 @@ public class MongodbService {
                 .build();
         MongoClient mongoClient = MongoClients.create(settings);
         mongoDB = mongoClient.getDatabase(mongodbdatabasis.getDatabasename());
+    }
+
+    /**
+     * Get the Name of the Collection that stores the 1 minute data
+     *
+     * @return the 1min data Collection Name as String
+     */
+    public String getCollectionName1MinData() {
+        return mongodbProperties.getMongodbcollection1min();
+    }
+
+    /**
+     * Get the Name of the Collection that stores the 5 minute data
+     *
+     * @return the 5min data Collection Name as String
+     */
+    public String getCollectionName5MinData() {
+        return mongodbProperties.getMongodbcollection5min();
     }
 
     /**
