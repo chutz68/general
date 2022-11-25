@@ -6,6 +6,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.ZoneId;
 
 /**
  * A Test Class of the Solarlog Service that reads a file from classpath instead of calling the webservice
@@ -33,6 +34,6 @@ public class SolarlogTestService implements ISolarlogService{
         if (solarlogService.getSolarlogproperty(solarlogName) == null) {
             throw new RuntimeException("The Solarlog Property File doesn't contain the solarlogger with the name '" + solarlogName + "'");
         }
-        return new SolarlogData(jsonFile);
+        return new SolarlogData(jsonFile, ZoneId.of("Europe/Paris"));
     }
 }

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.ZoneId;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -20,7 +21,7 @@ class SolarlogDataTest {
     @Test
     public void testSolarlogDataReader() throws IOException {
         String jsonFile = IOUtils.resourceToString("/solarlogdataNeuenhof.json", StandardCharsets.UTF_8);
-        SolarlogData solData = new SolarlogData(jsonFile);
+        SolarlogData solData = new SolarlogData(jsonFile, ZoneId.of("Europe/Paris"));
         LocalDateTime ldtexpected = LocalDateTime.of(2022, Month.NOVEMBER, 5, 12, 50);
         assertThat(solData.getSolarlogDateField(SolarlogData.SOLARLOG_REGISTER.CREATEDDATE), is(equalTo(ldtexpected)));
         assertThat(solData.getSolarlogIntegerField(SolarlogData.SOLARLOG_REGISTER.PACWRALL), is(equalTo(1036)));

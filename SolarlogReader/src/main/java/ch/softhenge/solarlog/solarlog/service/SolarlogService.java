@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,7 +68,9 @@ public class SolarlogService implements ISolarlogService {
      */
     @Override
     public SolarlogData getSolarogDataFromAPI(String solarlogName) {
-        return new SolarlogData(getSolarlogDataFromAPIAsString(solarlogName));
+        String zoneIdAsString = getSolarlogproperty(solarlogName).getmZoneid();
+        ZoneId zoneId = ZoneId.of(zoneIdAsString);
+        return new SolarlogData(getSolarlogDataFromAPIAsString(solarlogName), zoneId);
     }
 
     /**
@@ -91,7 +94,11 @@ public class SolarlogService implements ISolarlogService {
      * @return the solarlogProperty object
      */
     protected Solarlogproperty getSolarlogproperty(String solarlogName) {
-        return solarlogProperties.getSolarlogPropertyBySolarlogName(solarlogName);
+        Solarlogproperty solarlogProperty = solarlogProperties.getSolarlogPropertyBySolarlogName(solarlogName);
+        if (solarlogProperty == null) {
+            throw new RuntimeException("The Solarlog Property File " + SOLARLOG_PROPERTIES_FILE_LOC + " doesn't contain the solarlogger with the name '" + solarlogName + "'");
+        }
+        return solarlogProperty;
     }
 
     /**
@@ -103,9 +110,6 @@ public class SolarlogService implements ISolarlogService {
     private String enrichSolarlogURL(String solarlogName) {
         Map<String, String> valuesMap = new HashMap<>();
         Solarlogproperty solarlogProperty = getSolarlogproperty(solarlogName);
-        if (solarlogProperty == null) {
-            throw new RuntimeException("The Solarlog Property File " + SOLARLOG_PROPERTIES_FILE_LOC + " doesn't contain the solarlogger with the name '" + solarlogName + "'");
-        }
         valuesMap.put("baseURL", solarlogProperty.getSolarlogbaseurl());
         StringSubstitutor sub = new StringSubstitutor(valuesMap);
         return sub.replace(SOLARLOG_URI_TEMPLATE);

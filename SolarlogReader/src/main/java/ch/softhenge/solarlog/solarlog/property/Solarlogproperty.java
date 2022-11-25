@@ -12,6 +12,9 @@ public class Solarlogproperty {
     @SerializedName("solarlogname")
     private String mSolarlogname;
 
+    @SerializedName("zoneid")
+    private String mZoneid;
+
     public String getSolarlogbaseurl() {
         return mSolarlogbaseurl;
     }
@@ -28,4 +31,10 @@ public class Solarlogproperty {
         mSolarlogname = solarlogname;
     }
 
+    public String getmZoneid() {
+        return mZoneid;
+    }
+    public void setmZoneid(String mZoneid) {
+        this.mZoneid = mZoneid;
+    }
 }

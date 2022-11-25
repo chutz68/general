@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDateTime;
-import java.time.Month;
+import java.time.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -31,8 +30,16 @@ public class SolarlogServiceIntegrationTest {
     @Test
     public void testGetSolarlogDataFromAPI() {
         SolarlogData solarlogData = solarlogService.getSolarogDataFromAPI("ruros300");
-        LocalDateTime ldtexpected = LocalDateTime.of(2022, Month.NOVEMBER, 5, 12, 50);
-        assertThat(solarlogData.getSolarlogDateField(SolarlogData.SOLARLOG_REGISTER.CREATEDDATE), greaterThan(ldtexpected));
+        LocalDateTime ldtexpected = LocalDateTime.now().minusMinutes(5);
+        LocalDateTime solarlogDate = solarlogData.getSolarlogDateField(SolarlogData.SOLARLOG_REGISTER.CREATEDDATE);
+        assertThat(solarlogDate, greaterThan(ldtexpected));
+        System.out.println("Current Date: " + solarlogDate);
+        assertThat(solarlogDate.toString(), matchesRegex("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$"));
+
+        ZonedDateTime zonedSolarlogDate = solarlogData.getSolarlogDateFieldUTC(solarlogDate);
+        System.out.println("Current Date: " + zonedSolarlogDate);
+        assertThat(zonedSolarlogDate.toString(), matchesRegex("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"));
+
         assertThat(solarlogData.getSolarlogIntegerField(SolarlogData.SOLARLOG_REGISTER.PACWRALL), is(greaterThanOrEqualTo(0)));
         assertThat(solarlogData.getSolarlogIntegerField(SolarlogData.SOLARLOG_REGISTER.EAC_DAYSUM_CNT), is(greaterThanOrEqualTo(0)));
         assertThat(solarlogData.getSolarlogIntegerField(SolarlogData.SOLARLOG_REGISTER.EAC_TOTAL_CNT), is(greaterThan(0)));

@@ -6,6 +6,9 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,15 +56,19 @@ public class SolarlogData {
     private final Map<SOLARLOG_REGISTER, Integer> solarlogIntegerMap;
     private final Map<SOLARLOG_REGISTER, LocalDateTime> solarlogDateMap;
 
+    private final ZoneId zoneIdCreatedDate;
+
 
     /**
      * The constructor creates a class containing all values of the Solarlog Json, storing them to HashMaps
      *
      * @param solarlogLogJsonString the JSON as String
+     * @param zoneIdCreatedDate the zoneId of the createdDate
      */
-    public SolarlogData(String solarlogLogJsonString) {
+    public SolarlogData(String solarlogLogJsonString, ZoneId zoneIdCreatedDate) {
         solarlogIntegerMap = new HashMap<>();
         solarlogDateMap = new HashMap<>();
+        this.zoneIdCreatedDate = zoneIdCreatedDate;
 
         JsonParser parser = new JsonParser();
         JsonElement jsonElement = parser.parse(solarlogLogJsonString);
@@ -100,6 +107,16 @@ public class SolarlogData {
      */
     public LocalDateTime getSolarlogDateField(SOLARLOG_REGISTER register) {
         return solarlogDateMap.get(register);
+    }
+
+    /**
+     * returns the Date value of the requested key as a UTC Date
+     *
+     * @param localDateTime the localDateTime
+     * @return the ZonedDateTime in UTC
+     */
+    public ZonedDateTime getSolarlogDateFieldUTC(LocalDateTime localDateTime) {
+        return localDateTime.atZone(zoneIdCreatedDate).withZoneSameInstant(ZoneOffset.UTC);
     }
 
 }

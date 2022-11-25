@@ -2,11 +2,13 @@
   "solarlogproperties" : [
     {
       "solarlogname" : "ruros300",
-      "solarlogbaseurl" : "http://192.168.1.39"
+      "solarlogbaseurl" : "http://192.168.1.39",
+      "zoneid" : "Europe/Paris"
     },
     {
       "solarlogname" : "ruros1200",
-      "solarlogbaseurl" : "http://192.168.1.17"
+      "solarlogbaseurl" : "http://192.168.1.17",
+      "zoneid" : "Europe/Paris"
     }
   ]
 }
