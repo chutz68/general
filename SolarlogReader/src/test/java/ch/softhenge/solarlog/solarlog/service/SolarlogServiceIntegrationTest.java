@@ -30,9 +30,11 @@ public class SolarlogServiceIntegrationTest {
     @Test
     public void testGetSolarlogDataFromAPI() {
         SolarlogData solarlogData = solarlogService.getSolarogDataFromAPI("ruros300");
-        LocalDateTime ldtexpected = LocalDateTime.now().minusMinutes(5);
+        LocalDateTime ldtbefore5Minutes = LocalDateTime.now().minusMinutes(5);
         LocalDateTime solarlogDate = solarlogData.getSolarlogDateField(SolarlogData.SOLARLOG_REGISTER.CREATEDDATE);
-        assertThat(solarlogDate, greaterThan(ldtexpected));
+        assertThat(solarlogDate, greaterThan(ldtbefore5Minutes));
+        LocalDateTime ldtafter5Minutes = LocalDateTime.now().plusMinutes(5);
+        assertThat(solarlogDate, lessThan(ldtafter5Minutes));
         System.out.println("Current Date: " + solarlogDate);
         assertThat(solarlogDate.toString(), matchesRegex("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$"));
 

@@ -111,6 +111,7 @@ public class SolarlogData {
 
     /**
      * returns the Date value of the requested key as a UTC Date
+     * example: 2022-11-27T16:26:15Z
      *
      * @param localDateTime the localDateTime
      * @return the ZonedDateTime in UTC
