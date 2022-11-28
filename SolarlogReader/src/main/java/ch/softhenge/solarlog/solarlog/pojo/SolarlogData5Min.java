@@ -1,8 +1,7 @@
 
 package ch.softhenge.solarlog.solarlog.pojo;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.*;
 import java.util.List;
 import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;
@@ -12,9 +11,9 @@ import com.google.gson.annotations.SerializedName;
 public class SolarlogData5Min {
 
     @SerializedName("record_timestamp")
-    private String mRecordTimestamp;
+    private RecordTimestamp mRecordTimestamp;
     @SerializedName("update_timestamp")
-    private String mUpdateTimestamp;
+    private UpdateTimestamp mUpdateTimestamp;
     @SerializedName("e_ac_inverter_day")
     private Integer mEAcInverterDay;
     @SerializedName("e_ac_usage_day")
@@ -36,28 +35,30 @@ public class SolarlogData5Min {
     @SerializedName("weather")
     private Weather mWeather;
 
-    public String getRecordTimestamp() {
+    public RecordTimestamp getRecordTimestamp() {
         return mRecordTimestamp;
     }
 
-    public LocalDateTime getRecordTimestampAsDate() {
-        return LocalDateTime.parse(mRecordTimestamp, DateTimeFormatter.ISO_DATE_TIME);
+    public LocalDateTime getRecordTimestampAsLocalDateTime(ZoneId zone) {
+        Instant instant = Instant.parse(mRecordTimestamp.m$date);
+        return LocalDateTime.ofInstant(instant, zone);
     }
 
-    public void setRecordTimestamp(String recordTimestamp) {
+    public void setRecordTimestamp(RecordTimestamp recordTimestamp) {
         mRecordTimestamp = recordTimestamp;
     }
 
-    public String getUpdateTimestamp() {
+    public UpdateTimestamp getUpdateTimestamp() {
         return mUpdateTimestamp;
     }
 
-    public LocalDateTime getUpdateTimestampAsDate() {
-        return LocalDateTime.parse(mUpdateTimestamp, DateTimeFormatter.ISO_DATE_TIME);
+    public LocalDateTime getUpdateTimestampAsLocalDateTime(ZoneId zone) {
+        Instant instant = Instant.parse(mUpdateTimestamp.m$date);
+        return LocalDateTime.ofInstant(instant, zone);
     }
 
-    public void setUpdateTimestamp(String UpdateTimestamp) {
-        mUpdateTimestamp = UpdateTimestamp;
+    public void setUpdateTimestamp(UpdateTimestamp updateTimestamp) {
+        mUpdateTimestamp = updateTimestamp;
     }
 
     public Integer getEAcInverterDay() {
@@ -138,6 +139,35 @@ public class SolarlogData5Min {
 
     public void setWeather(Weather weather) {
         mWeather = weather;
+    }
+
+
+    public static class RecordTimestamp {
+
+        @SerializedName("$date")
+        private String m$date;
+
+        public String get$date() {
+            return m$date;
+        }
+
+        public void set$date(String $date) {
+            m$date = $date;
+        }
+    }
+
+    public static class UpdateTimestamp {
+
+        @SerializedName("$date")
+        private String m$date;
+
+        public String get$date() {
+            return m$date;
+        }
+
+        public void set$date(String $date) {
+            m$date = $date;
+        }
     }
 
     public static class Heatpump {

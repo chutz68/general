@@ -1,6 +1,6 @@
 {
-	"record_timestamp":"2022-10-11T21:39:00.000Z",
-	"update_timestamp":"2022-10-11T21:40:02.000Z",
+	"record_timestamp": { "$date": "2022-10-11T21:39:00Z" },
+	"update_timestamp": { "$date": "2022-10-11T21:40:02Z" },
 	"p_ac_usage":0,
 	"p_ac_inverter":0,
 	"e_ac_usage_day":12,

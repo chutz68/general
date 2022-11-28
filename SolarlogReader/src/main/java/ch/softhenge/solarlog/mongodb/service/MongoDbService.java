@@ -25,9 +25,9 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -112,9 +112,12 @@ public class MongodbService {
      * @return the result
      */
     public DeleteResult deleteOneFrom5MinData(LocalDateTime createdDateTime) {
-        String createdDateTimeAsString = createdDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        Bson query = eq("record_timestamp", createdDateTimeAsString);
+        Bson query = eq("record_timestamp", createdDateTime);
         return getCollection5MinData().deleteOne(query);
+    }
+
+    public List<SolarlogData5Min> readSolarlogData5MinByRecordDate() {
+        return null;
     }
 
     /**
