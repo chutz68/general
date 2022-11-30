@@ -39,12 +39,11 @@ public class MongoDbServiceIntegrationTest {
         System.out.println("Deleted " + deleteResult1 + " records");
 
         String jsonFile = IOUtils.resourceToString("/record5min.json", StandardCharsets.UTF_8);
-        SolarlogData5Min solarlogData5Min = new Gson().fromJson(jsonFile, SolarlogData5Min.class);
-        InsertOneResult insertOneResult = mongoDbService.insertOneInto5MinData(solarlogData5Min);
+        InsertOneResult insertOneResult = mongoDbService.insertOneInto5MinData(jsonFile);
         assertThat(insertOneResult.getInsertedId(), is(notNullValue()));
 
-        ZoneId zoneid = ZoneId.of("Europe/Paris");
-        DeleteResult deleteResult = mongoDbService.deleteOneFrom5MinData(solarlogData5Min.getRecordTimestampAsLocalDateTime(zoneid));
+        SolarlogData5Min solarlogData5Min = new Gson().fromJson(jsonFile, SolarlogData5Min.class);
+        DeleteResult deleteResult = mongoDbService.deleteOneFrom5MinData(solarlogData5Min.getRecordTimestampAsInstant());
         assertThat(deleteResult.getDeletedCount(), is(greaterThanOrEqualTo(1L)));
     }
 }

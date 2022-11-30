@@ -10,7 +10,6 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -31,18 +30,15 @@ class SolarlogData5MinTest {
         assertThat(solarlogData5Min.getPhases().get(0).getPAc(), is(equalTo(-300)));
         assertThat(solarlogData5Min.getWeather().getSunriseDatetime(), is(equalTo(1667282998)));
 
-        ZoneId zoneId = ZoneId.of("Europe/Paris");
         String myDate = "2022-10-11T21:39:00Z";
         assertThat(solarlogData5Min.getRecordTimestamp().get$date(), is(equalTo(myDate)));
         Instant instant = Instant.parse(myDate);
-        LocalDateTime ldt = LocalDateTime.ofInstant(instant, zoneId);
-        assertThat(solarlogData5Min.getRecordTimestampAsLocalDateTime(zoneId), is(equalTo(ldt)));
+        assertThat(solarlogData5Min.getRecordTimestampAsInstant(), is(equalTo(instant)));
 
         myDate = "2022-10-11T21:40:02Z";
         assertThat(solarlogData5Min.getUpdateTimestamp().get$date(), is(equalTo(myDate)));
         instant = Instant.parse(myDate);
-        ldt = LocalDateTime.ofInstant(instant, zoneId);
-        assertThat(solarlogData5Min.getUpdateTimestampAsLocalDateTime(zoneId), is(equalTo(ldt)));
+        assertThat(solarlogData5Min.getUpdateTimestampAsInstant(), is(equalTo(instant)));
     }
 
     @Test

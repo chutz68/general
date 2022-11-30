@@ -39,9 +39,8 @@ public class SolarlogData5Min {
         return mRecordTimestamp;
     }
 
-    public LocalDateTime getRecordTimestampAsLocalDateTime(ZoneId zone) {
-        Instant instant = Instant.parse(mRecordTimestamp.m$date);
-        return LocalDateTime.ofInstant(instant, zone);
+    public Instant getRecordTimestampAsInstant() {
+        return Instant.parse(mRecordTimestamp.m$date);
     }
 
     public void setRecordTimestamp(RecordTimestamp recordTimestamp) {
@@ -52,9 +51,8 @@ public class SolarlogData5Min {
         return mUpdateTimestamp;
     }
 
-    public LocalDateTime getUpdateTimestampAsLocalDateTime(ZoneId zone) {
-        Instant instant = Instant.parse(mUpdateTimestamp.m$date);
-        return LocalDateTime.ofInstant(instant, zone);
+    public Instant getUpdateTimestampAsInstant() {
+        return Instant.parse(mUpdateTimestamp.m$date);
     }
 
     public void setUpdateTimestamp(UpdateTimestamp updateTimestamp) {
@@ -468,6 +466,11 @@ public class SolarlogData5Min {
             mWindSpeed = windSpeed;
         }
 
+    }
+
+    @Override
+    public String toString() {
+        return "RecordDate: " + getRecordTimestamp().get$date();
     }
 
 }

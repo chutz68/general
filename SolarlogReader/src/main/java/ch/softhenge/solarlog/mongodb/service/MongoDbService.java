@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -95,23 +95,35 @@ public class MongodbService {
     }
 
     /**
-     * Insert one SolarlogData5Min into the 5-min collection
+     * Insert one SolarlogData5Min Java Object into the 5-min collection
      *
      * @param solarlogData5Min the object that should be written
      * @return the result
      */
     public InsertOneResult insertOneInto5MinData(SolarlogData5Min solarlogData5Min) {
         String solDataAsJson = new Gson().toJson(solarlogData5Min);
-        return getCollection5MinData().insertOne(Document.parse(solDataAsJson));
+        return insertOneInto5MinData(solDataAsJson);
     }
+
+    /**
+     * Insert one SolarlogData5Min json String into the 5-min collection
+     *
+     * @param solarlogData5MinJson the Json as String that should be written
+     * @return the result
+     */
+    public InsertOneResult insertOneInto5MinData(String solarlogData5MinJson) {
+        Document document = Document.parse(solarlogData5MinJson);
+        return getCollection5MinData().insertOne(document);
+    }
+
 
     /**
      * Delete one record from the 5-min collection based on the createddate
      *
-     * @param createdDateTime the datetime object of the record
+     * @param createdDateTime the instant object of the record
      * @return the result
      */
-    public DeleteResult deleteOneFrom5MinData(LocalDateTime createdDateTime) {
+    public DeleteResult deleteOneFrom5MinData(Instant createdDateTime) {
         Bson query = eq("record_timestamp", createdDateTime);
         return getCollection5MinData().deleteOne(query);
     }
