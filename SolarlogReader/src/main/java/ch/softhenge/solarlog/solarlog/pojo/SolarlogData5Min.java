@@ -3,12 +3,13 @@ package ch.softhenge.solarlog.solarlog.pojo;
 
 import java.time.*;
 import java.util.List;
+import java.util.Objects;
 import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;
 
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
-public class SolarlogData5Min {
+public class SolarlogData5Min implements Comparable {
 
     @SerializedName("record_timestamp")
     private RecordTimestamp mRecordTimestamp;
@@ -473,4 +474,24 @@ public class SolarlogData5Min {
         return "RecordDate: " + getRecordTimestamp().get$date();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SolarlogData5Min that = (SolarlogData5Min) o;
+        return mRecordTimestamp.equals(that.mRecordTimestamp);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mRecordTimestamp);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (this == o) return 0;
+        if (o == null || getClass() != o.getClass()) return 0;
+        SolarlogData5Min that = (SolarlogData5Min) o;
+        return -1 * that.getRecordTimestampAsInstant().compareTo(this.getRecordTimestampAsInstant());
+    }
 }

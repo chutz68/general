@@ -4,14 +4,9 @@ import ch.softhenge.solarlog.mongodb.property.MongodbProperties;
 import ch.softhenge.solarlog.mongodb.property.Mongodbdatabasis;
 import ch.softhenge.solarlog.solarlog.pojo.SolarlogData5Min;
 import com.google.gson.Gson;
-import com.mongodb.ConnectionString;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.ServerApi;
-import com.mongodb.ServerApiVersion;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.*;
+import com.mongodb.client.*;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import org.apache.commons.io.IOUtils;
@@ -25,12 +20,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 
-import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.*;
 
 /**
  * This service offers connection to the MongoDB and diverse Methods to connect to it
@@ -128,8 +121,18 @@ public class MongodbService {
         return getCollection5MinData().deleteOne(query);
     }
 
-    public List<SolarlogData5Min> readSolarlogData5MinByRecordDate() {
-        return null;
+    /**
+     * Requests for 5 min data based on from and to date
+     *
+     * @param fromDate The Date from which the records should be read including fromDate (>= fromDate)
+     * @param toDate The Date to which the records should be read, NOT including toDate (< toDate)
+     * @return a FindIterable of SolarlogData5Min
+     */
+    public FindIterable<SolarlogData5Min> readSolarlogData5MinByRecordDate(LocalDate fromDate, LocalDate toDate) {
+        List<SolarlogData5Min> solarlogList = new ArrayList<>();
+        Bson querygte = gte("record_timestamp", fromDate);
+        Bson querylt = lt("record_timestamp", toDate);
+        return getCollection5MinData().find(Filters.and(querygte, querylt), SolarlogData5Min.class);
     }
 
     /**

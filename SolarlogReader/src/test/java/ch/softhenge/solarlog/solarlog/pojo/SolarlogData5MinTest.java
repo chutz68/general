@@ -10,7 +10,6 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.time.ZoneId;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -30,7 +29,7 @@ class SolarlogData5MinTest {
         assertThat(solarlogData5Min.getPhases().get(0).getPAc(), is(equalTo(-300)));
         assertThat(solarlogData5Min.getWeather().getSunriseDatetime(), is(equalTo(1667282998)));
 
-        String myDate = "2022-10-11T21:39:00Z";
+        String myDate = "2022-10-11T21:35:00Z";
         assertThat(solarlogData5Min.getRecordTimestamp().get$date(), is(equalTo(myDate)));
         Instant instant = Instant.parse(myDate);
         assertThat(solarlogData5Min.getRecordTimestampAsInstant(), is(equalTo(instant)));
@@ -48,6 +47,5 @@ class SolarlogData5MinTest {
         String jsonFileFromObject = new Gson().toJson(solarlogData5Min);
         JSONAssert.assertEquals(jsonFile, jsonFileFromObject, JSONCompareMode.STRICT);
     }
-
 
 }
