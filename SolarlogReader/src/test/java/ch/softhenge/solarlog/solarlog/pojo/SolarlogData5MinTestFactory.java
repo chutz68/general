@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -94,7 +93,7 @@ public class SolarlogData5MinTestFactory {
     public void testSolarlog5MinCopier() throws IOException {
         List<SolarlogData5Min> solarlogList = create5minDataRecords(2022, Month.DECEMBER, 5);
         assertThat(solarlogList.size(), is(equalTo(361)));
-        Collections.sort(solarlogList);
+        solarlogList.sort(SolarlogData5Min::compareTo);
         SolarlogData5Min solarLog5MinPrev = null;
         for (SolarlogData5Min solarLog5Min : solarlogList) {
             if (solarLog5MinPrev != null) {

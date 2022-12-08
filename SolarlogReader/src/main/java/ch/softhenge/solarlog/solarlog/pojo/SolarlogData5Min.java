@@ -490,8 +490,9 @@ public class SolarlogData5Min implements Comparable {
     @Override
     public int compareTo(Object o) {
         if (this == o) return 0;
-        if (o == null || getClass() != o.getClass()) return 0;
+        if (o == null || this.getClass() != o.getClass()) return 0;
         SolarlogData5Min that = (SolarlogData5Min) o;
-        return -1 * that.getRecordTimestampAsInstant().compareTo(this.getRecordTimestampAsInstant());
+        return this.getRecordTimestampAsInstant().compareTo(that.getRecordTimestampAsInstant());
     }
+    
 }
