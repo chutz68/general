@@ -31,7 +31,7 @@ public class MongoDbServiceIntegrationTest {
     }
 
     @Test
-    public void testInsertOneInto5MinTable() throws IOException {
+    public void testInsertOneInto5MinTableJson() throws IOException {
         LocalDateTime ldtafter5Minutes = LocalDateTime.now().plusMinutes(2000);
         Bson query = new Document("record_timestamp", ldtafter5Minutes);
         long docs = mongoDbService.getCollection5MinData().countDocuments();
@@ -45,6 +45,25 @@ public class MongoDbServiceIntegrationTest {
         assertThat(insertOneResult.getInsertedId(), is(notNullValue()));
 
         SolarlogData5Min solarlogData5Min = new Gson().fromJson(jsonFile, SolarlogData5Min.class);
+        DeleteResult deleteResult = mongoDbService.deleteOneFrom5MinData(solarlogData5Min.getRecordTimestampAsInstant());
+        assertThat(deleteResult.getDeletedCount(), is(greaterThanOrEqualTo(1L)));
+    }
+
+    @Test
+    public void testInsertOneInto5MinTableObject() throws IOException {
+        LocalDateTime ldtafter5Minutes = LocalDateTime.now().plusMinutes(2000);
+        Bson query = new Document("record_timestamp", ldtafter5Minutes);
+        long docs = mongoDbService.getCollection5MinData().countDocuments();
+        System.out.println("has " + docs + " records");
+
+        DeleteResult deleteResult1 = mongoDbService.getCollection5MinData().deleteMany(query);
+        System.out.println("Deleted " + deleteResult1 + " records");
+
+        String jsonFile = IOUtils.resourceToString("/record5min.json", StandardCharsets.UTF_8);
+        SolarlogData5Min solarlogData5Min = new Gson().fromJson(jsonFile, SolarlogData5Min.class);
+        InsertOneResult insertOneResult = mongoDbService.insertOneInto5MinData(solarlogData5Min);
+        assertThat(insertOneResult.getInsertedId(), is(notNullValue()));
+
         DeleteResult deleteResult = mongoDbService.deleteOneFrom5MinData(solarlogData5Min.getRecordTimestampAsInstant());
         assertThat(deleteResult.getDeletedCount(), is(greaterThanOrEqualTo(1L)));
     }
