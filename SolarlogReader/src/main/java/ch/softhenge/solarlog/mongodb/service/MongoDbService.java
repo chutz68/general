@@ -15,7 +15,6 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -28,7 +27,6 @@ import static com.mongodb.client.model.Filters.*;
 /**
  * This service offers connection to the MongoDB and diverse Methods to connect to it
  */
-@Service
 public class MongodbService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -133,8 +131,7 @@ public class MongodbService {
     public FindIterable<SolarlogData5Min> readSolarlogData5MinByRecordDate(LocalDate fromDate, LocalDate toDate) {
         Bson querygte = gte("record_timestamp", fromDate);
         Bson querylt = lt("record_timestamp", toDate);
-        FindIterable<SolarlogData5Min> solarlogData5Mins = getCollection5MinData().find(and(querygte, querylt), SolarlogData5Min.class);
-        return solarlogData5Mins;
+        return getCollection5MinData().find(and(querygte, querylt), SolarlogData5Min.class);
     }
 
     /**
@@ -145,8 +142,9 @@ public class MongodbService {
      */
     public List<SolarlogData5Min> getListFromIterable(FindIterable<SolarlogData5Min> iterable) {
         List<SolarlogData5Min> solarlogList = new ArrayList<>();
-        for (SolarlogData5Min solarlogData5Min : iterable) {
-            solarlogList.add(solarlogData5Min);
+        MongoCursor<SolarlogData5Min> cursor = iterable.iterator();
+        if (cursor.hasNext()) {
+            solarlogList.add(cursor.next());
         }
         return solarlogList;
     }
