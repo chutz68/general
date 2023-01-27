@@ -88,24 +88,24 @@ public class MongodbService {
     }
 
     /**
-     * Insert one SolarlogData5Min Java Object into the 5-min collection
+     * Insert one SolarlogData5Minn Java Object into the 5-min collection
      *
-     * @param solarlogData5Min the object that should be written
+     * @param SolarlogData5Minn the object that should be written
      * @return the result
      */
-    public InsertOneResult insertOneInto5MinData(SolarlogData5Min solarlogData5Min) {
-        String solDataAsJson = new Gson().toJson(solarlogData5Min);
+    public InsertOneResult insertOneInto5MinData(SolarlogData5Min SolarlogData5Minn) {
+        String solDataAsJson = new Gson().toJson(SolarlogData5Minn);
         return insertOneInto5MinData(solDataAsJson);
     }
 
     /**
-     * Insert one SolarlogData5Min json String into the 5-min collection
+     * Insert one SolarlogData5Minn json String into the 5-min collection
      *
-     * @param solarlogData5MinJson the Json as String that should be written
+     * @param SolarlogData5MinnJson the Json as String that should be written
      * @return the result
      */
-    public InsertOneResult insertOneInto5MinData(String solarlogData5MinJson) {
-        Document document = Document.parse(solarlogData5MinJson);
+    public InsertOneResult insertOneInto5MinData(String SolarlogData5MinnJson) {
+        Document document = Document.parse(SolarlogData5MinnJson);
         return getCollection5MinData().insertOne(document);
     }
 
@@ -126,19 +126,25 @@ public class MongodbService {
      *
      * @param fromDate The Date from which the records should be read including fromDate (>= fromDate)
      * @param toDate The Date to which the records should be read, NOT including toDate (< toDate)
-     * @return a FindIterable of SolarlogData5Min
+     * @return a FindIterable of SolarlogData5Minn
      */
-    public FindIterable<SolarlogData5Min> readSolarlogData5MinByRecordDate(LocalDate fromDate, LocalDate toDate) {
+    public FindIterable<SolarlogData5Min> readSolarlogData5MinnByRecordDate(LocalDate fromDate, LocalDate toDate) {
         Bson querygte = gte("record_timestamp", fromDate);
         Bson querylt = lt("record_timestamp", toDate);
         return getCollection5MinData().find(and(querygte, querylt), SolarlogData5Min.class);
     }
 
+    public FindIterable<Document> readSolarlogData5MinnByRecordDateAsDocument(LocalDate fromDate, LocalDate toDate) {
+        Bson querygte = gte("record_timestamp", fromDate);
+        Bson querylt = lt("record_timestamp", toDate);
+        return getCollection5MinData().find(and(querygte, querylt));
+    }
+
     /**
-     * resturns a list of SolarlogData5Min based of a FindIterable
+     * resturns a list of SolarlogData5Minn based of a FindIterable
      *
      * @param iterable the FindIterable
-     * @return a list of SolarlogData5Min
+     * @return a list of SolarlogData5Minn
      */
     public List<SolarlogData5Min> getListFromIterable(FindIterable<SolarlogData5Min> iterable) {
         List<SolarlogData5Min> solarlogList = new ArrayList<>();

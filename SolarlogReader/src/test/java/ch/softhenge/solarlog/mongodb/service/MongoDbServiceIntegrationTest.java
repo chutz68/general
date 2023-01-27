@@ -3,6 +3,7 @@ package ch.softhenge.solarlog.mongodb.service;
 import ch.softhenge.solarlog.solarlog.pojo.SolarlogData5Min;
 import com.google.gson.Gson;
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import org.apache.commons.io.IOUtils;
@@ -72,8 +73,21 @@ public class MongoDbServiceIntegrationTest {
     public void testReadRecordFromDB() {
         LocalDate fromDate = LocalDate.of(2022, 10, 11);
         LocalDate toDate = LocalDate.of(2022, 10, 12);
-        FindIterable<SolarlogData5Min> solarlogData5MinsIterable = mongoDbService.readSolarlogData5MinByRecordDate(fromDate, toDate);
+        FindIterable<SolarlogData5Min> solarlogData5MinsIterable = mongoDbService.readSolarlogData5MinnByRecordDate(fromDate, toDate);
         List<SolarlogData5Min> solarlogDataList = mongoDbService.getListFromIterable(solarlogData5MinsIterable);
         assertThat(solarlogDataList.size(), is(equalTo(1)));
     }
+
+    @Test
+    public void testReadRecordFromDBAsDocument() {
+        LocalDate fromDate = LocalDate.of(2022, 10, 11);
+        LocalDate toDate = LocalDate.of(2022, 10, 12);
+        FindIterable<Document> document = mongoDbService.readSolarlogData5MinnByRecordDateAsDocument(fromDate, toDate);
+        MongoCursor<Document> cursor = document.iterator();
+        if (cursor.hasNext()) {
+            Document exp = cursor.next();
+            assertThat(exp, is(notNullValue()));
+        }
+    }
+
 }
