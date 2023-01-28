@@ -14,9 +14,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This is an object that contains the solarlog json data in HashMaps
+ * This is an object that contains the solarlog json data register in HashMaps
  */
-public class SolarlogData {
+public class SolarlogRegisterData {
 
     /**
      * This enum represents the json fields in the solarlog return value
@@ -65,7 +65,7 @@ public class SolarlogData {
      * @param solarlogLogJsonString the JSON as String
      * @param zoneIdCreatedDate the zoneId of the createdDate
      */
-    public SolarlogData(String solarlogLogJsonString, ZoneId zoneIdCreatedDate) {
+    public SolarlogRegisterData(String solarlogLogJsonString, ZoneId zoneIdCreatedDate) {
         solarlogIntegerMap = new HashMap<>();
         solarlogDateMap = new HashMap<>();
         this.zoneIdCreatedDate = zoneIdCreatedDate;
@@ -73,8 +73,8 @@ public class SolarlogData {
         JsonParser parser = new JsonParser();
         JsonElement jsonElement = parser.parse(solarlogLogJsonString);
         JsonObject jsonObj = jsonElement.getAsJsonObject();
-        jsonObj = jsonObj.getAsJsonObject(SolarlogData.SOLARLOG_JSON_OBJID_1);
-        jsonObj = jsonObj.getAsJsonObject(SolarlogData.SOLARLOG_JSON_OBJID_2);
+        jsonObj = jsonObj.getAsJsonObject(SolarlogRegisterData.SOLARLOG_JSON_OBJID_1);
+        jsonObj = jsonObj.getAsJsonObject(SolarlogRegisterData.SOLARLOG_JSON_OBJID_2);
 
         for (SOLARLOG_REGISTER slr : SOLARLOG_REGISTER.values()) {
             JsonPrimitive jsonPrimitive = jsonObj.get(slr.register).getAsJsonPrimitive();

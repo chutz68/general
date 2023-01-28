@@ -1,6 +1,6 @@
 package ch.softhenge.solarlog.solarlog.service;
 
-import ch.softhenge.solarlog.solarlog.pojo.SolarlogData;
+import ch.softhenge.solarlog.solarlog.pojo.SolarlogRegisterData;
 import ch.softhenge.solarlog.solarlog.property.SolarlogProperties;
 import ch.softhenge.solarlog.solarlog.property.Solarlogproperty;
 import com.google.gson.*;
@@ -67,10 +67,10 @@ public class SolarlogService implements ISolarlogService {
      * @return the SolarlogObject
      */
     @Override
-    public SolarlogData getSolarogDataFromAPI(String solarlogName) {
+    public SolarlogRegisterData getSolarogDataFromAPI(String solarlogName) {
         String zoneIdAsString = getSolarlogproperty(solarlogName).getmZoneid();
         ZoneId zoneId = ZoneId.of(zoneIdAsString);
-        return new SolarlogData(getSolarlogDataFromAPIAsString(solarlogName), zoneId);
+        return new SolarlogRegisterData(getSolarlogDataFromAPIAsString(solarlogName), zoneId);
     }
 
     /**

@@ -1,6 +1,6 @@
 package ch.softhenge.solarlog.solarlog.service;
 
-import ch.softhenge.solarlog.solarlog.pojo.SolarlogData;
+import ch.softhenge.solarlog.solarlog.pojo.SolarlogRegisterData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,12 +36,12 @@ public class SolarlogServiceTest {
 
     @Test
     public void testGet() {
-        SolarlogData solarlogData = solarlogService.getSolarogDataFromAPI("ruros300");
+        SolarlogRegisterData solarlogRegisterData = solarlogService.getSolarogDataFromAPI("ruros300");
         LocalDateTime ldtexpected = LocalDateTime.of(2022, Month.NOVEMBER, 5, 12, 50);
-        assertThat(solarlogData.getSolarlogDateField(SolarlogData.SOLARLOG_REGISTER.CREATEDDATE), is(equalTo(ldtexpected)));
-        assertThat(solarlogData.getSolarlogIntegerField(SolarlogData.SOLARLOG_REGISTER.PACWRALL), is(equalTo(1036)));
-        assertThat(solarlogData.getSolarlogIntegerField(SolarlogData.SOLARLOG_REGISTER.EAC_DAYSUM_CNT), is(equalTo(7370)));
-        assertThat(solarlogData.getSolarlogIntegerField(SolarlogData.SOLARLOG_REGISTER.EAC_TOTAL_CNT), is(equalTo(27495067)));
+        assertThat(solarlogRegisterData.getSolarlogDateField(SolarlogRegisterData.SOLARLOG_REGISTER.CREATEDDATE), is(equalTo(ldtexpected)));
+        assertThat(solarlogRegisterData.getSolarlogIntegerField(SolarlogRegisterData.SOLARLOG_REGISTER.PACWRALL), is(equalTo(1036)));
+        assertThat(solarlogRegisterData.getSolarlogIntegerField(SolarlogRegisterData.SOLARLOG_REGISTER.EAC_DAYSUM_CNT), is(equalTo(7370)));
+        assertThat(solarlogRegisterData.getSolarlogIntegerField(SolarlogRegisterData.SOLARLOG_REGISTER.EAC_TOTAL_CNT), is(equalTo(27495067)));
     }
 
     @Test
