@@ -128,13 +128,13 @@ public class MongodbService {
      * @param toDate The Date to which the records should be read, NOT including toDate (< toDate)
      * @return a FindIterable of SolarlogData5Minn
      */
-    public FindIterable<SolarlogData5Min> readSolarlogData5MinnByRecordDate(LocalDate fromDate, LocalDate toDate) {
+    public FindIterable<SolarlogData5Min> readSolarlogData5MinByRecordDate(LocalDate fromDate, LocalDate toDate) {
         Bson querygte = gte("record_timestamp", fromDate);
         Bson querylt = lt("record_timestamp", toDate);
         return getCollection5MinData().find(and(querygte, querylt), SolarlogData5Min.class);
     }
 
-    public FindIterable<Document> readSolarlogData5MinnByRecordDateAsDocument(LocalDate fromDate, LocalDate toDate) {
+    public FindIterable<Document> readSolarlogData5MinByRecordDateAsDocument(LocalDate fromDate, LocalDate toDate) {
         Bson querygte = gte("record_timestamp", fromDate);
         Bson querylt = lt("record_timestamp", toDate);
         return getCollection5MinData().find(and(querygte, querylt));

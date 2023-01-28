@@ -73,7 +73,7 @@ public class MongoDbServiceIntegrationTest {
     public void testReadRecordFromDB() {
         LocalDate fromDate = LocalDate.of(2022, 10, 11);
         LocalDate toDate = LocalDate.of(2022, 10, 12);
-        FindIterable<SolarlogData5Min> solarlogData5MinsIterable = mongoDbService.readSolarlogData5MinnByRecordDate(fromDate, toDate);
+        FindIterable<SolarlogData5Min> solarlogData5MinsIterable = mongoDbService.readSolarlogData5MinByRecordDate(fromDate, toDate);
         List<SolarlogData5Min> solarlogDataList = mongoDbService.getListFromIterable(solarlogData5MinsIterable);
         assertThat(solarlogDataList.size(), is(equalTo(1)));
     }
@@ -82,7 +82,7 @@ public class MongoDbServiceIntegrationTest {
     public void testReadRecordFromDBAsDocument() {
         LocalDate fromDate = LocalDate.of(2022, 10, 11);
         LocalDate toDate = LocalDate.of(2022, 10, 12);
-        FindIterable<Document> document = mongoDbService.readSolarlogData5MinnByRecordDateAsDocument(fromDate, toDate);
+        FindIterable<Document> document = mongoDbService.readSolarlogData5MinByRecordDateAsDocument(fromDate, toDate);
         MongoCursor<Document> cursor = document.iterator();
         if (cursor.hasNext()) {
             Document exp = cursor.next();
