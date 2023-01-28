@@ -2,6 +2,8 @@
 package ch.softhenge.solarlog.solarlog.pojo;
 
 import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import javax.annotation.Generated;
@@ -10,6 +12,15 @@ import com.google.gson.annotations.SerializedName;
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
 public class SolarlogData5Min implements Comparable {
+
+    /**
+     *
+     * @param instant an instant to check
+     * @return the instant formated as ISO_INSTANT, example "2022-10-11T21:35:00Z"
+     */
+    public static String getISOStringFromInstant(Instant instant) {
+        return ZonedDateTime.ofInstant(instant, ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT);
+    }
 
     @SerializedName("record_timestamp")
     private RecordDate mRecordTimestamp;
@@ -41,7 +52,7 @@ public class SolarlogData5Min implements Comparable {
     }
 
     public Instant getRecordTimestampAsInstant() {
-        return Instant.parse(mRecordTimestamp.m$date);
+        return mRecordTimestamp.m$date.toInstant();
     }
 
     public void setRecordTimestamp(RecordDate recordTimestamp) {
@@ -53,7 +64,7 @@ public class SolarlogData5Min implements Comparable {
     }
 
     public Instant getUpdateTimestampAsInstant() {
-        return Instant.parse(mUpdateTimestamp.m$date);
+        return mUpdateTimestamp.m$date.toInstant();
     }
 
     public void setUpdateTimestamp(RecordDate updateTimestamp) {
@@ -144,15 +155,26 @@ public class SolarlogData5Min implements Comparable {
     public static class RecordDate {
 
         @SerializedName("$date")
-        private String m$date;
+        private Date m$date;
 
-        public String get$date() {
+        public Date get$date() {
             return m$date;
         }
 
-        public void set$date(String $date) {
+        public void set$date(Date $date) {
             m$date = $date;
         }
+
+        /**
+         * sets a date that must be in the ISO Format ISO_INSTANT
+         *
+         * @param $date example "2022-10-11T21:35:00Z"
+         */
+        public void set$dateFromISOStringDate(String $date) {
+            Instant instant = Instant.parse($date);
+            m$date = Date.from(instant);
+        }
+
     }
 
 

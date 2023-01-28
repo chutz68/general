@@ -30,12 +30,14 @@ class SolarlogData5MinTest {
         assertThat(solarlogData5Min.getWeather().getSunriseDatetime(), is(equalTo(1667282998)));
 
         String myDate = "2022-10-11T21:35:00Z";
-        assertThat(solarlogData5Min.getRecordTimestamp().get$date(), is(equalTo(myDate)));
+        String recDateString = SolarlogData5Min.getISOStringFromInstant(solarlogData5Min.getRecordTimestampAsInstant());
+        assertThat(recDateString, is(equalTo(myDate)));
         Instant instant = Instant.parse(myDate);
         assertThat(solarlogData5Min.getRecordTimestampAsInstant(), is(equalTo(instant)));
 
         myDate = "2022-10-11T21:40:02Z";
-        assertThat(solarlogData5Min.getUpdateTimestamp().get$date(), is(equalTo(myDate)));
+        recDateString = SolarlogData5Min.getISOStringFromInstant(solarlogData5Min.getUpdateTimestampAsInstant());
+        assertThat(recDateString, is(equalTo(myDate)));
         instant = Instant.parse(myDate);
         assertThat(solarlogData5Min.getUpdateTimestampAsInstant(), is(equalTo(instant)));
     }

@@ -43,9 +43,9 @@ public class SolarlogData5MinTestFactory {
     /**
      * creates a new Solarlog Object copied from the original one
      *
-     * @param orig
-     * @param recordTimestamp
-     * @param recordVersion
+     * @param orig the origin object
+     * @param recordTimestamp the instant recordtimestamp
+     * @param recordVersion the version of the record
      * @return new Solarlog Object
      */
     public SolarlogData5Min cloneSolarlogData5Min(SolarlogData5Min orig, Instant recordTimestamp, int recordVersion) {
@@ -61,7 +61,7 @@ public class SolarlogData5MinTestFactory {
 
         String recordTimeStampString = recordTimestamp.toString();
         SolarlogData5Min.RecordDate rts = new SolarlogData5Min.RecordDate();
-        rts.set$date(recordTimeStampString);
+        rts.set$dateFromISOStringDate(recordTimeStampString);
 
         newSolarlog.setRecordTimestamp(rts);
         newSolarlog.setRecordVersion(recordVersion);
@@ -69,7 +69,7 @@ public class SolarlogData5MinTestFactory {
         Instant updateTimestamp = newSolarlog.getRecordTimestampAsInstant().plusSeconds(90);
         String updateTimestampString = updateTimestamp.toString();
         SolarlogData5Min.RecordDate uts = new SolarlogData5Min.RecordDate();
-        uts.set$date(updateTimestampString);
+        uts.set$dateFromISOStringDate(updateTimestampString);
         newSolarlog.setUpdateTimestamp(uts);
 
         return newSolarlog;
