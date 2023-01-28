@@ -12,9 +12,9 @@ import com.google.gson.annotations.SerializedName;
 public class SolarlogData5Min implements Comparable {
 
     @SerializedName("record_timestamp")
-    private RecordTimestamp mRecordTimestamp;
+    private RecordDate mRecordTimestamp;
     @SerializedName("update_timestamp")
-    private UpdateTimestamp mUpdateTimestamp;
+    private RecordDate mUpdateTimestamp;
     @SerializedName("e_ac_inverter_day")
     private Integer mEAcInverterDay;
     @SerializedName("e_ac_usage_day")
@@ -36,7 +36,7 @@ public class SolarlogData5Min implements Comparable {
     @SerializedName("weather")
     private Weather mWeather;
 
-    public RecordTimestamp getRecordTimestamp() {
+    public RecordDate getRecordTimestamp() {
         return mRecordTimestamp;
     }
 
@@ -44,11 +44,11 @@ public class SolarlogData5Min implements Comparable {
         return Instant.parse(mRecordTimestamp.m$date);
     }
 
-    public void setRecordTimestamp(RecordTimestamp recordTimestamp) {
+    public void setRecordTimestamp(RecordDate recordTimestamp) {
         mRecordTimestamp = recordTimestamp;
     }
 
-    public UpdateTimestamp getUpdateTimestamp() {
+    public RecordDate getUpdateTimestamp() {
         return mUpdateTimestamp;
     }
 
@@ -56,7 +56,7 @@ public class SolarlogData5Min implements Comparable {
         return Instant.parse(mUpdateTimestamp.m$date);
     }
 
-    public void setUpdateTimestamp(UpdateTimestamp updateTimestamp) {
+    public void setUpdateTimestamp(RecordDate updateTimestamp) {
         mUpdateTimestamp = updateTimestamp;
     }
 
@@ -141,7 +141,7 @@ public class SolarlogData5Min implements Comparable {
     }
 
 
-    public static class RecordTimestamp {
+    public static class RecordDate {
 
         @SerializedName("$date")
         private String m$date;
@@ -155,19 +155,6 @@ public class SolarlogData5Min implements Comparable {
         }
     }
 
-    public static class UpdateTimestamp {
-
-        @SerializedName("$date")
-        private String m$date;
-
-        public String get$date() {
-            return m$date;
-        }
-
-        public void set$date(String $date) {
-            m$date = $date;
-        }
-    }
 
     public static class Heatpump {
 

@@ -60,7 +60,7 @@ public class SolarlogData5MinTestFactory {
         newSolarlog.setWeather(orig.getWeather());
 
         String recordTimeStampString = recordTimestamp.toString();
-        SolarlogData5Min.RecordTimestamp rts = new SolarlogData5Min.RecordTimestamp();
+        SolarlogData5Min.RecordDate rts = new SolarlogData5Min.RecordDate();
         rts.set$date(recordTimeStampString);
 
         newSolarlog.setRecordTimestamp(rts);
@@ -68,7 +68,7 @@ public class SolarlogData5MinTestFactory {
 
         Instant updateTimestamp = newSolarlog.getRecordTimestampAsInstant().plusSeconds(90);
         String updateTimestampString = updateTimestamp.toString();
-        SolarlogData5Min.UpdateTimestamp uts = new SolarlogData5Min.UpdateTimestamp();
+        SolarlogData5Min.RecordDate uts = new SolarlogData5Min.RecordDate();
         uts.set$date(updateTimestampString);
         newSolarlog.setUpdateTimestamp(uts);
 
