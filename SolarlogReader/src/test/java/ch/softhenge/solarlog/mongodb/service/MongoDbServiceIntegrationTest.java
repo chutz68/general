@@ -1,6 +1,7 @@
 package ch.softhenge.solarlog.mongodb.service;
 
 import ch.softhenge.solarlog.solarlog.pojo.SolarlogData5Min;
+import ch.softhenge.solarlog.solarlog.pojo.SolarlogData5MinDB;
 import com.google.gson.Gson;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCursor;
@@ -47,7 +48,7 @@ public class MongoDbServiceIntegrationTest {
 
         SolarlogData5Min solarlogData5Min = new Gson().fromJson(jsonFile, SolarlogData5Min.class);
         DeleteResult deleteResult = mongoDbService.deleteOneFrom5MinData(solarlogData5Min.getRecordTimestampAsInstant());
-        assertThat(deleteResult.getDeletedCount(), is(greaterThanOrEqualTo(1L)));
+        assertThat(deleteResult.getDeletedCount(), is(equalTo(1L)));
     }
 
     @Test
@@ -73,8 +74,8 @@ public class MongoDbServiceIntegrationTest {
     public void testReadRecordFromDB() {
         LocalDate fromDate = LocalDate.of(2022, 10, 11);
         LocalDate toDate = LocalDate.of(2022, 10, 12);
-        FindIterable<SolarlogData5Min> solarlogData5MinsIterable = mongoDbService.readSolarlogData5MinByRecordDate(fromDate, toDate);
-        List<SolarlogData5Min> solarlogDataList = mongoDbService.getListFromIterable(solarlogData5MinsIterable);
+        FindIterable<SolarlogData5MinDB> solarlogData5MinsIterable = mongoDbService.readSolarlogData5MinByRecordDate(fromDate, toDate);
+        List<SolarlogData5MinDB> solarlogDataList = mongoDbService.getListFromIterable(solarlogData5MinsIterable);
         assertThat(solarlogDataList.size(), is(equalTo(1)));
     }
 

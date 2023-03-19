@@ -3,6 +3,7 @@ package ch.softhenge.solarlog.mongodb.service;
 import ch.softhenge.solarlog.mongodb.property.MongodbProperties;
 import ch.softhenge.solarlog.mongodb.property.Mongodbdatabasis;
 import ch.softhenge.solarlog.solarlog.pojo.SolarlogData5Min;
+import ch.softhenge.solarlog.solarlog.pojo.SolarlogData5MinDB;
 import com.google.gson.Gson;
 import com.mongodb.*;
 import com.mongodb.client.*;
@@ -128,10 +129,10 @@ public class MongodbService {
      * @param toDate The Date to which the records should be read, NOT including toDate (< toDate)
      * @return a FindIterable of SolarlogData5Minn
      */
-    public FindIterable<SolarlogData5Min> readSolarlogData5MinByRecordDate(LocalDate fromDate, LocalDate toDate) {
+    public FindIterable<SolarlogData5MinDB> readSolarlogData5MinByRecordDate(LocalDate fromDate, LocalDate toDate) {
         Bson querygte = gte("record_timestamp", fromDate);
         Bson querylt = lt("record_timestamp", toDate);
-        return getCollection5MinData().find(and(querygte, querylt), SolarlogData5Min.class);
+        return getCollection5MinData().find(and(querygte, querylt), SolarlogData5MinDB.class);
     }
 
     public FindIterable<Document> readSolarlogData5MinByRecordDateAsDocument(LocalDate fromDate, LocalDate toDate) {
@@ -146,9 +147,9 @@ public class MongodbService {
      * @param iterable the FindIterable
      * @return a list of SolarlogData5Minn
      */
-    public List<SolarlogData5Min> getListFromIterable(FindIterable<SolarlogData5Min> iterable) {
-        List<SolarlogData5Min> solarlogList = new ArrayList<>();
-        MongoCursor<SolarlogData5Min> cursor = iterable.iterator();
+    public List<SolarlogData5MinDB> getListFromIterable(FindIterable<SolarlogData5MinDB> iterable) {
+        List<SolarlogData5MinDB> solarlogList = new ArrayList<>();
+        MongoCursor<SolarlogData5MinDB> cursor = iterable.iterator();
         if (cursor.hasNext()) {
             solarlogList.add(cursor.next());
         }
