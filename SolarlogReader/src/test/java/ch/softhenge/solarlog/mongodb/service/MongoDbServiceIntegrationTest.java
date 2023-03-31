@@ -1,10 +1,8 @@
 package ch.softhenge.solarlog.mongodb.service;
 
 import ch.softhenge.solarlog.solarlog.pojo.SolarlogData5Min;
-import ch.softhenge.solarlog.solarlog.pojo.SolarlogData5MinDB;
 import com.google.gson.Gson;
 import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCursor;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import org.apache.commons.io.IOUtils;
@@ -14,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -72,23 +70,11 @@ public class MongoDbServiceIntegrationTest {
 
     @Test
     public void testReadRecordFromDB() {
-        LocalDate fromDate = LocalDate.of(2022, 10, 11);
-        LocalDate toDate = LocalDate.of(2022, 10, 12);
-        FindIterable<SolarlogData5MinDB> solarlogData5MinsIterable = mongoDbService.readSolarlogData5MinByRecordDate(fromDate, toDate);
-        List<SolarlogData5MinDB> solarlogDataList = mongoDbService.getListFromIterable(solarlogData5MinsIterable);
+        Instant fromDate = Instant.parse("2022-10-11T21:34:00Z");
+        Instant toDate = Instant.parse("2022-10-11T21:36:00Z");
+        FindIterable<SolarlogData5Min> solarlogData5MinsIterable = mongoDbService.readSolarlogData5MinByRecordDate(fromDate, toDate);
+        List<SolarlogData5Min> solarlogDataList = mongoDbService.getListFromIterable(solarlogData5MinsIterable);
         assertThat(solarlogDataList.size(), is(equalTo(1)));
-    }
-
-    @Test
-    public void testReadRecordFromDBAsDocument() {
-        LocalDate fromDate = LocalDate.of(2022, 10, 11);
-        LocalDate toDate = LocalDate.of(2022, 10, 12);
-        FindIterable<Document> document = mongoDbService.readSolarlogData5MinByRecordDateAsDocument(fromDate, toDate);
-        MongoCursor<Document> cursor = document.iterator();
-        if (cursor.hasNext()) {
-            Document exp = cursor.next();
-            assertThat(exp, is(notNullValue()));
-        }
     }
 
 }

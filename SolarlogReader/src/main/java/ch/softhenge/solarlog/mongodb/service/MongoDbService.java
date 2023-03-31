@@ -3,7 +3,6 @@ package ch.softhenge.solarlog.mongodb.service;
 import ch.softhenge.solarlog.mongodb.property.MongodbProperties;
 import ch.softhenge.solarlog.mongodb.property.Mongodbdatabasis;
 import ch.softhenge.solarlog.solarlog.pojo.SolarlogData5Min;
-import ch.softhenge.solarlog.solarlog.pojo.SolarlogData5MinDB;
 import com.google.gson.Gson;
 import com.mongodb.*;
 import com.mongodb.client.*;
@@ -20,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.*;
 
 import static com.mongodb.client.model.Filters.*;
@@ -118,7 +116,7 @@ public class MongodbService {
      * @return the result
      */
     public DeleteResult deleteOneFrom5MinData(Instant createdDateTime) {
-        Bson query = eq("record_timestamp", createdDateTime);
+        Bson query = eq("record_timestamp", SolarlogData5Min.getISOStringFromInstant(createdDateTime));
         return getCollection5MinData().deleteOne(query);
     }
 
@@ -129,16 +127,10 @@ public class MongodbService {
      * @param toDate The Date to which the records should be read, NOT including toDate (< toDate)
      * @return a FindIterable of SolarlogData5Minn
      */
-    public FindIterable<SolarlogData5MinDB> readSolarlogData5MinByRecordDate(LocalDate fromDate, LocalDate toDate) {
-        Bson querygte = gte("record_timestamp", fromDate);
-        Bson querylt = lt("record_timestamp", toDate);
-        return getCollection5MinData().find(and(querygte, querylt), SolarlogData5MinDB.class);
-    }
-
-    public FindIterable<Document> readSolarlogData5MinByRecordDateAsDocument(LocalDate fromDate, LocalDate toDate) {
-        Bson querygte = gte("record_timestamp", fromDate);
-        Bson querylt = lt("record_timestamp", toDate);
-        return getCollection5MinData().find(and(querygte, querylt));
+    public FindIterable<SolarlogData5Min> readSolarlogData5MinByRecordDate(Instant fromDate, Instant toDate) {
+        Bson querygte = gte("record_timestamp", SolarlogData5Min.getISOStringFromInstant(fromDate));
+        Bson querylt = lt("record_timestamp", SolarlogData5Min.getISOStringFromInstant(toDate));
+        return getCollection5MinData().find(and(querygte, querylt), SolarlogData5Min.class);
     }
 
     /**
@@ -147,9 +139,9 @@ public class MongodbService {
      * @param iterable the FindIterable
      * @return a list of SolarlogData5Minn
      */
-    public List<SolarlogData5MinDB> getListFromIterable(FindIterable<SolarlogData5MinDB> iterable) {
-        List<SolarlogData5MinDB> solarlogList = new ArrayList<>();
-        MongoCursor<SolarlogData5MinDB> cursor = iterable.iterator();
+    public List<SolarlogData5Min> getListFromIterable(FindIterable<SolarlogData5Min> iterable) {
+        List<SolarlogData5Min> solarlogList = new ArrayList<>();
+        MongoCursor<SolarlogData5Min> cursor = iterable.iterator();
         if (cursor.hasNext()) {
             solarlogList.add(cursor.next());
         }

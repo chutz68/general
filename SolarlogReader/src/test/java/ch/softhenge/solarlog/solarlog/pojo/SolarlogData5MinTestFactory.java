@@ -59,18 +59,14 @@ public class SolarlogData5MinTestFactory {
         newSolarlog.setRecordState(orig.getRecordState());
         newSolarlog.setWeather(orig.getWeather());
 
-        String recordTimeStampString = recordTimestamp.toString();
-        SolarlogData5Min.RecordDate rts = new SolarlogData5Min.RecordDate();
-        rts.set$dateFromISOStringDate(recordTimeStampString);
+        String recordTimeStampString = SolarlogData5Min.getISOStringFromInstant(recordTimestamp);
 
-        newSolarlog.setRecordTimestamp(rts);
+        newSolarlog.setRecordTimestamp(recordTimeStampString);
         newSolarlog.setRecordVersion(recordVersion);
 
         Instant updateTimestamp = newSolarlog.getRecordTimestampAsInstant().plusSeconds(90);
-        String updateTimestampString = updateTimestamp.toString();
-        SolarlogData5Min.RecordDate uts = new SolarlogData5Min.RecordDate();
-        uts.set$dateFromISOStringDate(updateTimestampString);
-        newSolarlog.setUpdateTimestamp(uts);
+        String updateTimestampString = SolarlogData5Min.getISOStringFromInstant(updateTimestamp);
+        newSolarlog.setUpdateTimestamp(updateTimestampString);
 
         return newSolarlog;
     }

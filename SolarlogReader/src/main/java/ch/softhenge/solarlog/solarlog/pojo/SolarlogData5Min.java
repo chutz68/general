@@ -1,13 +1,15 @@
 
 package ch.softhenge.solarlog.solarlog.pojo;
 
-import java.time.*;
+import com.google.gson.annotations.SerializedName;
+
+import javax.annotation.Generated;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import javax.annotation.Generated;
-import com.google.gson.annotations.SerializedName;
 
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
@@ -23,9 +25,9 @@ public class SolarlogData5Min implements Comparable {
     }
 
     @SerializedName("record_timestamp")
-    private RecordDate mRecordTimestamp;
+    private String mRecordTimestamp;
     @SerializedName("update_timestamp")
-    private RecordDate mUpdateTimestamp;
+    private String mUpdateTimestamp;
     @SerializedName("e_ac_inverter_day")
     private Integer mEAcInverterDay;
     @SerializedName("e_ac_usage_day")
@@ -47,30 +49,37 @@ public class SolarlogData5Min implements Comparable {
     @SerializedName("weather")
     private Weather mWeather;
 
-    public RecordDate getRecordTimestamp() {
+    public String getRecordTimestamp() {
         return mRecordTimestamp;
     }
 
     public Instant getRecordTimestampAsInstant() {
-        return mRecordTimestamp.m$date.toInstant();
+        return Instant.parse(mRecordTimestamp);
     }
 
-    public void setRecordTimestamp(RecordDate recordTimestamp) {
+    public void setRecordTimestamp(String recordTimestamp) {
         mRecordTimestamp = recordTimestamp;
     }
 
-    public RecordDate getUpdateTimestamp() {
+    public void setRecordTimestamp(Instant recordTimestamp) {
+        mRecordTimestamp = getISOStringFromInstant(recordTimestamp);
+    }
+
+    public String getUpdateTimestamp() {
         return mUpdateTimestamp;
     }
 
     public Instant getUpdateTimestampAsInstant() {
-        return mUpdateTimestamp.m$date.toInstant();
+        return Instant.parse(mUpdateTimestamp);
     }
 
-    public void setUpdateTimestamp(RecordDate updateTimestamp) {
+    public void setUpdateTimestamp(String updateTimestamp) {
         mUpdateTimestamp = updateTimestamp;
     }
 
+    public void setUpdateTimestamp(Instant updateTimestamp) {
+        mUpdateTimestamp = getISOStringFromInstant(updateTimestamp);
+    }
     public Integer getEAcInverterDay() {
         return mEAcInverterDay;
     }
@@ -149,32 +158,6 @@ public class SolarlogData5Min implements Comparable {
 
     public void setWeather(Weather weather) {
         mWeather = weather;
-    }
-
-
-    public static class RecordDate {
-
-        @SerializedName("$date")
-        private Date m$date;
-
-        public Date get$date() {
-            return m$date;
-        }
-
-        public void set$date(Date $date) {
-            m$date = $date;
-        }
-
-        /**
-         * sets a date that must be in the ISO Format ISO_INSTANT
-         *
-         * @param $date example "2022-10-11T21:35:00Z"
-         */
-        public void set$dateFromISOStringDate(String $date) {
-            Instant instant = Instant.parse($date);
-            m$date = Date.from(instant);
-        }
-
     }
 
 
@@ -480,7 +463,7 @@ public class SolarlogData5Min implements Comparable {
 
     @Override
     public String toString() {
-        return "RecordDate: " + getRecordTimestamp().get$date();
+        return "RecordDate: " + getRecordTimestamp();
     }
 
     @Override
