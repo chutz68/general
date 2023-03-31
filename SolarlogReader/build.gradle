@@ -17,7 +17,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-jersey:3.0.4'
 	implementation 'org.springframework.boot:spring-boot-starter-quartz:3.0.4'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket:3.0.4'
-	implementation 'org.springframework.data:spring-data-mongodb:4.0.3'
 	implementation group: 'com.google.code.gson', name: 'gson', version: '2.7'
 	implementation 'commons-io:commons-io:2.11.0'
 	implementation 'org.apache.commons:commons-text:1.10.0'
