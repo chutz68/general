@@ -3,6 +3,7 @@ package ch.softhenge.solarlog.mongodb.service;
 import ch.softhenge.solarlog.mongodb.property.MongodbProperties;
 import ch.softhenge.solarlog.mongodb.property.Mongodbdatabasis;
 import ch.softhenge.solarlog.solarlog.pojo.SolarlogData5Min;
+import ch.softhenge.solarlog.solarlog.pojo.SolarlogData5MinV1;
 import com.google.gson.Gson;
 import com.mongodb.*;
 import com.mongodb.client.*;
@@ -131,6 +132,12 @@ public class MongodbService {
         Bson querygte = gte("record_timestamp", SolarlogData5Min.getISOStringFromInstant(fromDate));
         Bson querylt = lt("record_timestamp", SolarlogData5Min.getISOStringFromInstant(toDate));
         return getCollection5MinData().find(and(querygte, querylt), SolarlogData5Min.class);
+    }
+
+    public FindIterable<SolarlogData5MinV1> readSolarlogData5MinByRecordDate2(Instant fromDate, Instant toDate) {
+        Bson querygte = gte("record_timestamp", SolarlogData5Min.getISOStringFromInstant(fromDate));
+        Bson querylt = lt("record_timestamp", SolarlogData5Min.getISOStringFromInstant(toDate));
+        return getCollection5MinData().find(and(querygte, querylt), SolarlogData5MinV1.class);
     }
 
     /**
