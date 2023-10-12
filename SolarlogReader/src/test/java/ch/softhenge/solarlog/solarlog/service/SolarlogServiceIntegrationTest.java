@@ -36,7 +36,7 @@ public class SolarlogServiceIntegrationTest {
         LocalDateTime ldtafter5Minutes = LocalDateTime.now().plusMinutes(5);
         assertThat(solarlogDate, lessThan(ldtafter5Minutes));
         System.out.println("Current Date: " + solarlogDate);
-        assertThat(solarlogDate.toString(), matchesRegex("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$"));
+        assertThat(solarlogDate.toString(), matchesRegex("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}$"));
 
         ZonedDateTime zonedSolarlogDate = solarlogRegisterData.getSolarlogDateFieldUTC(solarlogDate);
         System.out.println("Current Date: " + zonedSolarlogDate);
