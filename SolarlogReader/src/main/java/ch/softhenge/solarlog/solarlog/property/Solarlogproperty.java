@@ -1,10 +1,8 @@
 
 package ch.softhenge.solarlog.solarlog.property;
 
-import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;
 
-@Generated("net.hexar.json2pojo")
 public class Solarlogproperty {
 
     @SerializedName("solarlogbaseurl")

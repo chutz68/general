@@ -3,7 +3,6 @@ package ch.softhenge.solarlog.solarlog.pojo;
 
 import com.google.gson.annotations.SerializedName;
 
-import javax.annotation.Generated;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -11,7 +10,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 
-@Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
 public class SolarlogData5Min implements Comparable {
 
