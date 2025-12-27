@@ -93,6 +93,7 @@ public class ImageService {
 					if (imageFile.isKnownCameraModel()) {
 						sbmv.append("mv ").append('"').append(imageFile.getUnixFilePath()).append(UNIX_SEPERATOR).append(imageFile.getOriginalFileName()).append('"').append(" ");
 						sbmv.append('"').append(imageFile.getUnixFilePath()).append(UNIX_SEPERATOR).append(imageFile.getNewFileName()).append('"').append("\n");
+
 						sbundomv.append("mv ").append('"').append(imageFile.getUnixFilePath()).append(UNIX_SEPERATOR).append(imageFile.getNewFileName()).append(" ");
 						sbundomv.append(imageFile.getUnixFilePath()).append(UNIX_SEPERATOR).append(imageFile.getOriginalFileName()).append('"').append("\n");
 					} else {
@@ -152,7 +153,7 @@ public class ImageService {
 							sbcp.append("mkdir -p ").append('"').append(currentSubfolder).append('"').append("\n");
 							lastSubFolderName = currentSubfolder;
 						}
-						sbcp.append("cp -p ").append('"').append(imageFile.getUnixFilePath()).append(UNIX_SEPERATOR).append(imageFile.getOriginalFileName()).append('"')
+						sbcp.append("cp -up ").append('"').append(imageFile.getUnixFilePath()).append(UNIX_SEPERATOR).append(imageFile.getOriginalFileName()).append('"')
 						.append(" ").append('"').append(currentSubfolder).append(UNIX_SEPERATOR).append('"').append("\n");
 						//LOGGER.info(imageFile.getFileNameAndPath() + " was copied");
 						cntAllRatedFiles++;
