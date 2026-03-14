@@ -137,3 +137,4 @@ echo "   gcloud run jobs execute $JOB_NAME --region=$REGION --project=$PROJECT_I
 echo ""
 echo "   View logs:"
 echo "   gcloud logging read 'resource.type=cloud_run_job AND resource.labels.job_name=$JOB_NAME' --limit=50 --project=$PROJECT_ID"
+
