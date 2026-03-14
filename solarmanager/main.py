@@ -23,6 +23,7 @@ PROJECT_ID   = os.environ.get("GCP_PROJECT_ID", "modern-cubist-412113")
 DATASET_ID   = os.environ.get("BQ_DATASET_ID", "SolarManager")
 TABLE_ID     = os.environ.get("BQ_TABLE_ID", "SolarManager_5m")
 SM_URL       = os.environ.get("SOLARMANAGER_URL", "https://cloud.solar-manager.ch/v3/users/100000000B6E7363")
+SM_STREAM_URL = f"{SM_URL}/data/stream"
 WEATHER_URL  = os.environ.get("WEATHER_URL", "https://api.openweathermap.org/data/3.0/onecall?lat=47.45&lon=8.32&units=metric&exclude=minutely,hourly,daily,alerts")
 
 # Secret names in GCP Secret Manager
@@ -92,6 +93,36 @@ def fetch_solarmanager_data(token: str) -> dict | None:
 
     log.error("Solarmanager: all retries exhausted.")
     return None
+
+
+# ---------------------------------------------------------
+# 3) Solarmanager Stream API (Echtzeit-Momentanwerte)
+# ---------------------------------------------------------
+def fetch_solarmanager_stream(token: str) -> dict:
+    """
+    Fetch real-time stream data from Solarmanager API.
+    Extracts temperature from the heatpump device (operationState field).
+    """
+    headers = {"accept": "application/json", "authorization": token}
+
+    try:
+        response = requests.get(SM_STREAM_URL, headers=headers, timeout=15)
+        response.raise_for_status()
+        r = response.json()
+        log.info(f"Stream data: {r}")
+
+        # Find heatpump device (has "temperature" field)
+        hp_temp = None
+        for device in r.get("devices", []):
+            if "temperature" in device:
+                hp_temp = device["temperature"]
+                break
+
+        return {"tHpWarmwaterC": hp_temp}
+
+    except (requests.RequestException, ValueError) as e:
+        log.warning(f"Stream API error: {e} – returning empty stream data.")
+        return {"tHpWarmwaterC": None}
 
 
 # ---------------------------------------------------------
@@ -166,10 +197,11 @@ def main():
         log.error("No Solarmanager data – aborting.")
         sys.exit(1)
 
+    stream_data  = fetch_solarmanager_stream(sm_token)
     weather_data = fetch_weather_data(owm_key)
 
     # Merge & write
-    row = {**sm_data, **weather_data}
+    row = {**sm_data, **stream_data, **weather_data}
     log.info(f"Row to insert: {row}")
     write_to_bigquery([row])
 
@@ -178,3 +210,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
