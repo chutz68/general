@@ -1,0 +1,56 @@
+name: Deploy Solar Job to Cloud Run
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: modern-cubist-412113
+  REGION: europe-west6
+  REPO: solar
+  JOB_NAME: solar-bq-job
+
+jobs:
+  deploy:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write   # required for Workload Identity Federation
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      - name: Build & Push Docker image
+        run: |
+          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/solar-job"
+          docker build -t "$IMAGE:${{ github.sha }}" -t "$IMAGE:latest" .
+          docker push "$IMAGE" --all-tags
+
+      - name: Deploy Cloud Run Job
+        run: |
+          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/solar-job:${{ github.sha }}"
+          gcloud run jobs deploy ${{ env.JOB_NAME }} \
+            --image="$IMAGE" \
+            --region=${{ env.REGION }} \
+            --task-timeout=600 \
+            --max-retries=0 \
+            --service-account=solar-runner@${{ env.PROJECT_ID }}.iam.gserviceaccount.com \
+            --set-env-vars=GCP_PROJECT_ID=${{ env.PROJECT_ID }} \
+            --set-secrets="SECRET_SM_TOKEN=solarmanager-token:latest,SECRET_OWM_APIKEY=openweathermap-apikey:latest" \
+            --project=${{ env.PROJECT_ID }}
