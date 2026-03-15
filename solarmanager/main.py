@@ -111,18 +111,20 @@ def fetch_solarmanager_stream(token: str) -> dict:
         r = response.json()
         log.info(f"Stream data: {r}")
 
-        # Find heatpump device (has "temperature" field)
+        # Find heatpump device (has "temperature" and "operationState" fields)
         hp_temp = None
+        hp_state = None
         for device in r.get("devices", []):
             if "temperature" in device:
-                hp_temp = device["temperature"]
+                hp_temp = device.get("temperature")
+                hp_state = device.get("operationState")
                 break
 
-        return {"tHpWarmwaterC": hp_temp}
+        return {"tHpWarmwaterC": hp_temp, "sHp": hp_state}
 
     except (requests.RequestException, ValueError) as e:
         log.warning(f"Stream API error: {e} – returning empty stream data.")
-        return {"tHpWarmwaterC": None}
+        return {"tHpWarmwaterC": None, "sHp": None}
 
 
 # ---------------------------------------------------------
@@ -210,4 +212,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
