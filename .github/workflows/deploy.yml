@@ -44,6 +44,7 @@ jobs:
           docker push "$IMAGE" --all-tags
 
       - name: Deploy Cloud Run Job
+        working-directory: solarmanager
         run: |
           IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/solar-job:${{ github.sha }}"
           gcloud run jobs deploy ${{ env.JOB_NAME }} \
@@ -52,6 +53,5 @@ jobs:
             --task-timeout=600 \
             --max-retries=0 \
             --service-account=solar-runner@${{ env.PROJECT_ID }}.iam.gserviceaccount.com \
-            --set-env-vars=GCP_PROJECT_ID=${{ env.PROJECT_ID }} \
-            --set-secrets="SECRET_SM_TOKEN=solarmanager-token:latest,SECRET_OWM_APIKEY=openweathermap-apikey:latest" \
+            --set-env-vars="GCP_PROJECT_ID=${{ env.PROJECT_ID }},SECRET_SM_TOKEN=solarmanager-token,SECRET_OWM_APIKEY=openweathermap-apikey" \
             --project=${{ env.PROJECT_ID }}
