@@ -5,8 +5,9 @@ Solar Manager → BigQuery
 Cloud Run Job (triggered by Cloud Scheduler every 5 minutes)
 """
 
+import json
 import requests
-from google.cloud import bigquery, secretmanager
+from google.cloud import bigquery, secretmanager, storage
 import os
 import sys
 import time
@@ -29,6 +30,8 @@ WEATHER_URL  = os.environ.get("WEATHER_URL", "https://api.openweathermap.org/dat
 # Secret names in GCP Secret Manager
 SECRET_SM_TOKEN     = os.environ.get("SECRET_SM_TOKEN", "solarmanager-token")
 SECRET_OWM_APIKEY   = os.environ.get("SECRET_OWM_APIKEY", "openweathermap-apikey")
+GCS_BUCKET          = os.environ.get("GCS_BUCKET", "solar-isg-data")
+GCS_BLOB            = "isg_data.json"
 
 
 # ---------------------------------------------------------
@@ -81,7 +84,6 @@ def fetch_solarmanager_data(token: str) -> dict | None:
         r = data_list[0]
         return {
             "t":     r.get("t"),
-            "v":     "1101",
             "cW":    r.get("cW"),   "pW":   r.get("pW"),
             "bcW":   r.get("bcW"),  "bdW":  r.get("bdW"),
             "cWh":   r.get("cWh"),  "pWh":  r.get("pWh"),
@@ -184,6 +186,27 @@ def write_to_bigquery(rows: list) -> None:
 
 
 # ---------------------------------------------------------
+# 5) Read ISG data from GCS Bucket
+# ---------------------------------------------------------
+def fetch_isg_from_gcs() -> dict:
+    """Read latest ISG data from GCS bucket written by Raspberry Pi.
+    Deletes the file after reading so stale data is never reused.
+    Returns empty dict if file doesn't exist.
+    """
+    try:
+        client = storage.Client(project=PROJECT_ID)
+        bucket = client.bucket(GCS_BUCKET)
+        blob   = bucket.blob(GCS_BLOB)
+        payload = json.loads(blob.download_as_text())
+        blob.delete()
+        log.info(f"ISG data read and deleted from GCS: {payload.get('data')}")
+        return payload.get("data", {})
+    except Exception as e:
+        log.warning(f"No ISG data in GCS: {e} – using empty values.")
+        return {}
+
+
+# ---------------------------------------------------------
 # MAIN
 # ---------------------------------------------------------
 def main():
@@ -201,9 +224,17 @@ def main():
 
     stream_data  = fetch_solarmanager_stream(sm_token)
     weather_data = fetch_weather_data(owm_key)
+    isg_data     = fetch_isg_from_gcs()
+
+    # v = version/quality flag (4 digits):
+    # "1111"  = Solar + Battery + Weather + ISG all present
+    # "1101"  = ISG missing
+    has_isg = bool(isg_data)
+    version = "1111" if has_isg else "1101"
+    log.info(f"Data quality flag v={version} (ISG present: {has_isg})")
 
     # Merge & write
-    row = {**sm_data, **stream_data, **weather_data}
+    row = {**sm_data, **stream_data, **weather_data, **isg_data, "v": version}
     log.info(f"Row to insert: {row}")
     write_to_bigquery([row])
 
