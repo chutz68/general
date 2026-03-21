@@ -5,10 +5,9 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY main.py .
+COPY ingest_5m.py .
 
-# Cloud Run Jobs run as non-root
 RUN useradd -m appuser
 USER appuser
 
-CMD ["python", "main.py"]
+CMD ["python", "ingest_5m.py"]

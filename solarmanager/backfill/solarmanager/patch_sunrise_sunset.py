@@ -34,8 +34,7 @@ def find_missing_days(client: bigquery.Client) -> list:
     query = f"""
         SELECT DISTINCT DATE(t) as day
         FROM `{table_ref}`
-        WHERE t < '2026-03-14 21:50:00 UTC'
-          AND (sunriseTimestamp IS NULL OR sunsetTimestamp IS NULL)
+        WHERE (sunriseTimestamp IS NULL OR sunsetTimestamp IS NULL)
         ORDER BY day
     """
     results = list(client.query(query).result())

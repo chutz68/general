@@ -1,4 +1,4 @@
-name: Deploy Solar Job to Cloud Run
+name: Deploy Solar Jobs to Cloud Run
 
 on:
   push:
@@ -9,7 +9,8 @@ env:
   PROJECT_ID: modern-cubist-412113
   REGION: europe-west6
   REPO: solar
-  JOB_NAME: solar-bq-job
+  JOB_INGEST: solar-5min-job
+  JOB_DAILY: solar-daily-job
 
 jobs:
   deploy:
@@ -36,22 +37,46 @@ jobs:
       - name: Configure Docker
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
-      - name: Build & Push Docker image
-        working-directory: solarmanager
+      # ---------------------------------------------------------
+      # ingest_5m job
+      # ---------------------------------------------------------
+      - name: Build & Push ingest_5m image
+        working-directory: solarmanager/ingest_5m
         run: |
-          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/solar-job"
+          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/ingest-5m"
           docker build -t "$IMAGE:${{ github.sha }}" -t "$IMAGE:latest" .
           docker push "$IMAGE" --all-tags
 
-      - name: Deploy Cloud Run Job
-        working-directory: solarmanager
+      - name: Deploy ingest_5m Cloud Run Job
         run: |
-          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/solar-job:${{ github.sha }}"
-          gcloud run jobs deploy ${{ env.JOB_NAME }} \
+          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/ingest-5m:${{ github.sha }}"
+          gcloud run jobs deploy ${{ env.JOB_INGEST }} \
             --image="$IMAGE" \
             --region=${{ env.REGION }} \
             --task-timeout=600 \
             --max-retries=0 \
             --service-account=solar-runner@${{ env.PROJECT_ID }}.iam.gserviceaccount.com \
             --set-env-vars="GCP_PROJECT_ID=${{ env.PROJECT_ID }},SECRET_SM_TOKEN=solarmanager-token,SECRET_OWM_APIKEY=openweathermap-apikey" \
+            --project=${{ env.PROJECT_ID }}
+
+      # ---------------------------------------------------------
+      # aggregate_1d job
+      # ---------------------------------------------------------
+      - name: Build & Push aggregate_1d image
+        working-directory: solarmanager/aggregate_1d
+        run: |
+          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/aggregate-1d"
+          docker build -t "$IMAGE:${{ github.sha }}" -t "$IMAGE:latest" .
+          docker push "$IMAGE" --all-tags
+
+      - name: Deploy aggregate_1d Cloud Run Job
+        run: |
+          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/aggregate-1d:${{ github.sha }}"
+          gcloud run jobs deploy ${{ env.JOB_DAILY }} \
+            --image="$IMAGE" \
+            --region=${{ env.REGION }} \
+            --task-timeout=300 \
+            --max-retries=0 \
+            --service-account=solar-runner@${{ env.PROJECT_ID }}.iam.gserviceaccount.com \
+            --set-env-vars="GCP_PROJECT_ID=${{ env.PROJECT_ID }}" \
             --project=${{ env.PROJECT_ID }}
