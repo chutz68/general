@@ -10,7 +10,7 @@ Also performs data quality checks:
 - Duplicate timestamps
 """
 
-from google.cloud import bigquery, secretmanager
+from google.cloud import bigquery
 import os
 import sys
 import logging
