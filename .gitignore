@@ -1,3 +1,30 @@
 *.csv
 supRen/mv*_*
+
+# Maven
+target/
+
+# Node
+node_modules/
+node/
+
+# Vaadin generated files
+solar-dashboard/frontend/generated/
+vite.generated.ts
+src/main/dev-bundle/
+src/main/bundles/
+webpack.config.js
+webpack.generated.js
+
+# IntelliJ
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# GCP credentials
 secrets/
+gcp-key.json
+*application-default-credentials*
