@@ -27,6 +27,15 @@ data class DailyData(
     val missingRows: Int
 )
 
+data class FiveMinData(
+    val t: String,
+    val pW: Double,
+    val cW: Double,
+    val bcW: Double,
+    val bdW: Double,
+    val soc: Double?
+)
+
 @Service
 class SolarService {
 
@@ -93,6 +102,39 @@ class SolarService {
                     autarkyPct       = row["autarkyPct"].toDoubleOrNull(),
                     rowCount         = row["rowCount"].longValue.toInt(),
                     missingRows      = row["missingRows"].longValue.toInt()
+                )
+            }.toList()
+        } catch (e: Exception) {
+            log.error("BigQuery error: ${e.message}", e)
+            emptyList()
+        }
+    }
+
+    fun getFiveMinData(date: String): List<FiveMinData> {
+        log.debug("getFiveMinData: $date")
+        val query = """
+            SELECT
+                FORMAT_TIMESTAMP('%H:%M', t) AS t,
+                IFNULL(pW, 0)  AS pW,
+                IFNULL(cW, 0)  AS cW,
+                IFNULL(bcW, 0) AS bcW,
+                IFNULL(bdW, 0) AS bdW,
+                soc
+            FROM `$projectId.SolarManager.SolarManager_5m`
+            WHERE DATE(t) = '$date'
+            ORDER BY t ASC
+        """.trimIndent()
+
+        return try {
+            val results = bigQuery.query(QueryJobConfiguration.newBuilder(query).build())
+            results.iterateAll().map { row ->
+                FiveMinData(
+                    t   = row["t"].stringValue,
+                    pW  = row["pW"].toDoubleOrZero(),
+                    cW  = row["cW"].toDoubleOrZero(),
+                    bcW = row["bcW"].toDoubleOrZero(),
+                    bdW = row["bdW"].toDoubleOrZero(),
+                    soc = row["soc"].toDoubleOrNull()
                 )
             }.toList()
         } catch (e: Exception) {

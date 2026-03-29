@@ -8,8 +8,10 @@ import com.vaadin.flow.component.html.H2
 import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
+import com.vaadin.flow.router.RouterLink
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -31,8 +33,12 @@ class DashboardView(private val solarService: SolarService) : VerticalLayout() {
             today.format(formatter)
         )
 
-        // Title
-        add(H1("☀️ Solar Dashboard"))
+        // Title + navigation
+        val nav = HorizontalLayout(
+            H1("☀️ Solar Dashboard"),
+            RouterLink("⚡ Live View", LiveView::class.java)
+        ).apply { setAlignItems(Alignment.BASELINE) }
+        add(nav)
 
         // Summary cards for today
         val todayData = data.firstOrNull()
