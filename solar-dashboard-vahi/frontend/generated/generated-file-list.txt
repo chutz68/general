@@ -1,0 +1,7 @@
+SolarService.ts
+ch/softhenge/solar/service/DailyData.ts
+ch/softhenge/solar/service/RecentData.ts
+connect-client.default.ts
+endpoints.ts
+ch/softhenge/solar/service/DailyDataModel.ts
+ch/softhenge/solar/service/RecentDataModel.ts
