@@ -1,0 +1,18 @@
+# Vaadin generated
+frontend/generated/
+node_modules/
+node/
+.vaadin/
+target/
+vite.generated.ts
+webpack.config.js
+webpack.generated.js
+
+# IntelliJ
+.idea/
+*.iml
+out/
+
+# OS
+.DS_Store
+Thumbs.db
