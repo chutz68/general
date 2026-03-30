@@ -110,18 +110,18 @@ class SolarService {
         }
     }
 
-    fun getFiveMinData(date: String): List<FiveMinData> {
-        log.debug("getFiveMinData: $date")
+    fun getFiveMinData(fromDate: String, toDate: String = fromDate): List<FiveMinData> {
+        log.debug("getFiveMinData: $fromDate → $toDate")
         val query = """
             SELECT
-                FORMAT_TIMESTAMP('%H:%M', t) AS t,
+                FORMAT_TIMESTAMP('%Y-%m-%d %H:%M', t) AS t,
                 IFNULL(pW, 0)  AS pW,
                 IFNULL(cW, 0)  AS cW,
                 IFNULL(bcW, 0) AS bcW,
                 IFNULL(bdW, 0) AS bdW,
                 soc
             FROM `$projectId.SolarManager.SolarManager_5m`
-            WHERE DATE(t) = '$date'
+            WHERE DATE(t) BETWEEN '$fromDate' AND '$toDate'
             ORDER BY t ASC
         """.trimIndent()
 
