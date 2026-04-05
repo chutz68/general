@@ -1,0 +1,51 @@
+login
+
+ssh wern@RuRosRaspy5.local
+
+
+copy files to raspy:
+
+scp ingest_5m.py setup_ingest.sh wern@RuRosRaspy5.local:~/isg/
+
+
+Enable ip V4:
+
+sudo vi /etc/gai.conf
+
+
+-----------------------------------------------
+
+Find the line:
+```
+#precedence ::ffff:0:0/96  100
+```
+
+Uncomment it (remove the `#`):
+```
+precedence ::ffff:0:0/96  100
+
+-----------------------------------------------
+
+test:
+
+ping bigquery.googleapis.com
+
+
+
+Add log rotate
+
+sudo nano /etc/logrotate.d/solar-isg
+```
+
+Add:
+```
+/home/wern/isg/*.log {
+    weekly
+    rotate 12
+    compress
+    delaycompress
+    missingok
+    notifempty
+    dateext
+    dateformat -%Y-%m-%d
+}

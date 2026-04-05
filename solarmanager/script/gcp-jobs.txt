@@ -1,0 +1,26 @@
+create the solar-5mn-job
+
+gcloud run jobs create solar-5min-job \
+  --image=europe-west6-docker.pkg.dev/modern-cubist-412113/solar/ingest-5m:latest \
+  --region=europe-west6 \
+  --task-timeout=600 \
+  --max-retries=0 \
+  --service-account=solar-runner@modern-cubist-412113.iam.gserviceaccount.com \
+  --set-env-vars="GCP_PROJECT_ID=modern-cubist-412113,SECRET_SM_TOKEN=solarmanager-token,SECRET_OWM_APIKEY=openweathermap-apikey" \
+  --project=modern-cubist-412113
+
+
+execute it manually
+
+gcloud run jobs execute solar-5min-job --region=europe-west6 --project=modern-cubist-412113
+
+
+create the 5-min Scheduler
+
+gcloud scheduler jobs create http solar-bq-scheduler \
+  --location=europe-west6 \
+  --schedule="1,6,11,16,21,26,31,36,41,46,51,56 * * * *" \
+  --uri="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/modern-cubist-412113/jobs/solar-5min-job:run" \
+  --message-body="{}" \
+  --oauth-service-account-email=solar-runner@modern-cubist-412113.iam.gserviceaccount.com \
+  --project=modern-cubist-412113

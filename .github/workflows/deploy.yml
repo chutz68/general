@@ -9,7 +9,6 @@ env:
   PROJECT_ID: modern-cubist-412113
   REGION: europe-west6
   REPO: solar
-  JOB_INGEST: solar-5min-job
   JOB_DAILY: solar-daily-job
 
 jobs:
@@ -36,28 +35,6 @@ jobs:
 
       - name: Configure Docker
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
-
-      # ---------------------------------------------------------
-      # ingest_5m job
-      # ---------------------------------------------------------
-      - name: Build & Push ingest_5m image
-        working-directory: solarmanager/ingest_5m
-        run: |
-          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/ingest-5m"
-          docker build -t "$IMAGE:${{ github.sha }}" -t "$IMAGE:latest" .
-          docker push "$IMAGE" --all-tags
-
-      - name: Deploy ingest_5m Cloud Run Job
-        run: |
-          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/ingest-5m:${{ github.sha }}"
-          gcloud run jobs deploy ${{ env.JOB_INGEST }} \
-            --image="$IMAGE" \
-            --region=${{ env.REGION }} \
-            --task-timeout=600 \
-            --max-retries=0 \
-            --service-account=solar-runner@${{ env.PROJECT_ID }}.iam.gserviceaccount.com \
-            --set-env-vars="GCP_PROJECT_ID=${{ env.PROJECT_ID }},SECRET_SM_TOKEN=solarmanager-token,SECRET_OWM_APIKEY=openweathermap-apikey" \
-            --project=${{ env.PROJECT_ID }}
 
       # ---------------------------------------------------------
       # aggregate_1d job
