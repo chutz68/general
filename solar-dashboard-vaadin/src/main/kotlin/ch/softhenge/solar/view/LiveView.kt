@@ -14,6 +14,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.router.RouterLink
+import ch.softhenge.solar.util.TimeUtils
 import java.time.LocalDate
 
 @Route("live")
@@ -48,13 +49,13 @@ class LiveView(private val solarService: SolarService) : VerticalLayout() {
     }
 
     private fun buildToolbar(): VerticalLayout {
-        datePicker.value = LocalDate.now()
-        datePicker.max = LocalDate.now()
+        datePicker.value = TimeUtils.today()
+        datePicker.max = TimeUtils.today()
 
         val prevButton  = Button("◀") { navigateDate(-1) }
         val nextButton  = Button("▶") { navigateDate(1) }
         val todayButton = Button(getTranslation("live.today")) {
-            datePicker.value = LocalDate.now()
+            datePicker.value = TimeUtils.today()
             loadData()
         }
         datePicker.addValueChangeListener { loadData() }
@@ -104,7 +105,7 @@ class LiveView(private val solarService: SolarService) : VerticalLayout() {
             "month" -> datePicker.value.plusMonths(days)
             else    -> datePicker.value.plusDays(days)
         }
-        if (newDate <= LocalDate.now()) {
+        if (newDate <= TimeUtils.today()) {
             datePicker.value = newDate
             loadData()
         }

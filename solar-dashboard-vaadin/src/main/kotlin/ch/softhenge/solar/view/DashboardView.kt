@@ -13,6 +13,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.router.RouterLink
+import ch.softhenge.solar.util.TimeUtils
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -25,7 +26,7 @@ class DashboardView(private val solarService: SolarService) : VerticalLayout() {
         setPadding(true)
         setSpacing(true)
 
-        val today = LocalDate.now()
+        val today = TimeUtils.today()
         val thirtyDaysAgo = today.minusDays(30)
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
@@ -42,7 +43,7 @@ class DashboardView(private val solarService: SolarService) : VerticalLayout() {
         add(nav)
 
         val todaySums = solarService.getTodaySums()
-        add(H2("${t("dashboard.today")} – ${today.format(formatter)}"))
+        add(H2("${t("dashboard.today")} – ${today.format(formatter)} (${TimeUtils.zoneLabel()})"))
         add(buildSummaryCards(todaySums))
 
         add(H2(t("dashboard.last30days")))

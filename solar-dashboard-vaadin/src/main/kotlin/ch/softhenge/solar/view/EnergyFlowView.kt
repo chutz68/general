@@ -14,6 +14,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.router.RouterLink
+import ch.softhenge.solar.util.TimeUtils
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -75,7 +76,7 @@ class EnergyFlowView(private val solarService: SolarService) : VerticalLayout() 
         if (current != null) {
             renderChart(current)
             updateSummaryCards(sums)
-            lastUpdate.text = "${getTranslation("flow.lastupdate")}: ${current.t}"
+            lastUpdate.text = "${getTranslation("flow.lastupdate")}: ${TimeUtils.formatDateTime(current.t)} (${TimeUtils.zoneLabel()})"
         }
     }
 
