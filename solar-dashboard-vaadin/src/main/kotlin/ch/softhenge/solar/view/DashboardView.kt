@@ -3,7 +3,6 @@ package ch.softhenge.solar.view
 import ch.softhenge.solar.service.DailyData
 import ch.softhenge.solar.service.SolarService
 import ch.softhenge.solar.service.TodaySums
-import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.H1
 import com.vaadin.flow.component.html.H2
@@ -35,23 +34,22 @@ class DashboardView(private val solarService: SolarService) : VerticalLayout() {
             today.format(formatter)
         )
 
-        // Title + navigation
         val nav = HorizontalLayout(
-            H1("☀️ Solar Dashboard"),
-            RouterLink("⚡ Energiefluss", EnergyFlowView::class.java),
-            RouterLink("📈 Live View", LiveView::class.java)
+            H1(t("dashboard.title")),
+            RouterLink(t("dashboard.nav.flow"), EnergyFlowView::class.java),
+            RouterLink(t("dashboard.nav.live"), LiveView::class.java)
         ).apply { setAlignItems(Alignment.BASELINE); setSpacing(true) }
         add(nav)
 
-        // Summary cards for today – from 5-min data (always current)
         val todaySums = solarService.getTodaySums()
-        add(H2("Today – ${today.format(formatter)}"))
+        add(H2("${t("dashboard.today")} – ${today.format(formatter)}"))
         add(buildSummaryCards(todaySums))
 
-        // 30-day table
-        add(H2("Last 30 Days"))
+        add(H2(t("dashboard.last30days")))
         add(buildGrid(data))
     }
+
+    private fun t(key: String) = getTranslation(key)
 
     private fun buildSummaryCards(sums: TodaySums): HorizontalLayout {
         val pWh = sums.pWh
@@ -62,12 +60,12 @@ class DashboardView(private val solarService: SolarService) : VerticalLayout() {
         val layout = HorizontalLayout()
         layout.setWidthFull()
         layout.add(
-            card("Production",       "${(pWh / 1000).format(2)} kWh"),
-            card("Consumption",      "${(cWh / 1000).format(2)} kWh"),
-            card("Export",           "${(sums.eWh / 1000).format(2)} kWh"),
-            card("Import",           "${(sums.iWh / 1000).format(2)} kWh"),
-            card("Self Consumption", "${selfConsumptionPct?.format(2) ?: "-"} %"),
-            card("Autarky",          "${autarkyPct?.format(2) ?: "-"} %"),
+            card(t("dashboard.card.production"), "${(pWh / 1000).format(2)} kWh"),
+            card(t("dashboard.card.consumption"), "${(cWh / 1000).format(2)} kWh"),
+            card(t("dashboard.card.export"),      "${(sums.eWh / 1000).format(2)} kWh"),
+            card(t("dashboard.card.import"),      "${(sums.iWh / 1000).format(2)} kWh"),
+            card(t("dashboard.card.selfcons"),    "${selfConsumptionPct?.format(2) ?: "-"} %"),
+            card(t("dashboard.card.autarky"),     "${autarkyPct?.format(2) ?: "-"} %"),
         )
         return layout
     }
@@ -88,15 +86,15 @@ class DashboardView(private val solarService: SolarService) : VerticalLayout() {
         val grid = Grid(DailyData::class.java, false)
         grid.setWidthFull()
 
-        grid.addColumn { it.day }.setHeader("Day").setSortable(true)
-        grid.addColumn { (it.pWh / 1000).format(2) }.setHeader("Production (kWh)")
-        grid.addColumn { (it.cWh / 1000).format(2) }.setHeader("Consumption (kWh)")
-        grid.addColumn { (it.eWh / 1000).format(2) }.setHeader("Export (kWh)")
-        grid.addColumn { (it.iWh / 1000).format(2) }.setHeader("Import (kWh)")
-        grid.addColumn { it.selfConsumptionPct?.format(2) ?: "-" }.setHeader("Self Cons. %")
-        grid.addColumn { it.autarkyPct?.format(2) ?: "-" }.setHeader("Autarky %")
-        grid.addColumn { "${it.tempRealMin.format(2)} / ${it.tempRealMax.format(2)} °C" }.setHeader("Temp Min/Max")
-        grid.addColumn { if (it.rowCount == 288) "✅" else "⚠️ ${it.missingRows} missing" }.setHeader("Quality")
+        grid.addColumn { it.day }.setHeader(t("dashboard.col.day")).setSortable(true)
+        grid.addColumn { (it.pWh / 1000).format(2) }.setHeader(t("dashboard.col.production"))
+        grid.addColumn { (it.cWh / 1000).format(2) }.setHeader(t("dashboard.col.consumption"))
+        grid.addColumn { (it.eWh / 1000).format(2) }.setHeader(t("dashboard.col.export"))
+        grid.addColumn { (it.iWh / 1000).format(2) }.setHeader(t("dashboard.col.import"))
+        grid.addColumn { it.selfConsumptionPct?.format(2) ?: "-" }.setHeader(t("dashboard.col.selfcons"))
+        grid.addColumn { it.autarkyPct?.format(2) ?: "-" }.setHeader(t("dashboard.col.autarky"))
+        grid.addColumn { "${it.tempRealMin.format(2)} / ${it.tempRealMax.format(2)} °C" }.setHeader(t("dashboard.col.temp"))
+        grid.addColumn { if (it.rowCount == 288) "OK" else "${it.missingRows} missing" }.setHeader(t("dashboard.col.quality"))
 
         grid.setItems(data)
         return grid

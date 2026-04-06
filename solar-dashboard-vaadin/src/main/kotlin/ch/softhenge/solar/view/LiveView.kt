@@ -22,7 +22,7 @@ import java.time.LocalDate
 class LiveView(private val solarService: SolarService) : VerticalLayout() {
 
     private val chartDiv = Div()
-    private val datePicker = DatePicker("Date")
+    private val datePicker = DatePicker(getTranslation("live.today"))
     private var showBattery = false
     private var currentPeriod = "day"
 
@@ -32,9 +32,10 @@ class LiveView(private val solarService: SolarService) : VerticalLayout() {
         setSpacing(true)
 
         val nav = HorizontalLayout(
-            H1("⚡ Solar Live View"),
-            RouterLink("☀️ Dashboard", DashboardView::class.java)
-        ).apply { alignItems = Alignment.BASELINE }
+            H1(getTranslation("live.title")),
+            RouterLink(getTranslation("live.nav.dashboard"),  DashboardView::class.java),
+            RouterLink(getTranslation("live.nav.flow"),       EnergyFlowView::class.java)
+        ).apply { alignItems = Alignment.BASELINE; setSpacing(true) }
         add(nav)
         add(buildToolbar())
 
@@ -47,13 +48,12 @@ class LiveView(private val solarService: SolarService) : VerticalLayout() {
     }
 
     private fun buildToolbar(): VerticalLayout {
-        // Date navigation
         datePicker.value = LocalDate.now()
         datePicker.max = LocalDate.now()
 
-        val prevButton = Button("◀") { navigateDate(-1) }
-        val nextButton = Button("▶") { navigateDate(1) }
-        val todayButton = Button("Today") {
+        val prevButton  = Button("◀") { navigateDate(-1) }
+        val nextButton  = Button("▶") { navigateDate(1) }
+        val todayButton = Button(getTranslation("live.today")) {
             datePicker.value = LocalDate.now()
             loadData()
         }
@@ -63,18 +63,16 @@ class LiveView(private val solarService: SolarService) : VerticalLayout() {
             alignItems = Alignment.BASELINE
         }
 
-        // Period buttons
-        val dayButton   = periodButton("Day",   "day")
-        val weekButton  = periodButton("Week",  "week")
-        val monthButton = periodButton("Month", "month")
+        val dayButton   = periodButton(getTranslation("live.period.day"),   "day")
+        val weekButton  = periodButton(getTranslation("live.period.week"),  "week")
+        val monthButton = periodButton(getTranslation("live.period.month"), "month")
         dayButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY)
 
         val periodNav = HorizontalLayout(dayButton, weekButton, monthButton)
 
-        // Battery toggle
-        val batteryButton = Button("Show Battery") {
+        val batteryButton = Button(getTranslation("live.battery.show")) {
             showBattery = !showBattery
-            it.source.text = if (showBattery) "Hide Battery" else "Show Battery"
+            it.source.text = if (showBattery) getTranslation("live.battery.hide") else getTranslation("live.battery.show")
             loadData()
         }
 
@@ -92,7 +90,6 @@ class LiveView(private val solarService: SolarService) : VerticalLayout() {
     private fun periodButton(label: String, period: String): Button {
         return Button(label) {
             currentPeriod = period
-            // Update button styles
             (it.source.parent.get() as HorizontalLayout).children.forEach { btn ->
                 if (btn is Button) btn.removeThemeVariants(ButtonVariant.LUMO_PRIMARY)
             }
@@ -124,8 +121,8 @@ class LiveView(private val solarService: SolarService) : VerticalLayout() {
         val rawData = solarService.getFiveMinData(fromDate.toString(), toDate.toString())
 
         val aggregatedData = when (currentPeriod) {
-            "month" -> aggregate(rawData, 24)  // 2-hour buckets (24 x 5min)
-            "week"  -> aggregate(rawData, 12)  // 1-hour buckets (12 x 5min)
+            "month" -> aggregate(rawData, 24)
+            "week"  -> aggregate(rawData, 12)
             else    -> rawData
         }
 
@@ -148,37 +145,34 @@ class LiveView(private val solarService: SolarService) : VerticalLayout() {
     private fun renderChart(fromDate: String, toDate: String, data: List<FiveMinData>) {
         val title = if (fromDate == toDate) fromDate else "$fromDate → $toDate"
 
-        // For day view: show only time (HH:MM), for week/month: show full timestamp
         val times = if (currentPeriod == "day") {
             data.map { "\"${it.t.takeLast(5)}\"" }.joinToString(",")
         } else {
             data.map { "\"${it.t}\"" }.joinToString(",")
         }
 
-        val pW    = data.map { it.pW }.joinToString(",")
-        val cW    = data.map { it.cW }.joinToString(",")
-        val bcW   = data.map { it.bcW }.joinToString(",")
-        val bdW   = data.map { it.bdW }.joinToString(",")
-        val soc   = data.map { it.soc ?: 0.0 }.joinToString(",")
+        val pW  = data.map { it.pW }.joinToString(",")
+        val cW  = data.map { it.cW }.joinToString(",")
+        val bcW = data.map { it.bcW }.joinToString(",")
+        val bdW = data.map { it.bdW }.joinToString(",")
+        val soc = data.map { it.soc ?: 0.0 }.joinToString(",")
 
-        // Bar chart for month, line for day/week
         val chartType = if (currentPeriod == "month") "bar" else "line"
-        val smooth = if (currentPeriod == "month") "false" else "true"
+        val smooth    = if (currentPeriod == "month") "false" else "true"
 
-        // X-axis label interval
         val interval = when (currentPeriod) {
-            "day"   -> 11   // every hour
-            "week"  -> 23   // every 2 hours
-            else    -> 11   // every 2 hours for month
+            "day"  -> 11
+            "week" -> 23
+            else   -> 11
         }
 
         val batterySeries = if (showBattery) """
-            { name: 'Batt. Charging',    type: '$chartType', data: [$bcW], smooth: $smooth, yAxisIndex: 0, color: '#2ecc71', lineStyle: { width: 1 } },
-            { name: 'Batt. Discharging', type: '$chartType', data: [$bdW], smooth: $smooth, yAxisIndex: 0, color: '#e74c3c', lineStyle: { width: 1 } },
+            { name: 'Battery Charging',    type: '$chartType', data: [$bcW], smooth: $smooth, yAxisIndex: 0, color: '#2ecc71', lineStyle: { width: 1 } },
+            { name: 'Battery Discharging', type: '$chartType', data: [$bdW], smooth: $smooth, yAxisIndex: 0, color: '#e74c3c', lineStyle: { width: 1 } },
         """ else ""
 
         val legendData = if (showBattery)
-            "['Production', 'Consumption', 'Batt. Charging', 'Batt. Discharging', 'SOC %']"
+            "['Production', 'Consumption', 'Battery Charging', 'Battery Discharging', 'SOC %']"
         else
             "['Production', 'Consumption', 'SOC %']"
 
@@ -214,8 +208,6 @@ class LiveView(private val solarService: SolarService) : VerticalLayout() {
                     ]
                 };
                 chart.setOption(option, true);
-                
-                // Force resize after render
                 setTimeout(function() { chart.resize(); }, 100);
                 window.addEventListener('resize', function() { chart.resize(); });
             })();

@@ -27,12 +27,12 @@ class EnergyFlowView(private val solarService: SolarService) : VerticalLayout() 
     private val chartDiv   = Div()
     private val lastUpdate = Span()
 
-    private val cardPWh  = summaryCard("Produktion heute", "#f6c90e")
-    private val cardBcWh = summaryCard("Batterie geladen", "#2ecc71")
-    private val cardBdWh = summaryCard("Batterie entladen","#e74c3c")
-    private val cardScWh = summaryCard("Eigenverbrauch",   "#9b59b6")
-    private val cardEWh  = summaryCard("Einspeisung",      "#378ADD")
-    private val cardIWh  = summaryCard("Bezug",            "#D85A30")
+    private val cardPWh  = summaryCard(getTranslation("flow.card.production"),  "#f6c90e")
+    private val cardBcWh = summaryCard(getTranslation("flow.card.charged"),     "#2ecc71")
+    private val cardBdWh = summaryCard(getTranslation("flow.card.discharged"),  "#e74c3c")
+    private val cardScWh = summaryCard(getTranslation("flow.card.selfcons"),    "#9b59b6")
+    private val cardEWh  = summaryCard(getTranslation("flow.card.export"),      "#378ADD")
+    private val cardIWh  = summaryCard(getTranslation("flow.card.import"),      "#D85A30")
 
     init {
         setSizeFull()
@@ -40,9 +40,9 @@ class EnergyFlowView(private val solarService: SolarService) : VerticalLayout() 
         setSpacing(true)
 
         val nav = HorizontalLayout(
-            H1("⚡ Energiefluss"),
-            RouterLink("☀️ Dashboard",  DashboardView::class.java),
-            RouterLink("📈 Live Chart", LiveView::class.java)
+            H1(getTranslation("flow.title")),
+            RouterLink(getTranslation("flow.nav.dashboard"),  DashboardView::class.java),
+            RouterLink(getTranslation("flow.nav.live"),       LiveView::class.java)
         ).apply { alignItems = Alignment.BASELINE; setSpacing(true) }
         add(nav)
 
@@ -75,7 +75,7 @@ class EnergyFlowView(private val solarService: SolarService) : VerticalLayout() 
         if (current != null) {
             renderChart(current)
             updateSummaryCards(sums)
-            lastUpdate.text = "Letzter Wert: ${current.t}"
+            lastUpdate.text = "${getTranslation("flow.lastupdate")}: ${current.t}"
         }
     }
 
@@ -125,7 +125,7 @@ class EnergyFlowView(private val solarService: SolarService) : VerticalLayout() 
         val gridCons  = if (surplus < 0) max(0.0, abs(surplus) - batCons) else 0.0
 
         val gridNet   = solarGrid - gridCons
-        val gridLabel = if (gridNet >= 0) "Einspeisung" else "Bezug"
+        val gridLabel = if (gridNet >= 0) getTranslation("flow.node.feedin") else getTranslation("flow.node.draw")
 
         val wSolarCons = max(1.0, solarCons / 300)
         val wSolarBat  = max(1.0, solarBat  / 300)
@@ -135,10 +135,10 @@ class EnergyFlowView(private val solarService: SolarService) : VerticalLayout() 
 
         fun w(v: Double) = v.roundToInt()
 
-        val solarName = "Solar\\n${w(pW)} W"
-        val batName   = "Batterie\\n${soc.roundToInt()}%"
-        val gridName  = "Netz\\n${w(abs(gridNet))} W\\n$gridLabel"
-        val consName  = "Verbrauch\\n${w(cW)} W"
+        val solarName = "${getTranslation("flow.node.solar")}\\n${w(pW)} W"
+        val batName   = "${getTranslation("flow.node.battery")}\\n${soc.roundToInt()}%"
+        val gridName  = "${getTranslation("flow.node.grid")}\\n${w(abs(gridNet))} W\\n$gridLabel"
+        val consName  = "${getTranslation("flow.node.consumption")}\\n${w(cW)} W"
 
         val links = buildString {
             if (solarCons > 0) append("""{ source: '$solarName', target: '$consName', value: ${w(solarCons)}, lineStyle: { color: '#E09A00', width: $wSolarCons } },""")
