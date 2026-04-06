@@ -36,6 +36,27 @@ data class FiveMinData(
     val soc: Double?
 )
 
+data class CurrentData(
+    val t: String,
+    val pW: Double,
+    val cW: Double,
+    val bcW: Double,
+    val bdW: Double,
+    val soc: Double?,
+    val iWh: Double,
+    val eWh: Double
+)
+
+data class TodaySums(
+    val pWh: Double,
+    val cWh: Double,
+    val bcWh: Double,
+    val bdWh: Double,
+    val scWh: Double,
+    val iWh: Double,
+    val eWh: Double
+)
+
 @Service
 class SolarService {
 
@@ -140,6 +161,78 @@ class SolarService {
         } catch (e: Exception) {
             log.error("BigQuery error: ${e.message}", e)
             emptyList()
+        }
+    }
+
+    fun getCurrentData(): CurrentData? {
+        log.debug("getCurrentData")
+        val query = """
+            SELECT
+                FORMAT_TIMESTAMP('%Y-%m-%d %H:%M', t) AS t,
+                IFNULL(pW, 0)  AS pW,
+                IFNULL(cW, 0)  AS cW,
+                IFNULL(bcW, 0) AS bcW,
+                IFNULL(bdW, 0) AS bdW,
+                soc,
+                IFNULL(iWh, 0) AS iWh,
+                IFNULL(eWh, 0) AS eWh
+            FROM `$projectId.SolarManager.SolarManager_5m`
+            ORDER BY t DESC
+            LIMIT 1
+        """.trimIndent()
+
+        return try {
+            val results = bigQuery.query(QueryJobConfiguration.newBuilder(query).build())
+            results.iterateAll().map { row ->
+                CurrentData(
+                    t   = row["t"].stringValue,
+                    pW  = row["pW"].toDoubleOrZero(),
+                    cW  = row["cW"].toDoubleOrZero(),
+                    bcW = row["bcW"].toDoubleOrZero(),
+                    bdW = row["bdW"].toDoubleOrZero(),
+                    soc = row["soc"].toDoubleOrNull(),
+                    iWh = row["iWh"].toDoubleOrZero(),
+                    eWh = row["eWh"].toDoubleOrZero()
+                )
+            }.firstOrNull()
+        } catch (e: Exception) {
+            log.error("BigQuery error: ${e.message}", e)
+            null
+        }
+    }
+
+    fun getTodaySums(): TodaySums {
+        log.debug("getTodaySums")
+        val today = java.time.LocalDate.now().toString()
+        val query = """
+            SELECT
+                IFNULL(SUM(pWh), 0)  AS pWh,
+                IFNULL(SUM(cWh), 0)  AS cWh,
+                IFNULL(SUM(bcWh), 0) AS bcWh,
+                IFNULL(SUM(bdWh), 0) AS bdWh,
+                IFNULL(SUM(scWh), 0) AS scWh,
+                IFNULL(SUM(iWh), 0)  AS iWh,
+                IFNULL(SUM(eWh), 0)  AS eWh
+            FROM `$projectId.SolarManager.SolarManager_5m`
+            WHERE DATE(t) = '$today'
+        """.trimIndent()
+
+        return try {
+            val results = bigQuery.query(QueryJobConfiguration.newBuilder(query).build())
+            results.iterateAll().map { row ->
+                TodaySums(
+                    pWh  = row["pWh"].toDoubleOrZero(),
+                    cWh  = row["cWh"].toDoubleOrZero(),
+                    bcWh = row["bcWh"].toDoubleOrZero(),
+                    bdWh = row["bdWh"].toDoubleOrZero(),
+                    scWh = row["scWh"].toDoubleOrZero(),
+                    iWh  = row["iWh"].toDoubleOrZero(),
+                    eWh  = row["eWh"].toDoubleOrZero()
+                )
+            }.firstOrNull() ?: TodaySums(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+        } catch (e: Exception) {
+            log.error("BigQuery error: ${e.message}", e)
+            TodaySums(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
         }
     }
 }

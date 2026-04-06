@@ -2,13 +2,15 @@ package ch.softhenge.solar.view
 
 import ch.softhenge.solar.service.DailyData
 import ch.softhenge.solar.service.SolarService
+import ch.softhenge.solar.service.TodaySums
+import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.H1
 import com.vaadin.flow.component.html.H2
 import com.vaadin.flow.component.html.Span
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.router.RouterLink
@@ -36,32 +38,36 @@ class DashboardView(private val solarService: SolarService) : VerticalLayout() {
         // Title + navigation
         val nav = HorizontalLayout(
             H1("☀️ Solar Dashboard"),
-            RouterLink("⚡ Live View", LiveView::class.java)
-        ).apply { setAlignItems(Alignment.BASELINE) }
+            RouterLink("⚡ Energiefluss", EnergyFlowView::class.java),
+            RouterLink("📈 Live View", LiveView::class.java)
+        ).apply { setAlignItems(Alignment.BASELINE); setSpacing(true) }
         add(nav)
 
-        // Summary cards for today
-        val todayData = data.firstOrNull()
-        if (todayData != null) {
-            add(H2("Today – ${todayData.day}"))
-            add(buildSummaryCards(todayData))
-        }
+        // Summary cards for today – from 5-min data (always current)
+        val todaySums = solarService.getTodaySums()
+        add(H2("Today – ${today.format(formatter)}"))
+        add(buildSummaryCards(todaySums))
 
         // 30-day table
         add(H2("Last 30 Days"))
         add(buildGrid(data))
     }
 
-    private fun buildSummaryCards(data: DailyData): HorizontalLayout {
+    private fun buildSummaryCards(sums: TodaySums): HorizontalLayout {
+        val pWh = sums.pWh
+        val cWh = sums.cWh
+        val selfConsumptionPct = if (pWh > 0) (pWh - sums.eWh) / pWh * 100 else null
+        val autarkyPct         = if (cWh > 0) (cWh - sums.iWh) / cWh * 100 else null
+
         val layout = HorizontalLayout()
         layout.setWidthFull()
         layout.add(
-            card("Production",       "${(data.pWh / 1000).format(2)} kWh"),
-            card("Consumption",      "${(data.cWh / 1000).format(2)} kWh"),
-            card("Export",           "${(data.eWh / 1000).format(2)} kWh"),
-            card("Import",           "${(data.iWh / 1000).format(2)} kWh"),
-            card("Self Consumption", "${data.selfConsumptionPct?.format(2) ?: "-"} %"),
-            card("Autarky",          "${data.autarkyPct?.format(2) ?: "-"} %"),
+            card("Production",       "${(pWh / 1000).format(2)} kWh"),
+            card("Consumption",      "${(cWh / 1000).format(2)} kWh"),
+            card("Export",           "${(sums.eWh / 1000).format(2)} kWh"),
+            card("Import",           "${(sums.iWh / 1000).format(2)} kWh"),
+            card("Self Consumption", "${selfConsumptionPct?.format(2) ?: "-"} %"),
+            card("Autarky",          "${autarkyPct?.format(2) ?: "-"} %"),
         )
         return layout
     }
