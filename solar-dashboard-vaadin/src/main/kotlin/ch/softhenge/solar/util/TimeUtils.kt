@@ -35,14 +35,11 @@ object TimeUtils {
         }
     }
 
-    fun zoneLabel(): String {
-        val offset = ZonedDateTime.now(ZONE).offset
-        return "UTC$offset"
-    }
+    fun zoneLabel(): String = ZONE.id
 
     private fun parseUtc(s: String): ZonedDateTime {
         // Handle formats: "2026-04-06 14:35" or "2026-04-06T14:35:00Z" or "2026-04-06T14:35:00.000Z"
-        val cleaned = s.replace("T", " ").replace("Z", "").trimEnd('0').trimEnd('.')
+        val cleaned = s.replace("T", " ").replace("Z", "")
         val base = cleaned.substring(0, minOf(16, cleaned.length))
         val local = java.time.LocalDateTime.parse(base,
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
