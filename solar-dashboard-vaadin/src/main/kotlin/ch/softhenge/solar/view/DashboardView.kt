@@ -43,7 +43,9 @@ class DashboardView(private val solarService: SolarService) : VerticalLayout() {
         add(nav)
 
         val todaySums = solarService.getTodaySums()
-        add(H2("${t("dashboard.today")} – ${today.format(formatter)} (${TimeUtils.zoneLabel()})"))
+        val current = solarService.getCurrentData()
+        val lastTime = current?.let { TimeUtils.formatDateTime(it.t) } ?: today.format(formatter)
+        add(H2("${t("dashboard.today")} – $lastTime (${TimeUtils.zoneLabel()})"))
         add(buildSummaryCards(todaySums))
 
         add(H2(t("dashboard.last30days")))
