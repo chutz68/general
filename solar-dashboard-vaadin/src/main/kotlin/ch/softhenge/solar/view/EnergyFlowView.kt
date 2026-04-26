@@ -43,7 +43,8 @@ class EnergyFlowView(private val solarService: SolarService) : VerticalLayout() 
         val nav = HorizontalLayout(
             H1(getTranslation("flow.title")),
             RouterLink(getTranslation("flow.nav.dashboard"),  DashboardView::class.java),
-            RouterLink(getTranslation("flow.nav.live"),       LiveView::class.java)
+            RouterLink(getTranslation("flow.nav.live"),       LiveView::class.java),
+            RouterLink(getTranslation("flow.nav.month"),      MonthlyView::class.java)
         ).apply { alignItems = Alignment.BASELINE; setSpacing(true) }
         add(nav)
 

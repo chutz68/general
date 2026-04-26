@@ -37,8 +37,9 @@ class DashboardView(private val solarService: SolarService) : VerticalLayout() {
 
         val nav = HorizontalLayout(
             H1(t("dashboard.title")),
-            RouterLink(t("dashboard.nav.flow"), EnergyFlowView::class.java),
-            RouterLink(t("dashboard.nav.live"), LiveView::class.java)
+            RouterLink(t("dashboard.nav.flow"),  EnergyFlowView::class.java),
+            RouterLink(t("dashboard.nav.live"),  LiveView::class.java),
+            RouterLink(t("dashboard.nav.month"), MonthlyView::class.java)
         ).apply { setAlignItems(Alignment.BASELINE); setSpacing(true) }
         add(nav)
 
