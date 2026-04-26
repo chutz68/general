@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#0f172a" />
+<title>Softhenge — Familie Rodel</title>
+<meta name="description" content="Private Familien-Apps der Familie Rodel — Solar-Dashboard und mehr." />
+<link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><circle cx=%2232%22 cy=%2232%22 r=%2218%22 fill=%22%23f6c90e%22/><g stroke=%22%23f6c90e%22 stroke-width=%224%22 stroke-linecap=%22round%22><line x1=%2232%22 y1=%224%22 x2=%2232%22 y2=%2212%22/><line x1=%2232%22 y1=%2252%22 x2=%2232%22 y2=%2260%22/><line x1=%224%22 y1=%2232%22 x2=%2212%22 y2=%2232%22/><line x1=%2252%22 y1=%2232%22 x2=%2260%22 y2=%2232%22/><line x1=%2212%22 y1=%2212%22 x2=%2218%22 y2=%2218%22/><line x1=%2246%22 y1=%2246%22 x2=%2252%22 y2=%2252%22/><line x1=%2212%22 y1=%2252%22 x2=%2218%22 y2=%2246%22/><line x1=%2246%22 y1=%2218%22 x2=%2252%22 y2=%2212%22/></g></svg>" />
+<style>
+:root {
+    --bg: #f8fafc;
+    --bg-card: #ffffff;
+    --fg: #0f172a;
+    --fg-muted: #64748b;
+    --accent: #f6c90e;
+    --accent-hover: #e0b400;
+    --border: #e2e8f0;
+    --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06);
+    --shadow-hover: 0 4px 12px rgba(15, 23, 42, 0.08), 0 12px 32px rgba(15, 23, 42, 0.10);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #0f172a;
+        --bg-card: #1e293b;
+        --fg: #f1f5f9;
+        --fg-muted: #94a3b8;
+        --accent: #f6c90e;
+        --accent-hover: #fbd540;
+        --border: #334155;
+        --shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.3);
+        --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.25), 0 12px 32px rgba(0, 0, 0, 0.4);
+    }
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+    width: 100%;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: clamp(1.5rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem);
+}
+
+header {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    margin-bottom: 3rem;
+}
+
+.logo {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+}
+
+h1 {
+    margin: 0;
+    font-size: clamp(1.6rem, 4vw, 2rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+h1 .accent { color: var(--accent); }
+
+.tagline {
+    color: var(--fg-muted);
+    font-size: 0.95rem;
+    margin: 0.125rem 0 0 0;
+}
+
+.intro {
+    margin: 0 0 3rem 0;
+    font-size: 1.125rem;
+    color: var(--fg-muted);
+    max-width: 60ch;
+}
+
+.section-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--fg-muted);
+    margin: 0 0 1rem 0;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-bottom: 3rem;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: var(--shadow);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--accent);
+}
+
+.card.disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.card.disabled:hover {
+    transform: none;
+    box-shadow: var(--shadow);
+    border-color: var(--border);
+}
+
+.card-icon {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 0.875rem;
+    color: var(--accent);
+}
+
+.card-title {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.0625rem;
+    font-weight: 600;
+}
+
+.card-desc {
+    margin: 0;
+    color: var(--fg-muted);
+    font-size: 0.9rem;
+}
+
+.card-tag {
+    display: inline-block;
+    margin-top: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+    background: var(--border);
+    color: var(--fg-muted);
+    align-self: flex-start;
+}
+
+footer {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem clamp(1rem, 4vw, 2rem);
+    color: var(--fg-muted);
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+footer a {
+    color: var(--fg-muted);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--fg-muted);
+}
+
+footer a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+</style>
+</head>
+<body>
+
+<main>
+    <header>
+        <svg class="logo" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="32" cy="32" r="18" fill="#f6c90e" />
+            <g stroke="#f6c90e" stroke-width="4" stroke-linecap="round">
+                <line x1="32" y1="4"  x2="32" y2="12" />
+                <line x1="32" y1="52" x2="32" y2="60" />
+                <line x1="4"  y1="32" x2="12" y2="32" />
+                <line x1="52" y1="32" x2="60" y2="32" />
+                <line x1="12" y1="12" x2="18" y2="18" />
+                <line x1="46" y1="46" x2="52" y2="52" />
+                <line x1="12" y1="52" x2="18" y2="46" />
+                <line x1="46" y1="18" x2="52" y2="12" />
+            </g>
+        </svg>
+        <div>
+            <h1>soft<span class="accent">henge</span>.ch</h1>
+            <p class="tagline">Familien-Hub der Familie Rodel</p>
+        </div>
+    </header>
+
+    <p class="intro">
+        Hier sammeln sich kleine, selbstgebaute Apps rund um Haus, Energie und Alltag &mdash;
+        gehostet auf einer Synology zu Hause, vom Solarstrom auf dem Dach betrieben.
+    </p>
+
+    <h2 class="section-label">Apps</h2>
+
+    <div class="grid">
+
+        <a class="card" href="https://solar.softhenge.ch/" rel="noopener">
+            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="4" />
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+            </svg>
+            <h3 class="card-title">Solar Dashboard</h3>
+            <p class="card-desc">Live-Daten, Tages- und Monatsübersicht der Photovoltaik-Anlage.</p>
+            <span class="card-tag">Live</span>
+        </a>
+
+        <div class="card disabled" aria-disabled="true">
+            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 12l2-2 4 4 8-8 4 4" />
+                <path d="M3 18h18" />
+            </svg>
+            <h3 class="card-title">Wärmepumpe</h3>
+            <p class="card-desc">Detailauswertung Stiebel-Eltron ISG-Daten.</p>
+            <span class="card-tag">Geplant</span>
+        </div>
+
+        <div class="card disabled" aria-disabled="true">
+            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                <path d="M9 22V12h6v10" />
+            </svg>
+            <h3 class="card-title">Haus-Übersicht</h3>
+            <p class="card-desc">Zentrale Sicht auf Heizung, Verbrauch und Wetter.</p>
+            <span class="card-tag">Geplant</span>
+        </div>
+
+    </div>
+
+</main>
+
+<footer>
+    &copy; <span id="year">2026</span> Familie Rodel
+    &middot; gehostet zu Hause auf Synology
+    &middot; <a href="mailto:werner.rodel@gmail.com">Kontakt</a>
+</footer>
+
+<script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>

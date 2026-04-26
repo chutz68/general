@@ -1,0 +1,13 @@
+target/
+.idea/
+*.iml
+.vscode/
+.git/
+.github/
+node_modules/
+frontend/generated/
+.DS_Store
+*.log
+README.md
+DEPLOYMENT.md
+homepage/
