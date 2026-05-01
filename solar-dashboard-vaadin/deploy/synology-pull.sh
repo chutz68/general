@@ -26,7 +26,7 @@ cd "$COMPOSE_DIR"
 OLD_DIGEST="$(docker image inspect --format '{{index .RepoDigests 0}}' "$IMAGE" 2>/dev/null || echo none)"
 
 # Pull (silent if up to date)
-docker compose pull --quiet solar-dashboard
+docker-compose pull --quiet solar-dashboard
 
 NEW_DIGEST="$(docker image inspect --format '{{index .RepoDigests 0}}' "$IMAGE" 2>/dev/null || echo none)"
 
@@ -40,7 +40,7 @@ echo "  old: $OLD_DIGEST"
 echo "  new: $NEW_DIGEST"
 
 # Recreate container with the new image
-docker compose up -d --remove-orphans solar-dashboard
+docker-compose up -d --remove-orphans solar-dashboard
 
 # Free disk: drop now-unused old images (keep dangling refs from last 24 h)
 docker image prune -f --filter "until=24h" >/dev/null
