@@ -20,7 +20,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-@Route("flow")
+@Route("")
 @PageTitle("Energiefluss")
 @JavaScript("https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js")
 class EnergyFlowView(private val solarService: SolarService) : VerticalLayout() {
@@ -42,9 +42,8 @@ class EnergyFlowView(private val solarService: SolarService) : VerticalLayout() 
 
         val nav = HorizontalLayout(
             H1(getTranslation("flow.title")),
-            RouterLink(getTranslation("flow.nav.dashboard"),  DashboardView::class.java),
-            RouterLink(getTranslation("flow.nav.live"),       LiveView::class.java),
-            RouterLink(getTranslation("flow.nav.month"),      MonthlyView::class.java)
+            RouterLink(getTranslation("flow.nav.live"),  LiveView::class.java),
+            RouterLink(getTranslation("flow.nav.data"),  DashboardView::class.java)
         ).apply { alignItems = Alignment.BASELINE; setSpacing(true) }
         add(nav)
 

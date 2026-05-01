@@ -34,9 +34,8 @@ class LiveView(private val solarService: SolarService) : VerticalLayout() {
 
         val nav = HorizontalLayout(
             H1(getTranslation("live.title")),
-            RouterLink(getTranslation("live.nav.dashboard"),  DashboardView::class.java),
-            RouterLink(getTranslation("live.nav.flow"),       EnergyFlowView::class.java),
-            RouterLink(getTranslation("live.nav.month"),      MonthlyView::class.java)
+            RouterLink(getTranslation("live.nav.flow"),  EnergyFlowView::class.java),
+            RouterLink(getTranslation("live.nav.data"),  DashboardView::class.java)
         ).apply { alignItems = Alignment.BASELINE; setSpacing(true) }
         add(nav)
         add(buildToolbar())
