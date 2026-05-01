@@ -2,7 +2,7 @@ name: Build & publish Docker image
 
 on:
   push:
-    branches: [main]
+    branches: [master]
     paths-ignore:
       - 'homepage/**'
       - 'docs/**'
