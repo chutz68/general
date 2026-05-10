@@ -6,6 +6,8 @@ import com.google.cloud.bigquery.QueryJobConfiguration
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
+// ─── Data Classes ─────────────────────────────────────────────────────────────
+
 data class DailyData(
     val day: String,
     val pWh: Double,
@@ -98,6 +100,54 @@ data class MonthlyTotals(
     val avgAutarkyPct: Double?
 )
 
+/**
+ * Echtzeit-Snapshot für EnergyFlowView.
+ *
+ * @param t           Letzter Timestamp (formatiert HH:mm)
+ * @param pW          Solarleistung aktuell [W]
+ * @param cW          Hausverbrauch aktuell [W]
+ * @param bcW         Batterie-Ladeleistung [W]  (>0 = lädt)
+ * @param bdW         Batterie-Entladeleistung [W] (>0 = entlädt)
+ * @param soc         State of Charge [%], nullable
+ * @param pWhToday    Tagesertrag Solar [Wh]
+ * @param cWhToday    Tagesverbrauch Haus [Wh]
+ * @param iWhToday    Netzbezug heute [Wh]
+ * @param eWhToday    Netzeinspeisung heute [Wh]
+ * @param sunMinutes  Minuten mit pW > 200 W heute
+ * @param peakW       Peak-Solarleistung heute [W]
+ * @param peakTime    Uhrzeit der Peak-Leistung (HH:mm)
+ */
+data class EnergyFlowData(
+    val t: String,
+    val pW: Double,
+    val cW: Double,
+    val bcW: Double,
+    val bdW: Double,
+    val soc: Double?,
+    val pWhToday: Double,
+    val cWhToday: Double,
+    val iWhToday: Double,
+    val eWhToday: Double,
+    val sunMinutes: Int,
+    val peakW: Double,
+    val peakTime: String,
+)
+
+/**
+ * Abgeleitete KPIs — berechnet aus EnergyFlowData, kein BigQuery.
+ */
+data class EnergyFlowKpis(
+    val selfConsumptionPct: Double,
+    val autarkyPct: Double,
+    val sunHours: Double,
+    val peakW: Double,
+    val peakTime: String,
+    val isFeeding: Boolean,   // true = Einspeisung, false = Bezug
+    val gridW: Double,        // positiv = Einspeisung, negativ = Bezug (abgeleitet aus bcW/bdW/pW/cW)
+)
+
+// ─── Service ──────────────────────────────────────────────────────────────────
+
 @Service
 class SolarService {
 
@@ -113,6 +163,8 @@ class SolarService {
 
     private fun FieldValue.toDoubleOrNull(): Double? =
         if (this.isNull) null else this.doubleValue
+
+    // ── getDailyData ──────────────────────────────────────────────────────────
 
     fun getDailyData(fromDate: String, toDate: String): List<DailyData> {
         log.debug("getDailyData: $fromDate → $toDate")
@@ -172,6 +224,8 @@ class SolarService {
         }
     }
 
+    // ── getFiveMinData ────────────────────────────────────────────────────────
+
     fun getFiveMinData(fromDate: String, toDate: String = fromDate): List<FiveMinData> {
         log.debug("getFiveMinData: $fromDate → $toDate")
         val query = """
@@ -204,6 +258,8 @@ class SolarService {
             emptyList()
         }
     }
+
+    // ── getCurrentData ────────────────────────────────────────────────────────
 
     fun getCurrentData(): CurrentData? {
         log.debug("getCurrentData")
@@ -241,6 +297,8 @@ class SolarService {
             null
         }
     }
+
+    // ── getMonthlyData ────────────────────────────────────────────────────────
 
     /**
      * Returns daily values for the given month, joined with sunshine duration
@@ -326,6 +384,8 @@ class SolarService {
         }
     }
 
+    // ── summarize ─────────────────────────────────────────────────────────────
+
     /** Aggregates a month's daily rows into totals/averages for the KPI cards. */
     fun summarize(days: List<MonthlyDayData>): MonthlyTotals {
         if (days.isEmpty()) {
@@ -333,7 +393,6 @@ class SolarService {
         }
         val sc = days.mapNotNull { it.selfConsumptionPct }
         val au = days.mapNotNull { it.autarkyPct }
-        // tempRealMin/Max = 0 typically means "no data" (IFNULL fallback in SQL); ignore those.
         val mins = days.map { it.tempRealMin }.filter { it != 0.0 }
         val maxs = days.map { it.tempRealMax }.filter { it != 0.0 }
         return MonthlyTotals(
@@ -355,6 +414,8 @@ class SolarService {
             avgAutarkyPct         = if (au.isNotEmpty()) au.average() else null
         )
     }
+
+    // ── getTodaySums ──────────────────────────────────────────────────────────
 
     fun getTodaySums(): TodaySums {
         log.debug("getTodaySums")
@@ -389,5 +450,133 @@ class SolarService {
             log.error("BigQuery error: ${e.message}", e)
             TodaySums(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
         }
+    }
+
+    // ── getEnergyFlowData ─────────────────────────────────────────────────────
+
+    /**
+     * Lädt alle Daten für EnergyFlowView in einem Aufruf:
+     * - Letzter Echtzeit-Datenpunkt
+     * - Tagessummen (pWh, cWh, iWh, eWh)
+     * - Sonnenstunden (pW > 200 W)
+     * - Peak-Leistung mit Uhrzeit
+     */
+    fun getEnergyFlowData(): EnergyFlowData? {
+        log.debug("getEnergyFlowData")
+        val today = java.time.LocalDate.now().toString()
+
+        // ── 1. Letzter Echtzeit-Datenpunkt ────────────────────────────────
+        val sqlCurrent = """
+            SELECT
+                FORMAT_TIMESTAMP('%H:%M', t) AS t,
+                IFNULL(pW, 0)  AS pW,
+                IFNULL(cW, 0)  AS cW,
+                IFNULL(bcW, 0) AS bcW,
+                IFNULL(bdW, 0) AS bdW,
+                soc
+            FROM `$projectId.SolarManager.SolarManager_5m`
+            ORDER BY t DESC
+            LIMIT 1
+        """.trimIndent()
+
+        // ── 2. Tagessummen ─────────────────────────────────────────────────
+        val sqlSums = """
+            SELECT
+                IFNULL(SUM(pWh), 0)  AS pWh,
+                IFNULL(SUM(cWh), 0)  AS cWh,
+                IFNULL(SUM(iWh), 0)  AS iWh,
+                IFNULL(SUM(eWh), 0)  AS eWh
+            FROM `$projectId.SolarManager.SolarManager_5m`
+            WHERE DATE(t) = '$today'
+        """.trimIndent()
+
+        // ── 3. Sonnenstunden (pW > 200 W) ─────────────────────────────────
+        val sqlSun = """
+            SELECT COUNT(*) AS sunIntervals
+            FROM `$projectId.SolarManager.SolarManager_5m`
+            WHERE DATE(t) = '$today'
+              AND IFNULL(pW, 0) > 200
+        """.trimIndent()
+
+        // ── 4. Peak-Leistung heute ─────────────────────────────────────────
+        // Subquery für MAX damit wir den Timestamp dazu kriegen
+        val sqlPeak = """
+            SELECT
+                IFNULL(pW, 0) AS peakW,
+                FORMAT_TIMESTAMP('%H:%M', t) AS peakTime
+            FROM `$projectId.SolarManager.SolarManager_5m`
+            WHERE DATE(t) = '$today'
+              AND IFNULL(pW, 0) = (
+                  SELECT MAX(IFNULL(pW, 0))
+                  FROM `$projectId.SolarManager.SolarManager_5m`
+                  WHERE DATE(t) = '$today'
+              )
+            ORDER BY t ASC
+            LIMIT 1
+        """.trimIndent()
+
+        return try {
+            val resCurrent = bigQuery.query(QueryJobConfiguration.newBuilder(sqlCurrent).build())
+            val resSums    = bigQuery.query(QueryJobConfiguration.newBuilder(sqlSums).build())
+            val resSun     = bigQuery.query(QueryJobConfiguration.newBuilder(sqlSun).build())
+            val resPeak    = bigQuery.query(QueryJobConfiguration.newBuilder(sqlPeak).build())
+
+            val cur  = resCurrent.iterateAll().firstOrNull() ?: return null
+            val sums = resSums.iterateAll().firstOrNull()    ?: return null
+            val sun  = resSun.iterateAll().firstOrNull()
+            val peak = resPeak.iterateAll().firstOrNull()
+
+            EnergyFlowData(
+                t          = cur["t"].stringValue,
+                pW         = cur["pW"].toDoubleOrZero(),
+                cW         = cur["cW"].toDoubleOrZero(),
+                bcW        = cur["bcW"].toDoubleOrZero(),
+                bdW        = cur["bdW"].toDoubleOrZero(),
+                soc        = cur["soc"].toDoubleOrNull(),
+                pWhToday   = sums["pWh"].toDoubleOrZero(),
+                cWhToday   = sums["cWh"].toDoubleOrZero(),
+                iWhToday   = sums["iWh"].toDoubleOrZero(),
+                eWhToday   = sums["eWh"].toDoubleOrZero(),
+                sunMinutes = (sun?.get("sunIntervals")?.longValue?.toInt() ?: 0) * 5,
+                peakW      = peak?.get("peakW")?.toDoubleOrZero() ?: 0.0,
+                peakTime   = peak?.get("peakTime")?.stringValue ?: "--:--",
+            )
+        } catch (e: Exception) {
+            log.error("getEnergyFlowData BigQuery error: ${e.message}", e)
+            null
+        }
+    }
+
+    // ── computeKpis ───────────────────────────────────────────────────────────
+
+    /**
+     * Berechnet KPIs aus EnergyFlowData — pure Funktion, kein BigQuery.
+     *
+     * Eigenverbrauchsquote = (Solar - Einspeisung) / Solar × 100
+     * Autarkiequote        = (Verbrauch - Bezug)   / Verbrauch × 100
+     * gridW                = eWh > 0 → Einspeisung (positiv), sonst Bezug (negativ)
+     */
+    fun computeKpis(d: EnergyFlowData): EnergyFlowKpis {
+        val selfConsumption = if (d.pWhToday > 0)
+            ((d.pWhToday - d.eWhToday) / d.pWhToday * 100.0).coerceIn(0.0, 100.0)
+        else 0.0
+
+        val autarky = if (d.cWhToday > 0)
+            ((d.cWhToday - d.iWhToday) / d.cWhToday * 100.0).coerceIn(0.0, 100.0)
+        else 0.0
+
+        // Netto-Grid-Leistung aus aktuellen W-Werten ableiten:
+        // pW - cW - bcW + bdW = Überschuss → positiv = Einspeisung
+        val gridW = d.pW - d.cW - d.bcW + d.bdW
+
+        return EnergyFlowKpis(
+            selfConsumptionPct = selfConsumption,
+            autarkyPct         = autarky,
+            sunHours           = d.sunMinutes / 60.0,
+            peakW              = d.peakW,
+            peakTime           = d.peakTime,
+            isFeeding          = gridW >= 0,
+            gridW              = gridW,
+        )
     }
 }

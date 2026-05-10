@@ -1,0 +1,227 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   energy-flow.css
+   Schweizer Präzisions-Stil für EnergyFlowView
+   Einbinden via @CssImport("./styles/energy-flow.css") in EnergyFlowView.kt
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Keyframes ────────────────────────────────────────────────────────────── */
+
+@keyframes ef-flow-right {
+    from { stroke-dashoffset: 24; }
+    to   { stroke-dashoffset: 0;  }
+}
+@keyframes ef-flow-left {
+    from { stroke-dashoffset: 0;  }
+    to   { stroke-dashoffset: 24; }
+}
+@keyframes ef-flow-down {
+    from { stroke-dashoffset: 24; }
+    to   { stroke-dashoffset: 0;  }
+}
+@keyframes ef-flow-up {
+    from { stroke-dashoffset: 0;  }
+    to   { stroke-dashoffset: 24; }
+}
+@keyframes ef-pulse-sun {
+    0%, 100% { opacity: 0.16; }
+    50%       { opacity: 0.30; }
+}
+@keyframes ef-live-blink {
+    0%, 100% { opacity: 1;   }
+    50%       { opacity: 0.3; }
+}
+
+/* ── Energiefluss-Linien ──────────────────────────────────────────────────── */
+
+.ef-flow-right {
+    stroke-dasharray: 6 6;
+    animation: ef-flow-right 1.8s linear infinite;
+}
+.ef-flow-left {
+    stroke-dasharray: 6 6;
+    animation: ef-flow-left 1.8s linear infinite;
+}
+.ef-flow-down {
+    stroke-dasharray: 6 6;
+    animation: ef-flow-down 1.8s linear infinite;
+}
+.ef-flow-up {
+    stroke-dasharray: 6 6;
+    animation: ef-flow-up 1.8s linear infinite;
+}
+.ef-flow-none {
+    stroke-dasharray: 6 6;
+    opacity: 0.15;
+    /* keine Animation — kein Fluss */
+}
+
+/* ── Sonne ────────────────────────────────────────────────────────────────── */
+
+.ef-sun-ring {
+    animation: ef-pulse-sun 3s ease-in-out infinite;
+}
+
+/* ── Haupt-Container ──────────────────────────────────────────────────────── */
+
+.ef-container {
+    width: 100%;
+    max-width: 860px;
+    margin: 0 auto;
+    font-family: var(--lumo-font-family);
+}
+
+/* ── Header-Zeile ─────────────────────────────────────────────────────────── */
+
+.ef-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.ef-title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--lumo-body-text-color);
+    margin: 0;
+}
+
+.ef-live-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: var(--lumo-secondary-text-color);
+}
+
+.ef-live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #1D9E75;
+    animation: ef-live-blink 2s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+.ef-last-update {
+    font-size: 0.7rem;
+    color: var(--lumo-tertiary-text-color);
+}
+
+/* ── SVG-Wrapper ──────────────────────────────────────────────────────────── */
+
+.ef-svg-wrap {
+    width: 100%;
+    overflow: visible;
+}
+
+.ef-svg-wrap svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* ── Node-Hover ───────────────────────────────────────────────────────────── */
+
+.ef-node {
+    cursor: pointer;
+}
+
+.ef-node rect {
+    transition: filter 0.15s ease;
+}
+
+.ef-node:hover rect {
+    filter: brightness(0.96);
+}
+
+/* ── Trennlinie ───────────────────────────────────────────────────────────── */
+
+.ef-divider {
+    border: none;
+    border-top: 0.5px solid var(--lumo-contrast-10pct);
+    margin: 1rem 0 0.75rem;
+}
+
+/* ── KPI-Leiste ───────────────────────────────────────────────────────────── */
+
+.ef-kpi-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 0.5rem;
+}
+
+.ef-kpi-card {
+    background: var(--lumo-contrast-5pct);
+    border-radius: 8px;
+    padding: 0.6rem 0.75rem 0.65rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    cursor: default;
+    transition: background 0.15s;
+}
+
+.ef-kpi-card:hover {
+    background: var(--lumo-contrast-10pct);
+}
+
+.ef-kpi-label {
+    font-size: 0.7rem;
+    color: var(--lumo-secondary-text-color);
+    white-space: nowrap;
+}
+
+.ef-kpi-value {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--lumo-body-text-color);
+    line-height: 1.2;
+}
+
+.ef-kpi-sub {
+    font-size: 0.65rem;
+    color: var(--lumo-tertiary-text-color);
+}
+
+/* ── Badge (Einspeisung / Bezug) ──────────────────────────────────────────── */
+
+.ef-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+.ef-badge-feed {
+    background: #E6F1FB;
+    color: #0C447C;
+}
+
+.ef-badge-draw {
+    background: #FAECE7;
+    color: #993C1D;
+}
+
+/* Dark mode overrides */
+@media (prefers-color-scheme: dark) {
+    .ef-badge-feed {
+        background: #042C53;
+        color: #85B7EB;
+    }
+    .ef-badge-draw {
+        background: #4A1B0C;
+        color: #F0997B;
+    }
+}
+
+/* ── Responsiv: mobile ────────────────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+    .ef-kpi-bar {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
