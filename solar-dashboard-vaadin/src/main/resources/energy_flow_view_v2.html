@@ -1,0 +1,172 @@
+
+<style>
+  @keyframes flow-r { from{stroke-dashoffset:24} to{stroke-dashoffset:0} }
+  @keyframes flow-l { from{stroke-dashoffset:0} to{stroke-dashoffset:24} }
+  @keyframes flow-d { from{stroke-dashoffset:24} to{stroke-dashoffset:0} }
+  @keyframes flow-u { from{stroke-dashoffset:0} to{stroke-dashoffset:24} }
+  @keyframes pulse-sun { 0%,100%{opacity:.16} 50%{opacity:.30} }
+  @keyframes batt-charge { 0%{opacity:.5} 100%{opacity:1} }
+  .fr { stroke-dasharray:6 6; animation:flow-r 1.8s linear infinite; }
+  .fl { stroke-dasharray:6 6; animation:flow-l 1.8s linear infinite; }
+  .fd { stroke-dasharray:6 6; animation:flow-d 1.8s linear infinite; }
+  .fu { stroke-dasharray:6 6; animation:flow-u 1.8s linear infinite; }
+  .fn { stroke-dasharray:6 6; opacity:.15; }
+  .sun-ring { animation:pulse-sun 3s ease-in-out infinite; }
+</style>
+
+<svg width="100%" viewBox="0 0 680 600" role="img">
+  <title>Solar EnergyFlowView v2</title>
+  <desc>Energiefluss mit Node-integrierten Tageswerten und KPI-Leiste</desc>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- ══════════════════════════════════════════
+       SONNE
+  ══════════════════════════════════════════ -->
+  <g transform="translate(340,68)">
+    <circle class="sun-ring" cx="0" cy="0" r="40" fill="#EF9F27"/>
+    <circle cx="0" cy="0" r="28" fill="#FAC775" stroke="#EF9F27" stroke-width="1" opacity=".9"/>
+    <line x1="0"   y1="-36" x2="0"   y2="-43" stroke="#EF9F27" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="26"  y1="-26" x2="31"  y2="-31" stroke="#EF9F27" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="36"  y1="0"   x2="43"  y2="0"   stroke="#EF9F27" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="26"  y1="26"  x2="31"  y2="31"  stroke="#EF9F27" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="0"   y1="36"  x2="0"   y2="43"  stroke="#EF9F27" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="-26" y1="26"  x2="-31" y2="31"  stroke="#EF9F27" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="-36" y1="0"   x2="-43" y2="0"   stroke="#EF9F27" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="-26" y1="-26" x2="-31" y2="-31" stroke="#EF9F27" stroke-width="1.5" stroke-linecap="round"/>
+    <text style="font-size:9px;fill:#633806;font-family:var(--font-sans);font-weight:500" x="0" y="4" text-anchor="middle">4 200 W</text>
+  </g>
+
+  <!-- Sonne → Solar (Pfeil) -->
+  <line class="fd" x1="316" y1="93" x2="196" y2="148" stroke="#EF9F27" stroke-width="1.5" marker-end="url(#ar)"/>
+
+  <!-- ══════════════════════════════════════════
+       NODE: SOLARANLAGE (links)
+  ══════════════════════════════════════════ -->
+  <g class="node" onclick="sendPrompt('Zeig mir die Solar-Erzeugung der letzten 7 Tage')">
+    <rect x="40" y="148" width="160" height="90" rx="8" fill="var(--color-background-primary)" stroke="var(--color-border-secondary)" stroke-width="0.5"/>
+    <!-- Panel-Icon -->
+    <rect x="54"  y="160" width="44" height="30" rx="2" fill="#185FA5" opacity=".15" stroke="#185FA5" stroke-width="0.5"/>
+    <line x1="76"  y1="160" x2="76"  y2="190" stroke="#185FA5" stroke-width="0.5" opacity=".5"/>
+    <line x1="54"  y1="175" x2="98"  y2="175" stroke="#185FA5" stroke-width="0.5" opacity=".5"/>
+    <rect x="104" y="160" width="44" height="30" rx="2" fill="#185FA5" opacity=".15" stroke="#185FA5" stroke-width="0.5"/>
+    <line x1="126" y1="160" x2="126" y2="190" stroke="#185FA5" stroke-width="0.5" opacity=".5"/>
+    <line x1="104" y1="175" x2="148" y2="175" stroke="#185FA5" stroke-width="0.5" opacity=".5"/>
+    <!-- Werte -->
+    <text style="font-size:14px;font-weight:500;fill:var(--color-text-primary);font-family:var(--font-sans)" x="120" y="212" text-anchor="middle">4 200 W</text>
+    <text style="font-size:10px;fill:var(--color-text-secondary);font-family:var(--font-sans)" x="120" y="228" text-anchor="middle">18.4 kWh heute</text>
+  </g>
+
+  <!-- Solar → Wechselrichter -->
+  <line class="fr" x1="200" y1="210" x2="270" y2="235" stroke="#185FA5" stroke-width="2" marker-end="url(#ar)"/>
+
+  <!-- ══════════════════════════════════════════
+       NODE: WECHSELRICHTER (Mitte)
+  ══════════════════════════════════════════ -->
+  <g class="node" onclick="sendPrompt('Was bedeuten die Wechselrichter-Kennwerte?')">
+    <rect x="270" y="200" width="140" height="80" rx="8" fill="var(--color-background-primary)" stroke="var(--color-border-primary)" stroke-width="1"/>
+    <text style="font-size:18px;fill:#0C447C;font-family:var(--font-sans)" x="340" y="243" text-anchor="middle">∿</text>
+    <text style="font-size:11px;font-weight:500;fill:var(--color-text-primary);font-family:var(--font-sans)" x="340" y="262" text-anchor="middle">Wechselrichter</text>
+    <text style="font-size:10px;fill:var(--color-text-secondary);font-family:var(--font-sans)" x="340" y="275" text-anchor="middle">98.2 % η</text>
+  </g>
+
+  <!-- Wechselrichter → Haus -->
+  <line class="fr" x1="410" y1="238" x2="480" y2="215" stroke="#1D9E75" stroke-width="2" marker-end="url(#ar)"/>
+
+  <!-- ══════════════════════════════════════════
+       NODE: VERBRAUCH (rechts)
+  ══════════════════════════════════════════ -->
+  <g class="node" onclick="sendPrompt('Zeig mir den Hausverbrauch nach Kategorie')">
+    <rect x="480" y="148" width="160" height="90" rx="8" fill="var(--color-background-primary)" stroke="var(--color-border-secondary)" stroke-width="0.5"/>
+    <!-- Haus-Icon -->
+    <polygon points="560,160 544,176 576,176" fill="var(--color-text-secondary)" opacity=".25"/>
+    <rect x="550" y="176" width="20" height="16" rx="1" fill="var(--color-text-secondary)" opacity=".18"/>
+    <!-- Werte -->
+    <text style="font-size:14px;font-weight:500;fill:var(--color-text-primary);font-family:var(--font-sans)" x="560" y="212" text-anchor="middle">2 800 W</text>
+    <text style="font-size:10px;fill:var(--color-text-secondary);font-family:var(--font-sans)" x="560" y="228" text-anchor="middle">11.2 kWh heute</text>
+  </g>
+
+  <!-- Wechselrichter → Batterie -->
+  <line class="fd" x1="340" y1="280" x2="340" y2="348" stroke="#1D9E75" stroke-width="1.5" marker-end="url(#ar)"/>
+
+  <!-- ══════════════════════════════════════════
+       NODE: BATTERIE (Mitte unten)
+  ══════════════════════════════════════════ -->
+  <g class="node" onclick="sendPrompt('Wie hoch ist der aktuelle Batteriestand?')">
+    <rect x="270" y="348" width="140" height="90" rx="8" fill="var(--color-background-primary)" stroke="var(--color-border-secondary)" stroke-width="0.5"/>
+    <!-- Batterie-Symbol mit Füllstand -->
+    <rect x="308" y="362" width="60" height="26" rx="3" fill="none" stroke="var(--color-text-secondary)" stroke-width="1" opacity=".45"/>
+    <rect x="368" y="369" width="5" height="12" rx="1" fill="var(--color-text-secondary)" opacity=".35"/>
+    <rect x="311" y="365" width="37" height="20" rx="2" fill="#1D9E75" opacity=".6"/>
+    <!-- Füllstand-Label -->
+    <text style="font-size:9px;fill:#085041;font-family:var(--font-sans);font-weight:500" x="340" y="379" text-anchor="middle">62 %</text>
+    <text style="font-size:14px;font-weight:500;fill:var(--color-text-primary);font-family:var(--font-sans)" x="340" y="410" text-anchor="middle">800 W</text>
+    <text style="font-size:10px;fill:var(--color-text-secondary);font-family:var(--font-sans)" x="340" y="426" text-anchor="middle">↑ Laden</text>
+  </g>
+
+  <!-- Wechselrichter → Netz (L-förmig nach links unten) -->
+  <path class="fl" fill="none" stroke="#185FA5" stroke-width="1.5" marker-end="url(#ar)"
+    d="M285 280 L285 318 L120 318 L120 348"/>
+
+  <!-- ══════════════════════════════════════════
+       NODE: NETZ (links unten)
+  ══════════════════════════════════════════ -->
+  <g class="node" onclick="sendPrompt('Wie viel Strom wurde heute ins Netz eingespeist?')">
+    <rect x="40" y="348" width="160" height="90" rx="8" fill="var(--color-background-primary)" stroke="var(--color-border-secondary)" stroke-width="0.5"/>
+    <!-- Netz-Icon (Leitungsmasten vereinfacht) -->
+    <line x1="72"  y1="368" x2="148" y2="368" stroke="var(--color-text-secondary)" stroke-width="1.2" opacity=".3" stroke-linecap="round"/>
+    <line x1="72"  y1="374" x2="148" y2="374" stroke="var(--color-text-secondary)" stroke-width="1.2" opacity=".2" stroke-linecap="round"/>
+    <circle cx="86"  cy="371" r="3" fill="#185FA5" opacity=".5"/>
+    <circle cx="110" cy="371" r="3" fill="#185FA5" opacity=".5"/>
+    <circle cx="134" cy="371" r="3" fill="#185FA5" opacity=".5"/>
+    <!-- Einspeisung-Badge -->
+    <rect x="72" y="382" width="76" height="14" rx="3" fill="#E6F1FB"/>
+    <text style="font-size:9px;fill:#0C447C;font-family:var(--font-sans);font-weight:500" x="110" y="393" text-anchor="middle">Einspeisung</text>
+    <!-- Werte -->
+    <text style="font-size:14px;font-weight:500;fill:var(--color-text-primary);font-family:var(--font-sans)" x="120" y="418" text-anchor="middle">600 W</text>
+    <text style="font-size:10px;fill:var(--color-text-secondary);font-family:var(--font-sans)" x="120" y="430" text-anchor="middle">4.8 kWh heute</text>
+  </g>
+
+  <!-- ══════════════════════════════════════════
+       TRENNLINIE
+  ══════════════════════════════════════════ -->
+  <line x1="40" y1="468" x2="640" y2="468" stroke="var(--color-border-tertiary)" stroke-width="0.5"/>
+
+  <!-- ══════════════════════════════════════════
+       KPI-LEISTE: 4 Cards
+  ══════════════════════════════════════════ -->
+
+  <!-- Card: Eigenverbrauch -->
+  <g class="node" onclick="sendPrompt('Was bedeutet Eigenverbrauchsquote?')">
+    <rect x="40"  y="482" width="138" height="52" rx="6" fill="var(--color-background-secondary)"/>
+    <text style="font-size:9px;fill:var(--color-text-secondary);font-family:var(--font-sans)" x="109" y="498" text-anchor="middle">Eigenverbrauch</text>
+    <text style="font-size:18px;font-weight:500;fill:var(--color-text-primary);font-family:var(--font-sans)" x="109" y="524" text-anchor="middle">74 %</text>
+  </g>
+
+  <!-- Card: Autarkie -->
+  <g class="node" onclick="sendPrompt('Was bedeutet Autarkiequote?')">
+    <rect x="188" y="482" width="138" height="52" rx="6" fill="var(--color-background-secondary)"/>
+    <text style="font-size:9px;fill:var(--color-text-secondary);font-family:var(--font-sans)" x="257" y="498" text-anchor="middle">Autarkie</text>
+    <text style="font-size:18px;font-weight:500;fill:var(--color-text-primary);font-family:var(--font-sans)" x="257" y="524" text-anchor="middle">89 %</text>
+  </g>
+
+  <!-- Card: Sonnenstunden -->
+  <g class="node" onclick="sendPrompt('Wie werden Sonnenstunden berechnet?')">
+    <rect x="336" y="482" width="138" height="52" rx="6" fill="var(--color-background-secondary)"/>
+    <text style="font-size:9px;fill:var(--color-text-secondary);font-family:var(--font-sans)" x="405" y="498" text-anchor="middle">Sonnenstunden</text>
+    <!-- Mini-Sonne -->
+    <circle cx="388" cy="516" r="5" fill="#EF9F27" opacity=".7"/>
+    <text style="font-size:18px;font-weight:500;fill:var(--color-text-primary);font-family:var(--font-sans)" x="420" y="524" text-anchor="start">6.2 h</text>
+  </g>
+
+  <!-- Card: Peak heute -->
+  <g class="node" onclick="sendPrompt('Wann war die Peak-Leistung heute erreicht?')">
+    <rect x="484" y="482" width="156" height="52" rx="6" fill="var(--color-background-secondary)"/>
+    <text style="font-size:9px;fill:var(--color-text-secondary);font-family:var(--font-sans)" x="562" y="498" text-anchor="middle">Peak heute · 12:35</text>
+    <text style="font-size:18px;font-weight:500;fill:var(--color-text-primary);font-family:var(--font-sans)" x="562" y="524" text-anchor="middle">4 840 W</text>
+  </g>
+
+</svg>

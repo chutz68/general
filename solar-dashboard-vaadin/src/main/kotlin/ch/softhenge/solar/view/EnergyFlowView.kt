@@ -143,7 +143,9 @@ class EnergyFlowView(
         val battFlow   = if (d.bcW > 0) "ef-flow-down"
         else if (d.bdW > 0) "ef-flow-up"
         else "ef-flow-none"
-        val gridFlow   = if (k.gridW != 0.0) "ef-flow-left" else "ef-flow-none"
+        // Einspeisung: Pfad WR→Netz (abwärts), ef-flow-left, marker-end am Netz
+        // Bezug:       Pfad Netz→WR (aufwärts), ef-flow-right (0→-24), marker-end am WR
+        val gridFlow  = if (k.isFeeding) "ef-flow-down" else if (k.gridW != 0.0) "ef-flow-right" else "ef-flow-none"
         val houseFlow  = if (d.cW > 0) "ef-flow-right" else "ef-flow-none"
 
         // Netz-Badge
@@ -281,34 +283,33 @@ class EnergyFlowView(
           text-anchor="middle" x="340" y="428">$battLabel</text>
   </g>
 
-  <!-- WR → Netz (L-förmig) -->
+  <!-- WR ↔ Netz: Pfadrichtung bestimmt Pfeilspitze und Flussrichtung -->
   <path class="$gridFlow" fill="none"
-        stroke="$gridFlowColor" stroke-width="1.5" marker-end="url(#ef-ar)"
-        d="M285 280 L285 318 L120 318 L120 348"/>
-  <rect x="143" y="305" width="50" height="16" rx="4"
+        stroke="$gridFlowColor" stroke-width="1.5"
+        marker-end="url(#ef-ar)"
+        d="${if (k.isFeeding) "M285 280 L285 318 L120 318 L120 348" else "M120 348 L120 318 L285 318 L285 280"}"/>
+  <rect x="143" y="305" width="82" height="16" rx="4"
         fill="var(--lumo-contrast-5pct)"/>
   <text font-size="9" fill="$gridFlowColor" font-family="var(--lumo-font-family)"
-        text-anchor="middle" x="168" y="317">${abs(k.gridW).roundToInt().fmtW()}</text>
+        text-anchor="middle" x="184" y="317">${gridBadgeText}: ${abs(k.gridW).roundToInt().fmtW()}</text>
 
   <!-- ════════════════════════ NETZ (links unten) ════════════════════════ -->
   <g class="ef-node">
-    <rect x="40" y="348" width="160" height="96" rx="8"
+    <rect x="40" y="348" width="160" height="110" rx="8"
           fill="var(--lumo-base-color)" stroke="var(--lumo-contrast-20pct)" stroke-width="0.5"/>
     <!-- Netz-Icon -->
-    ${gridIcon(120, 362)}
-    <!-- Badge Einspeisung/Bezug -->
-    <foreignObject x="70" y="386" width="100" height="18">
-      <div xmlns="http://www.w3.org/1999/xhtml">
-        <span class="$gridBadgeClass">$gridBadgeText</span>
-      </div>
-    </foreignObject>
-    <!-- Werte -->
-    <text font-size="14" font-weight="500" fill="var(--lumo-body-text-color)"
+    ${gridIcon(120, 358)}
+    <!-- Aktueller Wert mit Richtungsangabe -->
+    <text font-size="13" font-weight="500" fill="$gridFlowColor"
           font-family="var(--lumo-font-family)"
-          text-anchor="middle" x="120" y="418">${abs(k.gridW).roundToInt().fmtW()}</text>
+          text-anchor="middle" x="120" y="382">${gridBadgeText}: ${abs(k.gridW).roundToInt().fmtW()}</text>
+    <!-- Tageswerte: immer beide anzeigen -->
     <text font-size="10" fill="var(--lumo-secondary-text-color)"
           font-family="var(--lumo-font-family)"
-          text-anchor="middle" x="120" y="434">${(abs(d.eWhToday - d.iWhToday) / 1000.0).fmt1()} kWh heute</text>
+          text-anchor="middle" x="120" y="400">↑ Einsp.: ${(d.eWhToday / 1000.0).fmt1()} kWh</text>
+    <text font-size="10" fill="var(--lumo-secondary-text-color)"
+          font-family="var(--lumo-font-family)"
+          text-anchor="middle" x="120" y="416">↓ Bezug: ${(d.iWhToday / 1000.0).fmt1()} kWh</text>
   </g>
 
 </svg>""".trimIndent()

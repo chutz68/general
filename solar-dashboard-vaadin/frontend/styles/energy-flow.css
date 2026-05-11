@@ -7,8 +7,8 @@
 /* ── Keyframes ────────────────────────────────────────────────────────────── */
 
 @keyframes ef-flow-right {
-    from { stroke-dashoffset: 24; }
-    to   { stroke-dashoffset: 0;  }
+    from { stroke-dashoffset: 0;  }
+    to   { stroke-dashoffset: -24; }
 }
 @keyframes ef-flow-left {
     from { stroke-dashoffset: 0;  }
@@ -20,7 +20,7 @@
 }
 @keyframes ef-flow-up {
     from { stroke-dashoffset: 0;  }
-    to   { stroke-dashoffset: 24; }
+    to   { stroke-dashoffset: -24; }
 }
 @keyframes ef-pulse-sun {
     0%, 100% { opacity: 0.16; }

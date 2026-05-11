@@ -465,7 +465,9 @@ class SolarService {
         log.debug("getEnergyFlowData")
         val today = java.time.LocalDate.now().toString()
 
-        // ── 1. Letzter Echtzeit-Datenpunkt ────────────────────────────────
+        // ── 1. Letzter Echtzeit-Datenpunkt (heute) ───────────────────────
+        // Für soc: letzten nicht-null Wert des Tages via LAST_VALUE nehmen,
+        // da der aktuellste Row soc manchmal null haben kann.
         val sqlCurrent = """
             SELECT
                 FORMAT_TIMESTAMP('%H:%M', t) AS t,
@@ -473,8 +475,12 @@ class SolarService {
                 IFNULL(cW, 0)  AS cW,
                 IFNULL(bcW, 0) AS bcW,
                 IFNULL(bdW, 0) AS bdW,
-                soc
+                LAST_VALUE(soc IGNORE NULLS) OVER (
+                    ORDER BY t
+                    ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+                ) AS soc
             FROM `$projectId.SolarManager.SolarManager_5m`
+            WHERE DATE(t) = '$today'
             ORDER BY t DESC
             LIMIT 1
         """.trimIndent()
