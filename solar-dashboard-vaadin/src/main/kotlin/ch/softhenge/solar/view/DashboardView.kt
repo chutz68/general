@@ -9,7 +9,6 @@ import ch.softhenge.solar.util.TimeUtils
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.grid.ColumnTextAlign
 import com.vaadin.flow.component.grid.Grid
-import com.vaadin.flow.component.html.H1
 import com.vaadin.flow.component.html.H2
 import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment
@@ -17,12 +16,11 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
-import com.vaadin.flow.router.RouterLink
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-@Route("data")
+@Route("data", layout = MainLayout::class)
 @PageTitle("Solar Dashboard")
 class DashboardView(private val solarService: SolarService) : VerticalLayout() {
 
@@ -39,12 +37,7 @@ class DashboardView(private val solarService: SolarService) : VerticalLayout() {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val today = TimeUtils.today()
 
-        val nav = HorizontalLayout(
-            H1(t("dashboard.title")),
-            RouterLink(t("dashboard.nav.flow"), EnergyFlowView::class.java),
-            RouterLink(t("dashboard.nav.live"), LiveView::class.java)
-        ).apply { setAlignItems(Alignment.BASELINE); setSpacing(true) }
-        add(nav)
+        // Navigation via MainLayout
 
         // --- Today ---
         val todaySums = solarService.getTodaySums()

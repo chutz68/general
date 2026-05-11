@@ -7,17 +7,15 @@ import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.datepicker.DatePicker
 import com.vaadin.flow.component.dependency.JavaScript
 import com.vaadin.flow.component.html.Div
-import com.vaadin.flow.component.html.H1
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
-import com.vaadin.flow.router.RouterLink
 import ch.softhenge.solar.util.TimeUtils
 import java.time.LocalDate
 
-@Route("live")
+@Route("live", layout = MainLayout::class)
 @PageTitle("Solar Live View")
 @JavaScript("https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js")
 class LiveView(private val solarService: SolarService) : VerticalLayout() {
@@ -32,12 +30,7 @@ class LiveView(private val solarService: SolarService) : VerticalLayout() {
         setPadding(true)
         setSpacing(true)
 
-        val nav = HorizontalLayout(
-            H1(getTranslation("live.title")),
-            RouterLink(getTranslation("live.nav.flow"),  EnergyFlowView::class.java),
-            RouterLink(getTranslation("live.nav.data"),  DashboardView::class.java)
-        ).apply { alignItems = Alignment.BASELINE; setSpacing(true) }
-        add(nav)
+        // Navigation via MainLayout
         add(buildToolbar())
 
         chartDiv.element.setAttribute("id", "solar-chart")

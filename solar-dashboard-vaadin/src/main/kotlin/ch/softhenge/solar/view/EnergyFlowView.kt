@@ -3,6 +3,7 @@ package ch.softhenge.solar.view
 import ch.softhenge.solar.service.EnergyFlowData
 import ch.softhenge.solar.service.EnergyFlowKpis
 import ch.softhenge.solar.service.SolarService
+import ch.softhenge.solar.util.TimeUtils
 import com.vaadin.flow.component.AttachEvent
 import com.vaadin.flow.component.DetachEvent
 import com.vaadin.flow.component.UI
@@ -18,7 +19,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
-@Route("flow")
+@Route("", layout = MainLayout::class)
 @PageTitle("Energiefluss – Solar")
 @CssImport("./styles/energy-flow.css")
 class EnergyFlowView(
@@ -49,8 +50,12 @@ class EnergyFlowView(
         val liveBadge = Div(liveDot, Span("Live · 5-Min")).apply {
             addClassName("ef-live-badge")
         }
+        val title = com.vaadin.flow.component.html.H2("Energiefluss").apply {
+            style.set("margin", "0").set("font-size", "1.4rem").set("font-weight", "600")
+        }
+        lastUpdate.addClassName("ef-last-update")
         val header = Div(
-            Span("Energiefluss").apply { addClassName("ef-title") },
+            title,
             Div(liveBadge, lastUpdate).apply {
                 addClassName("ef-live-badge")
                 style.set("gap", "12px")
@@ -96,7 +101,7 @@ class EnergyFlowView(
         if (data != null) {
             val kpis = solarService.computeKpis(data)
             renderFlow(data, kpis)
-            lastUpdate.text = "aktualisiert ${data.t}"
+            lastUpdate.text = "aktualisiert ${TimeUtils.formatDate(TimeUtils.today())} ${data.t}"
         }
     }
 

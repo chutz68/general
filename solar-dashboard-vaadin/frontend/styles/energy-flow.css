@@ -80,8 +80,8 @@
 }
 
 .ef-title {
-    font-size: 1rem;
-    font-weight: 500;
+    font-size: 1.4rem;
+    font-weight: 600;
     color: var(--lumo-body-text-color);
     margin: 0;
 }
@@ -104,8 +104,9 @@
 }
 
 .ef-last-update {
-    font-size: 0.7rem;
-    color: var(--lumo-tertiary-text-color);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--lumo-secondary-text-color);
 }
 
 /* ── SVG-Wrapper ──────────────────────────────────────────────────────────── */
