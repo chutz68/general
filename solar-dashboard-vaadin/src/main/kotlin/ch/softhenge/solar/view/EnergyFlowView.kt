@@ -159,7 +159,6 @@ class EnergyFlowView(
         // Batterie-Füllbalken (0..60px Breite)
         val socPct    = d.soc ?: 0.0
         val battFill  = (socPct / 100.0 * 56).coerceIn(0.0, 56.0)
-        val battLabel = if (d.bcW > 0) "↑ Laden" else if (d.bdW > 0) "↑ Entladen" else "Standby"
 
         // Watt-Linie Solar→WR
         val pvArrowColor  = if (d.pW > 50) "#185FA5" else "#888780"
@@ -170,6 +169,11 @@ class EnergyFlowView(
             d.bdW > 0 -> "#D85A30"   // Entladen: rot (wie Netz-Bezug)
             else      -> "#888780"   // Standby
         }
+
+        val gridPath = if (k.isFeeding)
+            "M285 280 L285 318 L120 318 L120 348"
+        else
+            "M120 348 L120 318 L285 318 L285 280"
 
         return """
 <svg class="ef-svg" viewBox="0 0 680 600" xmlns="http://www.w3.org/2000/svg" aria-label="Energiefluss-Diagramm">
@@ -269,7 +273,7 @@ class EnergyFlowView(
 
   <!-- ════════════════════════ BATTERIE (Mitte unten) ════════════════════ -->
   <g class="ef-node">
-    <rect x="270" y="348" width="140" height="96" rx="8"
+    <rect x="270" y="348" width="140" height="112" rx="8"
           fill="var(--lumo-base-color)" stroke="var(--lumo-contrast-20pct)" stroke-width="0.5"/>
     <!-- Batterie-Symbol -->
     <rect x="308" y="360" width="60" height="26" rx="3"
@@ -286,39 +290,42 @@ class EnergyFlowView(
     <!-- Leistung -->
     <text font-size="14" font-weight="500" fill="var(--lumo-body-text-color)"
           font-family="var(--lumo-font-family)"
-          text-anchor="middle" x="340" y="412">${(if (d.bcW > 0) d.bcW else d.bdW).roundToInt().fmtW()}</text>
+          text-anchor="middle" x="340" y="408">${(if (d.bcW > 0) d.bcW else d.bdW).roundToInt().fmtW()}</text>
     <text font-size="10" fill="var(--lumo-secondary-text-color)"
           font-family="var(--lumo-font-family)"
-          text-anchor="middle" x="340" y="428">$battLabel</text>
+          text-anchor="middle" x="340" y="422">↑ Laden: ${(d.bcWhToday / 1000.0).fmt1()} kWh</text>
+    <text font-size="10" fill="var(--lumo-secondary-text-color)"
+          font-family="var(--lumo-font-family)"
+          text-anchor="middle" x="340" y="436">↓ Entladen: ${(d.bdWhToday / 1000.0).fmt1()} kWh</text>
   </g>
 
   <!-- WR ↔ Netz: Pfadrichtung bestimmt Pfeilspitze und Flussrichtung -->
   <path class="$gridFlow" fill="none"
         stroke="$gridFlowColor" stroke-width="1.5"
         marker-end="url(#ef-ar)"
-        d="${if (k.isFeeding) "M285 280 L285 318 L120 318 L120 348" else "M120 348 L120 318 L285 318 L285 280"}"/>
+        d="$gridPath"/>
   <rect x="143" y="305" width="82" height="16" rx="4"
         fill="var(--lumo-contrast-5pct)"/>
   <text font-size="9" fill="$gridFlowColor" font-family="var(--lumo-font-family)"
-        text-anchor="middle" x="184" y="317">${gridBadgeText}: ${abs(k.gridW).roundToInt().fmtW()}</text>
+        text-anchor="middle" x="184" y="317">${abs(k.gridW).roundToInt().fmtW()}</text>
 
   <!-- ════════════════════════ NETZ (links unten) ════════════════════════ -->
   <g class="ef-node">
-    <rect x="40" y="348" width="160" height="110" rx="8"
+    <rect x="40" y="348" width="160" height="118" rx="8"
           fill="var(--lumo-base-color)" stroke="var(--lumo-contrast-20pct)" stroke-width="0.5"/>
     <!-- Netz-Icon -->
     ${gridIcon(120, 358)}
-    <!-- Aktueller Wert mit Richtungsangabe -->
-    <text font-size="13" font-weight="500" fill="$gridFlowColor"
+    <!-- Aktueller W-Wert -->
+    <text font-size="14" font-weight="500" fill="$gridFlowColor"
           font-family="var(--lumo-font-family)"
-          text-anchor="middle" x="120" y="382">${gridBadgeText}: ${abs(k.gridW).roundToInt().fmtW()}</text>
+          text-anchor="middle" x="120" y="402">${abs(k.gridW).roundToInt().fmtW()}</text>
     <!-- Tageswerte: immer beide anzeigen -->
     <text font-size="10" fill="var(--lumo-secondary-text-color)"
           font-family="var(--lumo-font-family)"
-          text-anchor="middle" x="120" y="400">↑ Einsp.: ${(d.eWhToday / 1000.0).fmt1()} kWh</text>
+          text-anchor="middle" x="120" y="416">↑ Einsp.: ${(d.eWhToday / 1000.0).fmt1()} kWh</text>
     <text font-size="10" fill="var(--lumo-secondary-text-color)"
           font-family="var(--lumo-font-family)"
-          text-anchor="middle" x="120" y="416">↓ Bezug: ${(d.iWhToday / 1000.0).fmt1()} kWh</text>
+          text-anchor="middle" x="120" y="432">↓ Bezug: ${(d.iWhToday / 1000.0).fmt1()} kWh</text>
   </g>
 
 </svg>""".trimIndent()
@@ -362,13 +369,18 @@ class EnergyFlowView(
     """.trimIndent()
 
     private fun gridIcon(cx: Int, y: Int) = """
-        <line x1="${cx-40}" y1="${y+8}"  x2="${cx+40}" y2="${y+8}"
+        <line x1="$cx" y1="$y" x2="$cx" y2="${y+28}"
+              stroke="var(--lumo-contrast-30pct)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="${cx-20}" y1="${y+6}" x2="${cx+20}" y2="${y+6}"
+              stroke="var(--lumo-contrast-30pct)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="${cx-14}" y1="${y+16}" x2="${cx+14}" y2="${y+16}"
               stroke="var(--lumo-contrast-20pct)" stroke-width="1.2" stroke-linecap="round"/>
-        <line x1="${cx-40}" y1="${y+15}" x2="${cx+40}" y2="${y+15}"
-              stroke="var(--lumo-contrast-20pct)" stroke-width="1.2" stroke-linecap="round" opacity=".6"/>
-        <circle cx="${cx-24}" cy="${y+11}" r="3" fill="#185FA5" opacity=".5"/>
-        <circle cx="${cx}"    cy="${y+11}" r="3" fill="#185FA5" opacity=".5"/>
-        <circle cx="${cx+24}" cy="${y+11}" r="3" fill="#185FA5" opacity=".5"/>
+        <circle cx="${cx-20}" cy="${y+6}"  r="2.5" fill="none" stroke="#185FA5" stroke-width="1" opacity=".7"/>
+        <circle cx="${cx}"    cy="${y+6}"  r="2.5" fill="none" stroke="#185FA5" stroke-width="1" opacity=".7"/>
+        <circle cx="${cx+20}" cy="${y+6}"  r="2.5" fill="none" stroke="#185FA5" stroke-width="1" opacity=".7"/>
+        <circle cx="${cx-14}" cy="${y+16}" r="2"   fill="none" stroke="#185FA5" stroke-width="1" opacity=".5"/>
+        <circle cx="${cx}"    cy="${y+16}" r="2"   fill="none" stroke="#185FA5" stroke-width="1" opacity=".5"/>
+        <circle cx="${cx+14}" cy="${y+16}" r="2"   fill="none" stroke="#185FA5" stroke-width="1" opacity=".5"/>
     """.trimIndent()
 
     // ── Formatter-Extensions ───────────────────────────────────────────────
@@ -386,7 +398,8 @@ class EnergyFlowView(
         // Platzhalter-Daten bis erster BigQuery-Abruf abgeschlossen
         val PLACEHOLDER = EnergyFlowData(
             t = "--:--", pW = 0.0, cW = 0.0, bcW = 0.0, bdW = 0.0, soc = null,
-            pWhToday = 0.0, cWhToday = 0.0, iWhToday = 0.0, eWhToday = 0.0,
+            pWhToday = 0.0, cWhToday = 0.0,
+            iWhToday = 0.0, eWhToday = 0.0, bcWhToday = 0.0, bdWhToday = 0.0,
             sunMinutes = 0, peakW = 0.0, peakTime = "--:--",
         )
         val PLACEHOLDER_KPIS = EnergyFlowKpis(

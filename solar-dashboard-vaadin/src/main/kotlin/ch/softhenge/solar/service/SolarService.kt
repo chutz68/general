@@ -129,6 +129,8 @@ data class EnergyFlowData(
     val cWhToday: Double,
     val iWhToday: Double,
     val eWhToday: Double,
+    val bcWhToday: Double,
+    val bdWhToday: Double,
     val sunMinutes: Int,
     val peakW: Double,
     val peakTime: String,
@@ -429,7 +431,9 @@ class SolarService {
                 IFNULL(SUM(bdWh), 0) AS bdWh,
                 IFNULL(SUM(scWh), 0) AS scWh,
                 IFNULL(SUM(iWh), 0)  AS iWh,
-                IFNULL(SUM(eWh), 0)  AS eWh
+                IFNULL(SUM(eWh), 0)   AS eWh,
+                IFNULL(SUM(bcWh), 0)  AS bcWh,
+                IFNULL(SUM(bdWh), 0)  AS bdWh
             FROM `$projectId.SolarManager.SolarManager_5m`
             WHERE DATE(t, '${TimeUtils.ZONE.id}') = '$today'
         """.trimIndent()
@@ -489,10 +493,12 @@ class SolarService {
         // ── 2. Tagessummen ─────────────────────────────────────────────────
         val sqlSums = """
             SELECT
-                IFNULL(SUM(pWh), 0)  AS pWh,
-                IFNULL(SUM(cWh), 0)  AS cWh,
-                IFNULL(SUM(iWh), 0)  AS iWh,
-                IFNULL(SUM(eWh), 0)  AS eWh
+                IFNULL(SUM(pWh), 0)   AS pWh,
+                IFNULL(SUM(cWh), 0)   AS cWh,
+                IFNULL(SUM(iWh), 0)   AS iWh,
+                IFNULL(SUM(eWh), 0)   AS eWh,
+                IFNULL(SUM(bcWh), 0)  AS bcWh,
+                IFNULL(SUM(bdWh), 0)  AS bdWh
             FROM `$projectId.SolarManager.SolarManager_5m`
             WHERE DATE(t, '${TimeUtils.ZONE.id}') = '$today'
         """.trimIndent()
@@ -544,6 +550,8 @@ class SolarService {
                 cWhToday   = sums["cWh"].toDoubleOrZero(),
                 iWhToday   = sums["iWh"].toDoubleOrZero(),
                 eWhToday   = sums["eWh"].toDoubleOrZero(),
+                bcWhToday  = sums["bcWh"].toDoubleOrZero(),
+                bdWhToday  = sums["bdWh"].toDoubleOrZero(),
                 sunMinutes = (sun?.get("sunIntervals")?.longValue?.toInt() ?: 0) * 5,
                 peakW      = peak?.get("peakW")?.toDoubleOrZero() ?: 0.0,
                 peakTime   = peak?.get("peakTime")?.stringValue ?: "--:--",
