@@ -114,7 +114,7 @@ data class MonthlyTotals(
  * @param cWhToday    Tagesverbrauch Haus [Wh]
  * @param iWhToday    Netzbezug heute [Wh]
  * @param eWhToday    Netzeinspeisung heute [Wh]
- * @param sunMinutes  Minuten mit pW > 200 W heute
+ * @param sunMinutes  Sonnenstunden heute in Minuten (weatherIconId IN 01d/02d)
  * @param peakW       Peak-Solarleistung heute [W]
  * @param peakTime    Uhrzeit der Peak-Leistung (HH:mm)
  */
@@ -463,7 +463,7 @@ class SolarService {
      * Lädt alle Daten für EnergyFlowView in einem Aufruf:
      * - Letzter Echtzeit-Datenpunkt
      * - Tagessummen (pWh, cWh, iWh, eWh)
-     * - Sonnenstunden (pW > 200 W)
+     * - Sonnenstunden via OpenWeatherMap weatherIconId (01d/02d)
      * - Peak-Leistung mit Uhrzeit
      */
     fun getEnergyFlowData(): EnergyFlowData? {
@@ -503,12 +503,13 @@ class SolarService {
             WHERE DATE(t, '${TimeUtils.ZONE.id}') = '$today'
         """.trimIndent()
 
-        // ── 3. Sonnenstunden (pW > 200 W) ─────────────────────────────────
+        // ── 3. Sonnenstunden via OpenWeatherMap (01d/02d = klar/leicht bewölkt) ──
+        //    Nachtcodes (01n/02n) werden natürlich ausgeschlossen.
         val sqlSun = """
-            SELECT COUNT(*) AS sunIntervals
+            SELECT IFNULL(COUNT(*) * 5, 0) AS sunMinutes
             FROM `$projectId.SolarManager.SolarManager_5m`
             WHERE DATE(t, '${TimeUtils.ZONE.id}') = '$today'
-              AND IFNULL(pW, 0) > 200
+              AND weatherIconId IN ('01d', '02d')
         """.trimIndent()
 
         // ── 4. Peak-Leistung heute ─────────────────────────────────────────
@@ -552,7 +553,7 @@ class SolarService {
                 eWhToday   = sums["eWh"].toDoubleOrZero(),
                 bcWhToday  = sums["bcWh"].toDoubleOrZero(),
                 bdWhToday  = sums["bdWh"].toDoubleOrZero(),
-                sunMinutes = (sun?.get("sunIntervals")?.longValue?.toInt() ?: 0) * 5,
+                sunMinutes = sun?.get("sunMinutes")?.longValue?.toInt() ?: 0,
                 peakW      = peak?.get("peakW")?.toDoubleOrZero() ?: 0.0,
                 peakTime   = peak?.get("peakTime")?.stringValue ?: "--:--",
             )
