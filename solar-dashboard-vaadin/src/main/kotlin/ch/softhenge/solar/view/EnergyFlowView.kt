@@ -140,8 +140,10 @@ class EnergyFlowView(
     private fun buildSvg(d: EnergyFlowData, k: EnergyFlowKpis): String {
         // Flussklassen je nach Vorzeichen
         val solarFlow  = if (d.pW > 0) "ef-flow-right" else "ef-flow-none"
-        val battFlow   = if (d.bcW > 0) "ef-flow-down"
-        else if (d.bdW > 0) "ef-flow-up"
+        // Laden:    Pfad WR→Batt (abwärts), ef-flow-down (24→0), marker-end an Batt
+        // Entladen: Pfad Batt→WR (aufwärts), ef-flow-right (0→-24), marker-end an WR
+        val battFlow     = if (d.bcW > 0) "ef-flow-down"
+        else if (d.bdW > 0) "ef-flow-right"
         else "ef-flow-none"
         // Einspeisung: Pfad WR→Netz (abwärts), ef-flow-left, marker-end am Netz
         // Bezug:       Pfad Netz→WR (aufwärts), ef-flow-right (0→-24), marker-end am WR
@@ -157,13 +159,17 @@ class EnergyFlowView(
         // Batterie-Füllbalken (0..60px Breite)
         val socPct    = d.soc ?: 0.0
         val battFill  = (socPct / 100.0 * 56).coerceIn(0.0, 56.0)
-        val battLabel = if (d.bcW > 0) "↑ Laden" else if (d.bdW > 0) "↓ Entladen" else "Standby"
+        val battLabel = if (d.bcW > 0) "↑ Laden" else if (d.bdW > 0) "↑ Entladen" else "Standby"
 
         // Watt-Linie Solar→WR
         val pvArrowColor  = if (d.pW > 50) "#185FA5" else "#888780"
         val pvFlowClass   = if (d.pW > 50) solarFlow else "ef-flow-none"
         val houseArrowCol = if (d.cW  > 0) "#1D9E75" else "#888780"
-        val battArrowCol  = if (d.bcW > 0 || d.bdW > 0) "#1D9E75" else "#888780"
+        val battArrowCol  = when {
+            d.bcW > 0 -> "#1D9E75"   // Laden: grün
+            d.bdW > 0 -> "#D85A30"   // Entladen: rot (wie Netz-Bezug)
+            else      -> "#888780"   // Standby
+        }
 
         return """
 <svg class="ef-svg" viewBox="0 0 680 600" xmlns="http://www.w3.org/2000/svg" aria-label="Energiefluss-Diagramm">
@@ -251,7 +257,10 @@ class EnergyFlowView(
   </g>
 
   <!-- WR → Batterie (vertikal) -->
-  <line class="$battFlow" x1="340" y1="280" x2="340" y2="348"
+  <!-- Batt: Laden = WR(280)→Batt(348), Entladen = Batt(348)→WR(280) -->
+  <line class="$battFlow"
+        x1="340" y1="${if (d.bdW > 0) 348 else 280}"
+        x2="340" y2="${if (d.bdW > 0) 280 else 348}"
         stroke="$battArrowCol" stroke-width="1.5" marker-end="url(#ef-ar)"/>
   <rect x="350" y="306" width="46" height="16" rx="4"
         fill="var(--lumo-contrast-5pct)"/>
