@@ -1,5 +1,6 @@
 package ch.softhenge.solar.service
 
+import ch.softhenge.solar.util.TimeUtils
 import com.google.cloud.bigquery.BigQueryOptions
 import com.google.cloud.bigquery.FieldValue
 import com.google.cloud.bigquery.QueryJobConfiguration
@@ -230,14 +231,14 @@ class SolarService {
         log.debug("getFiveMinData: $fromDate → $toDate")
         val query = """
             SELECT
-                FORMAT_TIMESTAMP('%Y-%m-%d %H:%M', t) AS t,
+                FORMAT_TIMESTAMP('%Y-%m-%d %H:%M', t, '${TimeUtils.ZONE.id}') AS t,
                 IFNULL(pW, 0)  AS pW,
                 IFNULL(cW, 0)  AS cW,
                 IFNULL(bcW, 0) AS bcW,
                 IFNULL(bdW, 0) AS bdW,
                 soc
             FROM `$projectId.SolarManager.SolarManager_5m`
-            WHERE DATE(t) BETWEEN '$fromDate' AND '$toDate'
+            WHERE DATE(t, '${TimeUtils.ZONE.id}') BETWEEN '$fromDate' AND '$toDate'
             ORDER BY t ASC
         """.trimIndent()
 
@@ -265,7 +266,7 @@ class SolarService {
         log.debug("getCurrentData")
         val query = """
             SELECT
-                FORMAT_TIMESTAMP('%Y-%m-%d %H:%M', t) AS t,
+                FORMAT_TIMESTAMP('%Y-%m-%d %H:%M', t, '${TimeUtils.ZONE.id}') AS t,
                 IFNULL(pW, 0)  AS pW,
                 IFNULL(cW, 0)  AS cW,
                 IFNULL(bcW, 0) AS bcW,
@@ -312,11 +313,11 @@ class SolarService {
                 -- clear sky (01d) or few clouds (02d). Night codes (01n/02n) are
                 -- naturally excluded so we don't count "sunshine" after sunset.
                 SELECT
-                    DATE(t, 'Europe/Zurich') AS day,
+                    DATE(t, '${TimeUtils.ZONE.id}') AS day,
                     COUNT(*) * 5             AS sunshineMin
                 FROM `$projectId.SolarManager.SolarManager_5m`
                 WHERE weatherIconId IN ('01d', '02d')
-                  AND DATE(t, 'Europe/Zurich') BETWEEN '$fromDate' AND '$toDate'
+                  AND DATE(t, '${TimeUtils.ZONE.id}') BETWEEN '$fromDate' AND '$toDate'
                 GROUP BY day
             )
             SELECT
@@ -333,12 +334,12 @@ class SolarService {
                 IFNULL(d.tempRealMax, 0)      AS tempRealMax,
                 IFNULL(d.rainAmountSum, 0)    AS rainAmountSum,
                 IFNULL(d.snowAmountSum, 0)    AS snowAmountSum,
-                -- Day length: compare only time-of-day in Europe/Zurich; the stored
+                -- Day length: compare only time-of-day in configured zone; the stored
                 -- sunsetTimestamp may belong to the following day, which would otherwise
                 -- add a spurious 24 h. TIME_DIFF on the time component is date-agnostic.
                 IFNULL(TIME_DIFF(
-                    TIME(d.sunsetTimestamp,  'Europe/Zurich'),
-                    TIME(d.sunriseTimestamp, 'Europe/Zurich'),
+                    TIME(d.sunsetTimestamp,  '${TimeUtils.ZONE.id}'),
+                    TIME(d.sunriseTimestamp, '${TimeUtils.ZONE.id}'),
                     MINUTE
                 ), 0) AS dayLengthMin,
                 IFNULL(s.sunshineMin, 0)      AS sunshineMin,
@@ -419,7 +420,7 @@ class SolarService {
 
     fun getTodaySums(): TodaySums {
         log.debug("getTodaySums")
-        val today = java.time.LocalDate.now().toString()
+        val today = TimeUtils.formatDate(TimeUtils.today())
         val query = """
             SELECT
                 IFNULL(SUM(pWh), 0)  AS pWh,
@@ -430,7 +431,7 @@ class SolarService {
                 IFNULL(SUM(iWh), 0)  AS iWh,
                 IFNULL(SUM(eWh), 0)  AS eWh
             FROM `$projectId.SolarManager.SolarManager_5m`
-            WHERE DATE(t) = '$today'
+            WHERE DATE(t, '${TimeUtils.ZONE.id}') = '$today'
         """.trimIndent()
 
         return try {
@@ -463,14 +464,14 @@ class SolarService {
      */
     fun getEnergyFlowData(): EnergyFlowData? {
         log.debug("getEnergyFlowData")
-        val today = java.time.LocalDate.now().toString()
+        val today = TimeUtils.formatDate(TimeUtils.today())
 
         // ── 1. Letzter Echtzeit-Datenpunkt (heute) ───────────────────────
         // Für soc: letzten nicht-null Wert des Tages via LAST_VALUE nehmen,
         // da der aktuellste Row soc manchmal null haben kann.
         val sqlCurrent = """
             SELECT
-                FORMAT_TIMESTAMP('%H:%M', t) AS t,
+                FORMAT_TIMESTAMP('%H:%M', t, '${TimeUtils.ZONE.id}') AS t,
                 IFNULL(pW, 0)  AS pW,
                 IFNULL(cW, 0)  AS cW,
                 IFNULL(bcW, 0) AS bcW,
@@ -480,7 +481,7 @@ class SolarService {
                     ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
                 ) AS soc
             FROM `$projectId.SolarManager.SolarManager_5m`
-            WHERE DATE(t) = '$today'
+            WHERE DATE(t, '${TimeUtils.ZONE.id}') = '$today'
             ORDER BY t DESC
             LIMIT 1
         """.trimIndent()
@@ -493,14 +494,14 @@ class SolarService {
                 IFNULL(SUM(iWh), 0)  AS iWh,
                 IFNULL(SUM(eWh), 0)  AS eWh
             FROM `$projectId.SolarManager.SolarManager_5m`
-            WHERE DATE(t) = '$today'
+            WHERE DATE(t, '${TimeUtils.ZONE.id}') = '$today'
         """.trimIndent()
 
         // ── 3. Sonnenstunden (pW > 200 W) ─────────────────────────────────
         val sqlSun = """
             SELECT COUNT(*) AS sunIntervals
             FROM `$projectId.SolarManager.SolarManager_5m`
-            WHERE DATE(t) = '$today'
+            WHERE DATE(t, '${TimeUtils.ZONE.id}') = '$today'
               AND IFNULL(pW, 0) > 200
         """.trimIndent()
 
@@ -509,13 +510,13 @@ class SolarService {
         val sqlPeak = """
             SELECT
                 IFNULL(pW, 0) AS peakW,
-                FORMAT_TIMESTAMP('%H:%M', t) AS peakTime
+                FORMAT_TIMESTAMP('%H:%M', t, '${TimeUtils.ZONE.id}') AS peakTime
             FROM `$projectId.SolarManager.SolarManager_5m`
-            WHERE DATE(t) = '$today'
+            WHERE DATE(t, '${TimeUtils.ZONE.id}') = '$today'
               AND IFNULL(pW, 0) = (
                   SELECT MAX(IFNULL(pW, 0))
                   FROM `$projectId.SolarManager.SolarManager_5m`
-                  WHERE DATE(t) = '$today'
+                  WHERE DATE(t, '${TimeUtils.ZONE.id}') = '$today'
               )
             ORDER BY t ASC
             LIMIT 1
