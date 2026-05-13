@@ -5,8 +5,6 @@ import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.applayout.AppLayout
 import com.vaadin.flow.component.applayout.DrawerToggle
 import com.vaadin.flow.component.html.H1
-import com.vaadin.flow.component.orderedlayout.FlexComponent
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.sidenav.SideNav
 import com.vaadin.flow.component.sidenav.SideNavItem
 import com.vaadin.flow.router.RouterLayout
@@ -32,6 +30,7 @@ class MainLayout : AppLayout(), RouterLayout {
     }
 
     private fun createHeader() {
+        // DrawerToggle muss direkt in der Navbar sein — nicht in einem Layout verschachtelt
         val toggle = DrawerToggle()
 
         val title = H1("Solar Dashboard").apply {
@@ -39,19 +38,11 @@ class MainLayout : AppLayout(), RouterLayout {
                 .set("font-size", "1.1rem")
                 .set("font-weight", "600")
                 .set("margin", "0")
-                .set("color", "var(--lumo-base-color)")
+                .set("flex-grow", "1")
         }
 
-        val header = HorizontalLayout(toggle, title).apply {
-            defaultVerticalComponentAlignment = FlexComponent.Alignment.CENTER
-            setWidthFull()
-            style
-                .set("background", "var(--lumo-primary-color)")
-                .set("padding", "0 1rem")
-                .set("height", "56px")
-        }
-
-        addToNavbar(header)
+        // Toggle und Title direkt hinzufügen, nicht in HorizontalLayout
+        addToNavbar(true, toggle, title)
     }
 
     private fun createDrawer() {
