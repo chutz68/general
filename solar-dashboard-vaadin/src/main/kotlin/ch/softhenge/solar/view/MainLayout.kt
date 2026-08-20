@@ -51,6 +51,7 @@ class MainLayout : AppLayout(), RouterLayout {
                 SideNavItem("⚡ Energiefluss",  EnergyFlowView::class.java),
                 SideNavItem("📈 Live-Ansicht",   LiveView::class.java),
                 SideNavItem("📊 Dashboard",      DashboardView::class.java),
+                SideNavItem("🌤 Wetter",         WeatherView::class.java),
             )
         }
         addToDrawer(nav)
