@@ -222,11 +222,69 @@ DSM → Systemsteuerung → Sicherheit → Zertifikat → Einstellungen → Konf
 → Bei `solar.softhenge.ch` das Let's Encrypt Zertifikat auswählen
 
 **Automatische Erneuerung** (Zertifikat läuft nach 90 Tagen ab):
-Synology Task Scheduler → neuer Job:
+
+⚠️ **Vorfall 2026-08-29:** Das Zertifikat ist am 24.07.2026 unbemerkt abgelaufen, weil der
+untenstehende Task Scheduler Job **nie angelegt worden war** — nur dokumentiert. Zusätzlich
+aktualisierte `acme.sh --install-cert` zwar die Dateien unter `/volume1/scripts/ssl/`, aber
+DSM importiert diese nicht automatisch — ohne den Deploy-Hook (siehe unten) bleibt das alte,
+in DSM eingetragene Zertifikat aktiv, auch wenn acme.sh im Hintergrund erfolgreich erneuert.
+Seither: Task Scheduler Job existiert (siehe unten) UND Deploy-Hook automatisiert den DSM-Import.
+
+**a) Task Scheduler Job für die Erneuerung** (muss existieren — Ursache des Ausfalls war, dass er fehlte):
+DSM → Systemsteuerung → Aufgabenplaner → Erstellen → Geplante Aufgabe → Benutzerdefiniertes Skript
+- Name: `acme.sh Renewal`
+- Benutzer: `werneradmin`
+- Zeitplan: täglich (acme.sh erneuert nur wenn < 30 Tage bis Ablauf)
+- Skript:
 ```bash
-/var/services/homes/werneradmin/.acme.sh/acme.sh --cron --home /var/services/homes/werneradmin/.acme.sh
+/var/services/homes/werneradmin/.acme.sh/acme.sh --cron --home /var/services/homes/werneradmin/.acme.sh >> /volume1/scripts/acme-cron.log 2>&1
 ```
-Zeitplan: täglich (acme.sh erneuert nur wenn < 30 Tage bis Ablauf)
+
+**b) Deploy-Hook: automatischer Import in DSM nach jeder Erneuerung**
+
+acme.sh's `--install-cert` allein reicht nicht — DSM's Zertifikat-Manager hat eine eigene
+interne Datenbank, die nur über die DSM-API oder manuellen GUI-Import aktualisiert wird.
+Der `synology_dsm` Deploy-Hook übernimmt das automatisch über die lokale DSM-API (`localhost`,
+kein externer Zugriff nötig).
+
+Da `werneradmin` 2FA aktiv hat, braucht der Hook ein **Applikationskennwort** (umgeht 2FA nur
+für diesen einen Zweck, ohne 2FA für den normalen Login zu deaktivieren):
+DSM-Weblogin als `werneradmin` → Profil-Icon → Persönlich → Konto → Tab "Applikationskennwörter" → neu erstellen.
+
+Einmalige Einrichtung (im SSH-Fenster als `werneradmin`):
+```bash
+export SYNO_Username="werneradmin"
+export SYNO_Password="<Applikationskennwort>"
+export SYNO_Certificate="<Beschreibung wie in DSM Zertifikat-Liste, z.B. solar.softhenge.ch>"
+export SYNO_Scheme="http"
+export SYNO_Hostname="localhost"
+export SYNO_Port="5000"
+export SYNO_Create="0"
+
+~/.acme.sh/acme.sh --deploy -d solar.softhenge.ch --deploy-hook synology_dsm
+```
+Nach einem erfolgreichen Lauf (`Success`) speichert acme.sh den Hook + alle `SYNO_*`-Werte
+automatisch in `~/.acme.sh/solar.softhenge.ch_ecc/solar.softhenge.ch.conf` (Feld `Le_DeployHook`).
+Der Task Scheduler Job aus (a) triggert diesen Hook danach bei jeder künftigen Erneuerung
+automatisch mit — keine weitere manuelle Aktion nötig.
+
+**Manueller Fallback** (falls Deploy-Hook je fehlschlägt oder Zertifikat trotzdem abläuft):
+```bash
+~/.acme.sh/acme.sh --renew -d solar.softhenge.ch --force
+~/.acme.sh/acme.sh --install-cert -d solar.softhenge.ch \
+  --cert-file /volume1/scripts/ssl/solar.softhenge.ch.cer \
+  --key-file /volume1/scripts/ssl/solar.softhenge.ch.key \
+  --fullchain-file /volume1/scripts/ssl/fullchain.cer
+cp ~/.acme.sh/solar.softhenge.ch_ecc/ca.cer /volume1/scripts/ssl/ca.cer
+```
+Danach in DSM → Systemsteuerung → Sicherheit → Zertifikat → **Hinzufügen** (nicht auf dem
+alten Eintrag "Aktualisieren"/"Erneuern" klicken — das lädt nur ein Archiv herunter statt neu
+zu importieren) → Zertifikat importieren → die drei Dateien hochladen (Zwischenzertifikat:
+`ca.cer`, nicht `fullchain.cer`) → danach unter Zertifikat → Einstellungen die Bindung für
+`solar.softhenge.ch` auf das neue Zertifikat umstellen → altes Zertifikat löschen.
+
+Die Dateien liegen auf der NAS, der Browser-Upload-Dialog braucht sie aber lokal — vorher per
+File Station herunterladen oder `scp -P 55222 werneradmin@<Heim-IP>:/volume1/scripts/ssl/<datei> .`
 
 ### 5. Reverse Proxy (Synology DSM)
 

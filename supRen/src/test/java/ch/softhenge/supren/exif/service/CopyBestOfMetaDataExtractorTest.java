@@ -38,8 +38,8 @@ public class CopyBestOfMetaDataExtractorTest {
 	    bw = new BufferedWriter(fw);
 	    bw.write("export LANG=de_CH\n");
 	    bw.write("#Start " + LocalDateTime.now() + "\n");
-		imageService = new ImageService("ruro.properties", "C:\\photos", false, new ExifServiceMetaDataExtractor());
-		String copyBestOfToNewFolder = imageService.copyBestOfToNewFolder("C:\\photo", "2025");
+		imageService = new ImageService("ruro.properties", "D:\\photos", false, new ExifServiceMetaDataExtractor());
+		String copyBestOfToNewFolder = imageService.copyBestOfToNewFolder("D:\\photo", "2026");
 		bw.write(copyBestOfToNewFolder + "#End " + LocalDateTime.now());
 		bw.close();
 	}
