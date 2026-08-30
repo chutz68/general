@@ -351,4 +351,4 @@ Internet
 - [ ] Synology Drive auf allen Geräten auf QuickConnect-ID umstellen
 - [ ] Dockerfile für Vaadin App erstellen
 - [ ] GitHub Actions Deploy-Pipeline zur Synology einrichten
-- [ ] PWA-Annotation in Vaadin App hinzufügen (`@PWA`)
+- [x] PWA-Annotation in Vaadin App hinzufügen (`@PWA`)
