@@ -62,6 +62,15 @@ All views extend `VerticalLayout` and are Spring-managed beans (Vaadin handles i
 
 Vaadin Flow generates frontend resources under `frontend/generated/` — do not edit these files manually. Custom CSS lives in `frontend/themes/solar-dashboard/styles.css`. Charts use **Apache ECharts 5** loaded from CDN via `@JavaScript` annotations on the view classes; chart rendering is done by injecting JavaScript strings via `element.executeJs()`.
 
+### PWA
+
+The app is installable as a Progressive Web App via the `@PWA` annotation on `SolarDashboardApplication` (name, short name, theme/background color). Vaadin Flow handles the rest automatically at request time:
+
+- **Base icon**: a single square source image at `src/main/resources/META-INF/resources/icons/icon.png` (served from the classpath because that's Spring Boot's default static-resources location). Vaadin derives every required size from it — 16/32/96/144/192/512 for the manifest and favicons, 180×180 for `apple-touch-icon`, plus all the iOS splash-screen sizes. To change the icon, just replace that one PNG (recommended: square, ≥512×512) — no other config changes needed.
+- **Generated at runtime**: `manifest.webmanifest`, `sw.js` (service worker, enables offline fallback + asset caching), and the icon variants are all generated on first request and served under `/`, `/sw.js`, `/icons/*` — none of these are checked into the repo.
+- **iOS**: Vaadin also injects `apple-mobile-web-app-capable`, `apple-mobile-web-app-title`, and `apple-mobile-web-app-status-bar-style` meta tags, so Safari's "Add to Home Screen" launches the app standalone (no browser chrome) using the generated 180×180 icon.
+- Works on any environment served over HTTPS (or `localhost`); the production deployment at `solar.softhenge.ch` already satisfies this (see Infrastructure section below).
+
 ## Project: Solar Dashboard (ch.softhenge.solar)
 Vaadin Flow + Kotlin dashboard for home solar energy monitoring.
 
@@ -349,6 +358,6 @@ Internet
 
 - [ ] Port 5001 in FritzBox schliessen (nach QuickConnect-Migration aller Geräte)
 - [ ] Synology Drive auf allen Geräten auf QuickConnect-ID umstellen
-- [ ] Dockerfile für Vaadin App erstellen
-- [ ] GitHub Actions Deploy-Pipeline zur Synology einrichten
+- [x] Dockerfile für Vaadin App erstellen
+- [x] GitHub Actions Deploy-Pipeline zur Synology einrichten (Build/Push via `docker-publish.yml`, Pull/Restart via `solar-pull.sh` Cron auf der Synology)
 - [x] PWA-Annotation in Vaadin App hinzufügen (`@PWA`)
