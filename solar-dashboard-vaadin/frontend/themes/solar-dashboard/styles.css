@@ -1,1 +1,33 @@
 /* Solar Dashboard Theme */
+
+/* ── Responsive helpers ──────────────────────────────────────────────────
+   Applied via addClassName(...) from the Kotlin views. Kept generic so any
+   view's toolbar/card rows can opt in to wrapping instead of overflowing
+   on narrow (phone) viewports.
+──────────────────────────────────────────────────────────────────────── */
+
+.wrap-row {
+    flex-wrap: wrap;
+    row-gap: 0.5rem;
+}
+
+.scroll-x {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    /* Flex items with overflow != visible get an automatic min-size of 0,
+       which collapses this wrapper to zero height inside Vaadin's flex-based
+       layouts unless shrinking is explicitly disabled. */
+    flex-shrink: 0;
+}
+
+.chart-box {
+    width: 100%;
+    height: 500px;
+}
+
+@media (max-width: 600px) {
+    .chart-box {
+        height: 320px;
+    }
+}

@@ -66,6 +66,7 @@ class TopTenView(private val solarService: SolarService) : VerticalLayout() {
         val nav = HorizontalLayout(prevBtn, periodLabel, nextBtn).apply {
             alignItems = Alignment.CENTER
             isSpacing = true
+            addClassName("wrap-row")
         }
 
         return VerticalLayout(modeToggle, nav).apply {
@@ -131,16 +132,16 @@ class TopTenView(private val solarService: SolarService) : VerticalLayout() {
         val row1 = HorizontalLayout(
             buildTableCard(getTranslation("topten.table.production"), topProduction),
             buildTableCard(getTranslation("topten.table.hottest"),    topHottest)
-        ).apply { setWidthFull(); isSpacing = true }
+        ).apply { setWidthFull(); isSpacing = true; addClassName("wrap-row") }
 
         val row2 = HorizontalLayout(
             buildTableCard(getTranslation("topten.table.rainiest"),  topRainiest),
             buildTableCard(getTranslation("topten.table.coldest"),   topColdest)
-        ).apply { setWidthFull(); isSpacing = true }
+        ).apply { setWidthFull(); isSpacing = true; addClassName("wrap-row") }
 
         val row3 = HorizontalLayout(
             buildTableCard(getTranslation("topten.table.snow"), topSnow),
-        ).apply { setWidthFull(); isSpacing = true }
+        ).apply { setWidthFull(); isSpacing = true; addClassName("wrap-row") }
 
         tablesLayout.add(row1, row2, row3)
     }
@@ -172,9 +173,9 @@ class TopTenView(private val solarService: SolarService) : VerticalLayout() {
         return VerticalLayout(H3(title), grid).apply {
             setPadding(true)
             setSpacing(false)
-            width = "50%"
             style.set("border", "1px solid var(--lumo-contrast-10pct)")
                  .set("border-radius", "var(--lumo-border-radius-m)")
+                 .set("flex", "1 1 320px")
         }
     }
 }

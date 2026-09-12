@@ -35,7 +35,7 @@ class LiveView(private val solarService: SolarService) : VerticalLayout() {
 
         chartDiv.element.setAttribute("id", "solar-chart")
         chartDiv.setWidthFull()
-        chartDiv.height = "500px"
+        chartDiv.addClassName("chart-box")
         add(chartDiv)
 
         loadData()
@@ -55,6 +55,7 @@ class LiveView(private val solarService: SolarService) : VerticalLayout() {
 
         val dateNav = HorizontalLayout(prevButton, datePicker, nextButton, todayButton).apply {
             alignItems = Alignment.BASELINE
+            addClassName("wrap-row")
         }
 
         val dayButton   = periodButton(getTranslation("live.period.day"),   "day")
@@ -73,6 +74,7 @@ class LiveView(private val solarService: SolarService) : VerticalLayout() {
         val toolbar = HorizontalLayout(dateNav, periodNav, batteryButton).apply {
             alignItems = Alignment.BASELINE
             setWidthFull()
+            addClassName("wrap-row")
         }
 
         return VerticalLayout(toolbar).apply {
@@ -176,11 +178,11 @@ class LiveView(private val solarService: SolarService) : VerticalLayout() {
                 if (!dom) return;
                 var chart = echarts.getInstanceByDom(dom) || echarts.init(dom);
                 var option = {
-                    title: { text: 'Solar – $title' },
+                    title: { text: 'Solar – $title', top: 0, left: 0, textStyle: { fontSize: 14 } },
                     tooltip: { trigger: 'axis', axisPointer: { type: 'cross' } },
-                    legend: { data: $legendData },
-                    grid: { left: '5%', right: '8%', bottom: '15%', containLabel: true },
-                    toolbox: { feature: { dataZoom: { yAxisIndex: 'none' }, restore: {}, saveAsImage: {} } },
+                    legend: { data: $legendData, top: 26, textStyle: { fontSize: 11 } },
+                    grid: { top: 66, left: '5%', right: '8%', bottom: '15%', containLabel: true },
+                    toolbox: { top: 0, right: 0, itemSize: 13, feature: { dataZoom: { yAxisIndex: 'none' }, restore: {}, saveAsImage: {} } },
                     dataZoom: [
                         { type: 'inside', start: 0, end: 100 },
                         { start: 0, end: 100 }

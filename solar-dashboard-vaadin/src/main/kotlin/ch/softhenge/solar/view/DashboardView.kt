@@ -9,6 +9,7 @@ import ch.softhenge.solar.util.TimeUtils
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.grid.ColumnTextAlign
 import com.vaadin.flow.component.grid.Grid
+import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.html.H2
 import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment
@@ -24,8 +25,8 @@ import java.util.Locale
 @PageTitle("Solar Dashboard")
 class DashboardView(private val solarService: SolarService) : VerticalLayout() {
 
-    private val monthCardsLayout = HorizontalLayout().apply { setWidthFull(); isSpacing = true }
-    private val monthGridContainer = VerticalLayout().apply { setPadding(false); setSpacing(false); setWidthFull() }
+    private val monthCardsLayout = HorizontalLayout().apply { setWidthFull(); isSpacing = true; addClassName("wrap-row") }
+    private val monthGridContainer = VerticalLayout().apply { setPadding(false); setSpacing(false); setWidthFull(); addClassName("scroll-x") }
     private val monthLabel = H2()
     private var currentMonth: YearMonth = YearMonth.from(TimeUtils.today())
 
@@ -71,6 +72,7 @@ class DashboardView(private val solarService: SolarService) : VerticalLayout() {
         val autarkyPct         = if (cWh > 0) (cWh - sums.iWh) / cWh * 100 else null
         return HorizontalLayout().apply {
             setWidthFull()
+            addClassName("wrap-row")
             add(
                 card(t("dashboard.card.production"),  "${(pWh / 1000).format(2)} kWh"),
                 card(t("dashboard.card.consumption"), "${(cWh / 1000).format(2)} kWh"),
@@ -90,13 +92,14 @@ class DashboardView(private val solarService: SolarService) : VerticalLayout() {
             .set("border", "1px solid var(--lumo-contrast-20pct)")
             .set("border-radius", "8px")
             .set("padding", "1em")
-            .set("min-width", "130px")
+            .set("flex", "1 1 110px")
         return card
     }
 
-    private fun buildDailyGrid(data: List<DailyData>): Grid<DailyData> {
+    private fun buildDailyGrid(data: List<DailyData>): Div {
         val grid = Grid(DailyData::class.java, false)
         grid.setWidthFull()
+        grid.style.set("min-width", "760px")
         grid.addColumn { it.day }.setHeader(t("dashboard.col.day")).setSortable(true)
         grid.addColumn { (it.pWh / 1000).format(2) }.setHeader(t("dashboard.col.production"))
         grid.addColumn { (it.cWh / 1000).format(2) }.setHeader(t("dashboard.col.consumption"))
@@ -107,7 +110,7 @@ class DashboardView(private val solarService: SolarService) : VerticalLayout() {
         grid.addColumn { "${it.tempRealMin.format(2)} / ${it.tempRealMax.format(2)} °C" }.setHeader(t("dashboard.col.temp"))
         grid.addColumn { if (it.rowCount == 288) "OK" else "${it.missingRows} missing" }.setHeader(t("dashboard.col.quality"))
         grid.setItems(data)
-        return grid
+        return Div(grid).apply { setWidthFull(); addClassName("scroll-x") }
     }
 
     // -------------------- Monthly section --------------------
@@ -177,8 +180,7 @@ class DashboardView(private val solarService: SolarService) : VerticalLayout() {
             .set("border", "1px solid var(--lumo-contrast-20pct)")
             .set("border-top", "3px solid $color")
             .set("border-radius", "8px")
-            .set("min-width", "110px")
-            .set("flex", "1")
+            .set("flex", "1 1 100px")
         card.add(Span(label).also { it.style.set("font-size", "11px").set("color", "var(--lumo-secondary-text-color)") })
         card.add(Span(value).also { it.style.set("font-size", "16px").set("font-weight", "600") })
         return card
@@ -187,6 +189,7 @@ class DashboardView(private val solarService: SolarService) : VerticalLayout() {
     private fun buildMonthGrid(data: List<MonthlyDayData>): Grid<MonthlyDayData> {
         val grid = Grid(MonthlyDayData::class.java, false)
         grid.setWidthFull()
+        grid.style.set("min-width", "1050px")
         grid.setAllRowsVisible(true)
         grid.addColumn { it.day }.setHeader(t("month.col.day")).setAutoWidth(true).setSortable(true)
         grid.addColumn { (it.pWh / 1000).format(2) }.setHeader(t("month.col.production")).setTextAlign(ColumnTextAlign.END)

@@ -64,6 +64,7 @@
 /* ── Haupt-Container ──────────────────────────────────────────────────────── */
 
 .ef-container {
+    box-sizing: border-box;
     width: 100%;
     max-width: 860px;
     margin: 0 auto;
@@ -74,8 +75,10 @@
 
 .ef-header {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
+    gap: 0.5rem 1rem;
     margin-bottom: 1.5rem;
 }
 
@@ -88,6 +91,7 @@
 
 .ef-live-badge {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 6px;
     font-size: 0.75rem;
@@ -224,5 +228,9 @@
 @media (max-width: 600px) {
     .ef-kpi-bar {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .ef-container {
+        padding: 0 0.75rem;
     }
 }

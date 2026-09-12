@@ -31,7 +31,7 @@ class WeatherView(private val solarService: SolarService) : VerticalLayout() {
 
         chartDiv.element.setAttribute("id", "weather-chart")
         chartDiv.setWidthFull()
-        chartDiv.height = "550px"
+        chartDiv.addClassName("chart-box")
         add(chartDiv)
 
         loadData()
@@ -56,6 +56,7 @@ class WeatherView(private val solarService: SolarService) : VerticalLayout() {
 
         return HorizontalLayout(prevBtn, currentBtn, nextBtn).apply {
             alignItems = Alignment.BASELINE
+            addClassName("wrap-row")
         }
     }
 
@@ -83,7 +84,7 @@ class WeatherView(private val solarService: SolarService) : VerticalLayout() {
                 if (!dom) return;
                 var chart = echarts.getInstanceByDom(dom) || echarts.init(dom);
                 var option = {
-                    title: { text: 'Weather & Solar – $monthLabel', left: 'center' },
+                    title: { text: 'Weather & Solar – $monthLabel', left: 'center', textStyle: { fontSize: 14 } },
                     tooltip: {
                         trigger: 'axis',
                         axisPointer: { type: 'cross' },
@@ -97,10 +98,12 @@ class WeatherView(private val solarService: SolarService) : VerticalLayout() {
                     },
                     legend: {
                         data: ['Solar (kWh)', 'Temp Max (°C)', 'Temp Min (°C)', 'Rain (mm)', 'Snow (mm)', 'Sunshine (h)'],
-                        top: 30
+                        top: 28,
+                        itemGap: 8,
+                        textStyle: { fontSize: 11 }
                     },
-                    grid: { left: '5%', right: '14%', bottom: '15%', top: '80px', containLabel: true },
-                    toolbox: { feature: { dataZoom: { yAxisIndex: 'none' }, restore: {}, saveAsImage: {} } },
+                    grid: { left: '5%', right: '14%', bottom: '15%', top: '112px', containLabel: true },
+                    toolbox: { top: 0, right: 0, itemSize: 13, feature: { dataZoom: { yAxisIndex: 'none' }, restore: {}, saveAsImage: {} } },
                     dataZoom: [
                         { type: 'inside', start: 0, end: 100 },
                         { start: 0, end: 100, bottom: 5 }
